@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="fa">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
     <title>حساب‌کده | مدیریت مالی شخصی</title>
-    <script src="js/Dexie.js"></script>
+    <script src="js/Dexie.js">
+    </script>
     <!-- فونت وزیرمتن -->
     <link href="style/css/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <style>
@@ -19,7 +22,7 @@
             --text-light: #64748b;
             --radius: 20px;
             --radius-sm: 14px;
-            --shadow: 0 8px 25px rgba(0,0,0,0.05);
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -53,6 +56,7 @@
             text-align: center;
             padding: 8px 0 4px;
         }
+
         .app-header h1 {
             font-size: 1.8rem;
             font-weight: 700;
@@ -65,11 +69,11 @@
             justify-content: center;
             gap: 6px;
         }
+
         .app-header h1 span {
             font-size: 2rem;
         }
 
-        /* کارت */
         .glass-card {
             background: var(--card-bg);
             backdrop-filter: blur(20px);
@@ -77,11 +81,9 @@
             border-radius: var(--radius);
             padding: 18px 14px;
             box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.6);
-            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
-        /* تب‌های پایین */
         .bottom-tabs {
             position: fixed;
             bottom: 12px;
@@ -95,17 +97,16 @@
             border-radius: 40px;
             display: flex;
             justify-content: space-around;
-            align-items: center;
             padding: 6px 8px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
             z-index: 100;
-            border: 1px solid rgba(255,255,255,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
+
         .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             gap: 2px;
             background: transparent;
             border: none;
@@ -116,66 +117,75 @@
             padding: 8px 10px;
             border-radius: 30px;
             cursor: pointer;
-            transition: all 0.2s ease;
             flex: 1;
-            white-space: nowrap;
         }
+
         .tab-item i {
             font-size: 1.3rem;
             font-style: normal;
-            line-height: 1;
         }
+
         .tab-item.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 6px 15px rgba(37,99,235,0.4);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
             font-weight: 600;
         }
 
-        /* محتوا */
         .tab-content {
             display: none;
             animation: fadeSlide 0.3s ease;
         }
+
         .tab-content.active {
             display: block;
         }
+
         @keyframes fadeSlide {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* فرم */
         .form-group {
             margin-bottom: 14px;
             display: flex;
             flex-direction: column;
         }
+
         label {
             font-size: 0.8rem;
             font-weight: 600;
             margin-bottom: 6px;
             color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
-        input, select, button {
+
+        input,
+        select,
+        button {
             font-family: 'Vazirmatn', sans-serif;
             font-size: 0.9rem;
             padding: 12px 14px;
             border-radius: var(--radius-sm);
             border: 1.5px solid #e2e8f0;
             background: white;
-            transition: all 0.2s;
-            outline: none;
             width: 100%;
             -webkit-appearance: none;
+            outline: none;
         }
-        input:focus, select:focus {
+
+        input:focus,
+        select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
+
         button {
             background: var(--primary);
             color: white;
@@ -186,21 +196,22 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(37,99,235,0.2);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
         }
+
         button:active {
             transform: scale(0.97);
         }
+
         button.danger {
             background: var(--danger);
-            box-shadow: 0 4px 10px rgba(239,68,68,0.2);
             width: auto;
         }
+
         button.success {
             background: var(--success);
-            box-shadow: 0 4px 10px rgba(16,185,129,0.2);
         }
+
         button.secondary {
             background: #f1f5f9;
             color: #1e293b;
@@ -209,23 +220,25 @@
             width: auto;
         }
 
-        /* تاریخ */
         .date-selectors {
             display: flex;
             gap: 6px;
         }
+
         .date-selectors select {
             flex: 1;
             text-align: center;
             padding: 10px 2px;
             font-size: 0.8rem;
         }
+
         .date-range {
             display: flex;
             gap: 6px;
             align-items: center;
             flex-wrap: wrap;
         }
+
         .date-range .date-selectors {
             flex: 2;
         }
@@ -237,8 +250,7 @@
             flex-wrap: wrap;
         }
 
-        /* اشخاص و قرض */
-        .person-item, .debt-item {
+        .person-item {
             background: white;
             padding: 12px 14px;
             margin: 8px 0;
@@ -246,77 +258,75 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
             border: 1px solid #f1f5f9;
         }
-        .debt-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        .badge {
-            background: #e2e8f0;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-        }
 
-        /* جدول */
         .table-wrapper {
             overflow-x: auto;
             border-radius: 16px;
             background: white;
             margin-top: 10px;
-            -webkit-overflow-scrolling: touch;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.75rem;
             min-width: 650px;
         }
+
         th {
             background: #f8fafc;
             padding: 10px 6px;
             font-weight: 600;
             color: #475569;
             border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
         }
+
         td {
             padding: 8px 6px;
             text-align: center;
             border-bottom: 1px solid #f1f5f9;
-            white-space: nowrap;
         }
-        .row-income { background-color: #f0fdf4; }
-        .row-expense { background-color: #fef2f2; }
-        .row-debt_taken { background-color: #fffbeb; }
-        .row-debt_given { background-color: #eff6ff; }
-        .row-settle { background-color: #f8fafc; }
-        .action-btns {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
+
+        .row-income {
+            background-color: #f0fdf4;
         }
+
+        .row-expense {
+            background-color: #fef2f2;
+        }
+
+        .row-debt_taken {
+            background-color: #fffbeb;
+        }
+
+        .row-debt_given {
+            background-color: #eff6ff;
+        }
+
+        .row-settle {
+            background-color: #f8fafc;
+        }
+
         .action-btns button {
             padding: 5px 8px;
             font-size: 15px;
             border-radius: 10px;
         }
 
-        /* مودال */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(6px);
             z-index: 200;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
+
         .modal-content {
             background: white;
             border-radius: 24px;
@@ -325,546 +335,491 @@
             max-width: 450px;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
         }
+
         .close-btn {
             float: left;
             font-size: 26px;
             cursor: pointer;
             color: #94a3b8;
-            line-height: 1;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 24px;
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        /* ریسپانسیو برای موبایل‌های کوچک */
         @media (max-width: 480px) {
             body {
                 padding: 12px 6px 95px;
             }
+
             .glass-card {
                 padding: 14px 10px;
-            }
-            .app-header h1 {
-                font-size: 1.5rem;
-            }
-            .date-selectors {
-                flex-wrap: wrap;
-            }
-            .date-selectors select {
-                flex: 1 0 30%;
-            }
-            .bottom-tabs {
-                padding: 4px 4px;
-                bottom: 8px;
-            }
-            .tab-item {
-                font-size: 0.6rem;
-                padding: 6px 4px;
-            }
-            .tab-item i {
-                font-size: 1.1rem;
-            }
-            input, select, button {
-                font-size: 0.85rem;
-                padding: 10px 12px;
-            }
-            .action-btns button {
-                padding: 4px 6px;
-                font-size: 0.65rem;
             }
         }
     </style>
 </head>
+
 <body>
-<div class="app-container">
-    <div class="app-header">
-        <h1><span>📒</span> حساب‌کده</h1>
-    </div>
+    <div class="app-container">
+        <div class="app-header">
+            <h1><span>📒</span> حساب‌کده</h1>
+        </div>
 
-    <!-- تب ثبت -->
-    <div id="tab-add" class="tab-content active glass-card">
-        <h3 style="margin-bottom: 12px;">➕ ثبت تراکنش جدید</h3>
-        <div class="form-group">
-            <label>📌 نوع تراکنش</label>
-            <select id="transType">
-                <option value="income">💰 درآمد</option>
-                <option value="expense">💸 هزینه</option>
-                <option value="debt_taken">🤝 قرض گرفتم</option>
-                <option value="debt_given">🤝 قرض دادم</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>👤 شخص مرتبط</label>
-            <select id="personSelect"><option value="">انتخاب شخص</option></select>
-        </div>
-        <div class="form-group">
-            <label>💵 مبلغ (تومان)</label>
-            <input type="number" id="amount" placeholder="مثلاً ۵۰۰,۰۰۰">
-        </div>
-        <div class="form-group">
-            <label>📅 تاریخ</label>
-            <div class="date-selectors">
-                <select id="yearSelect"></select>
-                <select id="monthSelect"></select>
-                <select id="daySelect"></select>
+        <!-- تب ثبت -->
+        <div id="tab-add" class="tab-content active glass-card">
+            <h3 style="margin-bottom: 12px;">➕ ثبت تراکنش جدید</h3>
+            <div class="form-group">
+                <label>📌 نوع تراکنش</label>
+                <select id="transType">
+                    <option value="income">💰 درآمد</option>
+                    <option value="expense">💸 هزینه</option>
+                    <option value="debt_taken">🤝 قرض گرفتم</option>
+                    <option value="debt_given">🤝 قرض دادم</option>
+                    <option value="debt_taken_settle">✅ تسویه قرض گرفته شده</option>
+                    <option value="debt_given_settle">✅ تسویه قرض داده شده</option>
+                </select>
             </div>
-        </div>
-        <div class="form-group">
-            <label>🏦 بانک / حساب</label>
-            <select id="bankSelect">
-                <option value="">انتخاب کنید</option>
-                <option value="ملت">ملت</option><option value="ملی">ملی</option>
-                <option value="صادرات">صادرات</option><option value="تجارت">تجارت</option>
-                <option value="رفاه">رفاه</option><option value="پاسارگاد">پاسارگاد</option>
-                <option value="سامان">سامان</option><option value="نقدی">نقدی</option>
-                <option value="سایر">سایر</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>📝 توضیحات</label>
-            <input type="text" id="desc" placeholder="اختیاری">
-        </div>
-        <button id="addBtn" style="width:100%; margin-top:6px;">✔ ثبت تراکنش</button>
-    </div>
-
-    <!-- تب اشخاص -->
-    <div id="tab-persons" class="tab-content glass-card">
-        <h3>👥 مدیریت اشخاص</h3>
-        <div class="row" style="margin:14px 0;">
-            <input type="text" id="newPersonName" placeholder="نام شخص جدید" style="flex:2;">
-            <button id="addPersonBtn" style="flex:1;">➕ اضافه</button>
-        </div>
-        <div id="personsList" class="empty-state">در حال بارگذاری...</div>
-    </div>
-
-    <!-- تب تسویه -->
-    <div id="tab-settle" class="tab-content glass-card">
-        <h3>✅ تسویه قرض‌ها</h3>
-        <div id="debtList" class="empty-state">در حال بارگذاری...</div>
-    </div>
-
-    <!-- تب گزارش -->
-    <div id="tab-report" class="tab-content glass-card">
-        <h3>📊 گزارش قرض</h3>
-        <div class="form-group">
-            <label>👤 انتخاب شخص</label>
-            <select id="reportPerson"></select>
-        </div>
-        <div class="form-group">
-            <label>📅 بازه زمانی</label>
-            <div class="date-range">
-                <span>از</span>
+            <div class="form-group">
+                <label>👤 شخص مرتبط</label>
+                <select id="personSelect">
+                    <option value="">انتخاب شخص</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>💵 مبلغ (تومان)</label>
+                <input type="number" id="amount" placeholder="مثلاً ۵۰۰,۰۰۰">
+            </div>
+            <div class="form-group">
+                <label>📅 تاریخ</label>
                 <div class="date-selectors">
-                    <select id="fromYearSelect"></select>
-                    <select id="fromMonthSelect"></select>
-                    <select id="fromDaySelect"></select>
-                </div>
-                <span>تا</span>
-                <div class="date-selectors">
-                    <select id="toYearSelect"></select>
-                    <select id="toMonthSelect"></select>
-                    <select id="toDaySelect"></select>
+                    <select id="yearSelect"></select>
+                    <select id="monthSelect"></select>
+                    <select id="daySelect"></select>
                 </div>
             </div>
+            <div class="form-group">
+                <label>🏦 بانک / حساب</label>
+                <select id="bankSelect">
+                    <option value="">انتخاب کنید</option>
+                    <option value="ملت">ملت</option>
+                    <option value="ملی">ملی</option>
+                    <option value="صادرات">صادرات</option>
+                    <option value="تجارت">تجارت</option>
+                    <option value="رفاه">رفاه</option>
+                    <option value="پاسارگاد">پاسارگاد</option>
+                    <option value="سامان">سامان</option>
+                    <option value="نقدی">نقدی</option>
+                    <option value="سایر">سایر</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📝 توضیحات</label>
+                <input type="text" id="desc" placeholder="اختیاری">
+            </div>
+            <button id="addBtn" style="width:100%; margin-top:6px;">✔ ثبت تراکنش</button>
         </div>
-        <button id="showReportBtn">🔍 نمایش گزارش</button>
-        <div id="reportResult" style="margin-top:14px;"></div>
+
+        <!-- تب اشخاص -->
+        <div id="tab-persons" class="tab-content glass-card">
+            <h3>👥 مدیریت اشخاص</h3>
+            <div class="row" style="margin:14px 0;">
+                <input type="text" id="newPersonName" placeholder="نام شخص جدید" style="flex:2;">
+                <button id="addPersonBtn" style="flex:1;">➕ اضافه</button>
+            </div>
+            <div id="personsList" class="empty-state">در حال بارگذاری...</div>
+        </div>
+
+        <!-- تب گزارش -->
+        <div id="tab-report" class="tab-content glass-card">
+            <h3>📊 گزارش قرض</h3>
+            <div class="form-group">
+                <label>👤 انتخاب شخص</label>
+                <select id="reportPerson"></select>
+            </div>
+            <div class="form-group">
+                <label>📅 بازه زمانی</label>
+                <div class="date-range">
+                    <span>از</span>
+                    <div class="date-selectors">
+                        <select id="fromYearSelect"></select>
+                        <select id="fromMonthSelect"></select>
+                        <select id="fromDaySelect"></select>
+                    </div>
+                    <span>تا</span>
+                    <div class="date-selectors">
+                        <select id="toYearSelect"></select>
+                        <select id="toMonthSelect"></select>
+                        <select id="toDaySelect"></select>
+                    </div>
+                </div>
+            </div>
+            <button id="showReportBtn">🔍 نمایش گزارش</button>
+            <div id="reportResult" style="margin-top:14px;"></div>
+        </div>
+
+        <!-- تب همه تراکنش‌ها -->
+        <div id="tab-all" class="tab-content glass-card">
+            <h3>📋 همه تراکنش‌ها</h3>
+            <div class="row" style="gap:6px; margin-bottom:12px;">
+                <select id="filterType" style="flex:1;">
+                    <option value="all">همه نوع‌ها</option>
+                    <option value="income">درآمد</option>
+                    <option value="expense">هزینه</option>
+                    <option value="debt_taken">قرض گرفتم</option>
+                    <option value="debt_given">قرض دادم</option>
+                    <option value="debt_taken_settle">تسویه قرض گرفته شده</option>
+                    <option value="debt_given_settle">تسویه قرض داده شده</option>
+                </select>
+                <select id="filterBank" style="flex:1;">
+                    <option value="all">همه بانک‌ها</option>
+                    <option value="ملت">ملت</option>
+                    <option value="ملی">ملی</option>
+                    <option value="صادرات">صادرات</option>
+                    <option value="تجارت">تجارت</option>
+                    <option value="رفاه">رفاه</option>
+                    <option value="پاسارگاد">پاسارگاد</option>
+                    <option value="سامان">سامان</option>
+                    <option value="نقدی">نقدی</option>
+                    <option value="سایر">سایر</option>
+                </select>
+                <button id="filterBtn" class="secondary">🔍</button>
+                <button id="exportBtn" class="success">📥</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ردیف</th>
+                            <th>تاریخ</th>
+                            <th>مبلغ</th>
+                            <th>نوع</th>
+                            <th>شخص</th>
+                            <th>بانک</th>
+                            <th>توضیحات</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <tr>
+                            <td colspan="8">در حال بارگذاری...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <!-- تب همه تراکنش‌ها -->
-    <div id="tab-all" class="tab-content glass-card">
-        <h3>📋 همه تراکنش‌ها</h3>
-        <div class="row" style="gap:6px; margin-bottom:12px;">
-            <select id="filterType" style="flex:1;">
-                <option value="all">همه نوع‌ها</option>
-                <option value="income">درآمد</option><option value="expense">هزینه</option>
-                <option value="debt_taken">قرض گرفتم</option><option value="debt_given">قرض دادم</option>
-            </select>
-            <select id="filterBank" style="flex:1;">
-                <option value="all">همه بانک‌ها</option>
-                <option value="ملت">ملت</option><option value="ملی">ملی</option><option value="صادرات">صادرات</option><option value="تجارت">تجارت</option><option value="رفاه">رفاه</option><option value="پاسارگاد">پاسارگاد</option><option value="سامان">سامان</option><option value="نقدی">نقدی</option><option value="سایر">سایر</option>
-            </select>
-            <button id="filterBtn" class="secondary">🔍</button>
-            <button id="exportBtn" class="success">📥</button>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead><tr><th>ردیف</th><th>تاریخ</th><th>مبلغ</th><th>نوع</th><th>شخص</th><th>بانک</th><th>توضیحات</th><th>وضعیت</th><th>عملیات</th></tr></thead>
-                <tbody id="transactionsTableBody"><tr><td colspan="9">در حال بارگذاری...</td></tr></tbody>
-            </table>
+    <!-- نوار تب -->
+    <div class="bottom-tabs">
+        <button class="tab-item active" data-tab="add"><i>➕</i> ثبت</button>
+        <button class="tab-item" data-tab="persons"><i>👥</i> اشخاص</button>
+        <button class="tab-item" data-tab="report"><i>📊</i> گزارش</button>
+        <button class="tab-item" data-tab="all"><i>📋</i> همه</button>
+    </div>
+
+    <!-- مودال ویرایش -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            <h3>✏️ ویرایش تراکنش</h3>
+            <input type="hidden" id="editId">
+            <div class="form-group"><label>نوع</label><select id="editType">
+                    <option value="income">درآمد</option>
+                    <option value="expense">هزینه</option>
+                    <option value="debt_taken">قرض گرفتم</option>
+                    <option value="debt_given">قرض دادم</option>
+                    <option value="debt_taken_settle">تسویه قرض گرفته شده</option>
+                    <option value="debt_given_settle">تسویه قرض داده شده</option>
+                </select></div>
+            <div class="form-group"><label>شخص</label><select id="editPersonId"></select></div>
+            <div class="form-group"><label>مبلغ</label><input type="number" id="editAmount"></div>
+            <div class="form-group"><label>تاریخ</label>
+                <div class="date-selectors"><select id="editYear"></select><select id="editMonth"></select><select
+                        id="editDay"></select></div>
+            </div>
+            <div class="form-group"><label>بانک</label><select id="editBank">
+                    <option value="">انتخاب</option>
+                    <option value="ملت">ملت</option>
+                    <option value="ملی">ملی</option>
+                    <option value="صادرات">صادرات</option>
+                    <option value="تجارت">تجارت</option>
+                    <option value="رفاه">رفاه</option>
+                    <option value="پاسارگاد">پاسارگاد</option>
+                    <option value="سامان">سامان</option>
+                    <option value="نقدی">نقدی</option>
+                    <option value="سایر">سایر</option>
+                </select></div>
+            <div class="form-group"><label>توضیحات</label><input type="text" id="editDesc"></div>
+            <button id="saveEditBtn" class="success" style="width:100%">💾 ذخیره تغییرات</button>
         </div>
     </div>
-</div>
 
-<!-- نوار تب پایین -->
-<div class="bottom-tabs">
-    <button class="tab-item active" data-tab="add"><i>➕</i> ثبت</button>
-    <button class="tab-item" data-tab="persons"><i>👥</i> اشخاص</button>
-    <button class="tab-item" data-tab="settle"><i>✅</i> تسویه</button>
-    <button class="tab-item" data-tab="report"><i>📊</i> گزارش</button>
-    <button class="tab-item" data-tab="all"><i>📋</i> همه</button>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const db = new Dexie('FinanceDB_V3');
+            db.version(1).stores({
+                transactions: '++id, date, personId, type, amount, description, bank',
+                persons: '++id, name'
+            });
 
-<!-- مودال ویرایش -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" id="closeModalBtn">&times;</span>
-        <h3>✏️ ویرایش تراکنش</h3>
-        <input type="hidden" id="editId">
-        <div class="form-group"><label>نوع</label><select id="editType"><option value="income">درآمد</option><option value="expense">هزینه</option><option value="debt_taken">قرض گرفتم</option><option value="debt_given">قرض دادم</option></select></div>
-        <div class="form-group"><label>شخص</label><select id="editPersonId"></select></div>
-        <div class="form-group"><label>مبلغ</label><input type="number" id="editAmount"></div>
-        <div class="form-group"><label>تاریخ</label><div class="date-selectors"><select id="editYear"></select><select id="editMonth"></select><select id="editDay"></select></div></div>
-        <div class="form-group"><label>بانک</label><select id="editBank"><option value="">انتخاب</option><option value="ملت">ملت</option><option value="ملی">ملی</option><option value="صادرات">صادرات</option><option value="تجارت">تجارت</option><option value="رفاه">رفاه</option><option value="پاسارگاد">پاسارگاد</option><option value="سامان">سامان</option><option value="نقدی">نقدی</option><option value="سایر">سایر</option></select></div>
-        <div class="form-group"><label>توضیحات</label><input type="text" id="editDesc"></div>
-        <button id="saveEditBtn" class="success" style="width:100%">💾 ذخیره تغییرات</button>
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // دیتابیس
-        const db = new Dexie('FinanceDB_Mobile');
-        db.version(1).stores({
-            transactions: '++id, date, personId, type, amount, isSettled, description, bank',
-            persons: '++id, name'
-        });
-
-        // تاریخ شمسی
-        function getToday() {
-            const d = new Date();
-            const jalali = toJalali(d.getFullYear(), d.getMonth() + 1, d.getDate());
-            return { year: jalali.jy, month: jalali.jm, day: jalali.jd };
-        }
-        function toJalali(gy, gm, gd) {
-            const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-            let gy2 = (gm > 2) ? (gy + 1) : gy;
-            let days = 355666 + (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
-            let jy = -1595 + (33 * Math.floor(days / 12053));
-            days %= 12053;
-            jy += 4 * Math.floor(days / 1461);
-            days %= 1461;
-            if (days > 365) { jy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
-            let jm, jd;
-            if (days < 186) { jm = 1 + Math.floor(days / 31); jd = 1 + (days % 31); }
-            else { jm = 7 + Math.floor((days - 186) / 30); jd = 1 + ((days - 186) % 30); }
-            return { jy, jm, jd };
-        }
-        const monthNames = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-        function isLeapYear(y) { return [1,5,9,13,17,22,26,30].includes(y % 33); }
-        function getMonthDays(y, m) { return m <= 6 ? 31 : m <= 11 ? 30 : isLeapYear(y) ? 30 : 29; }
-        function formatDate(y,m,d) { return `${y}/${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`; }
-        function parseDate(str) { const p = str.split('/'); return { year: +p[0], month: +p[1], day: +p[2] }; }
-
-        // helper ها
-        function fillYear(sel, def) {
-            if (!sel) return;
-            sel.innerHTML = '';
-            for (let y = 1400; y <= 1430; y++) {
-                const opt = document.createElement('option');
-                opt.value = y; opt.textContent = y;
-                if (y === def) opt.selected = true;
-                sel.appendChild(opt);
+            // تاریخ شمسی
+            function getToday() {
+                const d = new Date();
+                const j = toJalali(d.getFullYear(), d.getMonth() + 1, d.getDate());
+                return { year: j.jy, month: j.jm, day: j.jd };
             }
-        }
-        function fillMonth(sel, def) {
-            if (!sel) return;
-            sel.innerHTML = '';
-            for (let m = 1; m <= 12; m++) {
-                const opt = document.createElement('option');
-                opt.value = m; opt.textContent = monthNames[m-1];
-                if (m === def) opt.selected = true;
-                sel.appendChild(opt);
+            function toJalali(gy, gm, gd) {
+                const gdm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+                let gy2 = (gm > 2) ? gy + 1 : gy;
+                let days = 355666 + 365 * gy + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + gdm[gm - 1];
+                let jy = -1595 + 33 * Math.floor(days / 12053);
+                days %= 12053;
+                jy += 4 * Math.floor(days / 1461);
+                days %= 1461;
+                if (days > 365) { jy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
+                let jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
+                let jd = (days < 186) ? 1 + (days % 31) : 1 + ((days - 186) % 30);
+                return { jy, jm, jd };
             }
-        }
-        function updateDays(daySel, yearSel, monthSel) {
-            if (!daySel || !yearSel || !monthSel) return;
-            const y = +yearSel.value;
-            const m = +monthSel.value;
-            const max = getMonthDays(y, m);
-            const cur = +daySel.value || 1;
-            daySel.innerHTML = '';
-            for (let d = 1; d <= max; d++) {
-                const opt = document.createElement('option');
-                opt.value = d; opt.textContent = d;
-                if (d === cur && d <= max) opt.selected = true;
-                else if (d === 1 && cur > max) opt.selected = true;
-                daySel.appendChild(opt);
+            const monthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+            function isLeapYear(y) { return [1, 5, 9, 13, 17, 22, 26, 30].includes(y % 33); }
+            function getMonthDays(y, m) { return m <= 6 ? 31 : m <= 11 ? 30 : isLeapYear(y) ? 30 : 29; }
+            function formatDate(y, m, d) { return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`; }
+            function parseDate(str) { const p = str.split('/'); return { year: +p[0], month: +p[1], day: +p[2] }; }
+
+            function fillYear(sel, def) {
+                sel.innerHTML = '';
+                for (let y = 1400; y <= 1430; y++) {
+                    const o = document.createElement('option');
+                    o.value = y; o.textContent = y; if (y === def) o.selected = true;
+                    sel.appendChild(o);
+                }
             }
-        }
-
-        // المنت‌های تاریخ
-        const els = {
-            yearSelect: document.getElementById('yearSelect'),
-            monthSelect: document.getElementById('monthSelect'),
-            daySelect: document.getElementById('daySelect'),
-            fromYear: document.getElementById('fromYearSelect'),
-            fromMonth: document.getElementById('fromMonthSelect'),
-            fromDay: document.getElementById('fromDaySelect'),
-            toYear: document.getElementById('toYearSelect'),
-            toMonth: document.getElementById('toMonthSelect'),
-            toDay: document.getElementById('toDaySelect'),
-            editYear: document.getElementById('editYear'),
-            editMonth: document.getElementById('editMonth'),
-            editDay: document.getElementById('editDay'),
-            personSelect: document.getElementById('personSelect'),
-            reportPerson: document.getElementById('reportPerson'),
-            editPersonId: document.getElementById('editPersonId'),
-        };
-
-        const today = getToday();
-        fillYear(els.yearSelect, today.year);
-        fillMonth(els.monthSelect, today.month);
-        updateDays(els.daySelect, els.yearSelect, els.monthSelect);
-        fillYear(els.fromYear, today.year);
-        fillMonth(els.fromMonth, 1);
-        updateDays(els.fromDay, els.fromYear, els.fromMonth);
-        fillYear(els.toYear, today.year);
-        fillMonth(els.toMonth, today.month);
-        updateDays(els.toDay, els.toYear, els.toMonth);
-        fillYear(els.editYear, today.year);
-        fillMonth(els.editMonth, today.month);
-        updateDays(els.editDay, els.editYear, els.editMonth);
-
-        els.yearSelect.addEventListener('change', () => updateDays(els.daySelect, els.yearSelect, els.monthSelect));
-        els.monthSelect.addEventListener('change', () => updateDays(els.daySelect, els.yearSelect, els.monthSelect));
-        els.fromYear.addEventListener('change', () => updateDays(els.fromDay, els.fromYear, els.fromMonth));
-        els.fromMonth.addEventListener('change', () => updateDays(els.fromDay, els.fromYear, els.fromMonth));
-        els.toYear.addEventListener('change', () => updateDays(els.toDay, els.toYear, els.toMonth));
-        els.toMonth.addEventListener('change', () => updateDays(els.toDay, els.toYear, els.toMonth));
-        els.editYear.addEventListener('change', () => updateDays(els.editDay, els.editYear, els.editMonth));
-        els.editMonth.addEventListener('change', () => updateDays(els.editDay, els.editYear, els.editMonth));
-
-        // تب‌ها
-        const tabButtons = document.querySelectorAll('.tab-item');
-        const tabs = {
-            add: document.getElementById('tab-add'),
-            persons: document.getElementById('tab-persons'),
-            settle: document.getElementById('tab-settle'),
-            report: document.getElementById('tab-report'),
-            all: document.getElementById('tab-all')
-        };
-        function switchTab(id) {
-            Object.values(tabs).forEach(t => t.classList.remove('active'));
-            tabs[id].classList.add('active');
-            tabButtons.forEach(b => b.classList.remove('active'));
-            document.querySelector(`.tab-item[data-tab="${id}"]`).classList.add('active');
-            if (id === 'persons') loadPersons();
-            if (id === 'settle') loadDebts();
-            if (id === 'report') loadReportPersons();
-            if (id === 'all') loadTransactions();
-        }
-        tabButtons.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
-
-        // اشخاص
-        async function loadPersons() {
-            const persons = await db.persons.toArray();
-            const c = document.getElementById('personsList');
-            if (!persons.length) { c.innerHTML = '<div class="empty-state">👤 هیچ شخصی ثبت نشده</div>'; return; }
-            let html = '';
-            for (let p of persons) {
-                const unsettled = await db.transactions.where('personId').equals(p.id).and(t => !t.isSettled && (t.type==='debt_taken'||t.type==='debt_given')).count();
-                html += `<div class="person-item"><div><strong>${p.name}</strong> ${unsettled ? `<span class="badge">${unsettled} قرض باز</span>` : ''}</div><button class="danger" onclick="window.deletePerson(${p.id}, '${p.name}')">🗑️</button></div>`;
+            function fillMonth(sel, def) {
+                sel.innerHTML = '';
+                for (let m = 1; m <= 12; m++) {
+                    const o = document.createElement('option');
+                    o.value = m; o.textContent = monthNames[m - 1]; if (m === def) o.selected = true;
+                    sel.appendChild(o);
+                }
             }
-            c.innerHTML = html;
-        }
-        window.deletePerson = async (id, name) => {
-            if (await db.transactions.where('personId').equals(id).and(t => !t.isSettled).first()) return alert('قرض باز دارد');
-            if (confirm(`حذف ${name}؟`)) {
-                await db.persons.delete(id);
-                await db.transactions.where('personId').equals(id).delete();
-                loadPersons(); loadPersonSelects();
+            function updateDays(daySel, yearSel, monthSel) {
+                const y = +yearSel.value, m = +monthSel.value, max = getMonthDays(y, m);
+                const cur = +daySel.value || 1;
+                daySel.innerHTML = '';
+                for (let d = 1; d <= max; d++) {
+                    const o = document.createElement('option');
+                    o.value = d; o.textContent = d;
+                    if ((d === cur && d <= max) || (d === 1 && cur > max)) o.selected = true;
+                    daySel.appendChild(o);
+                }
             }
-        };
-        async function loadPersonSelects() {
-            const persons = await db.persons.toArray();
-            [els.personSelect, els.reportPerson, els.editPersonId].forEach(sel => {
-                if (sel) {
+
+            const els = {
+                yearSelect: document.getElementById('yearSelect'), monthSelect: document.getElementById('monthSelect'), daySelect: document.getElementById('daySelect'),
+                fromYear: document.getElementById('fromYearSelect'), fromMonth: document.getElementById('fromMonthSelect'), fromDay: document.getElementById('fromDaySelect'),
+                toYear: document.getElementById('toYearSelect'), toMonth: document.getElementById('toMonthSelect'), toDay: document.getElementById('toDaySelect'),
+                editYear: document.getElementById('editYear'), editMonth: document.getElementById('editMonth'), editDay: document.getElementById('editDay'),
+                personSelect: document.getElementById('personSelect'), reportPerson: document.getElementById('reportPerson'), editPersonId: document.getElementById('editPersonId'),
+            };
+
+            const today = getToday();
+            fillYear(els.yearSelect, today.year); fillMonth(els.monthSelect, today.month); updateDays(els.daySelect, els.yearSelect, els.monthSelect);
+            fillYear(els.fromYear, today.year); fillMonth(els.fromMonth, 1); updateDays(els.fromDay, els.fromYear, els.fromMonth);
+            fillYear(els.toYear, today.year); fillMonth(els.toMonth, today.month); updateDays(els.toDay, els.toYear, els.toMonth);
+            fillYear(els.editYear, today.year); fillMonth(els.editMonth, today.month); updateDays(els.editDay, els.editYear, els.editMonth);
+
+            els.yearSelect.onchange = () => updateDays(els.daySelect, els.yearSelect, els.monthSelect);
+            els.monthSelect.onchange = () => updateDays(els.daySelect, els.yearSelect, els.monthSelect);
+            els.fromYear.onchange = () => updateDays(els.fromDay, els.fromYear, els.fromMonth);
+            els.fromMonth.onchange = () => updateDays(els.fromDay, els.fromYear, els.fromMonth);
+            els.toYear.onchange = () => updateDays(els.toDay, els.toYear, els.toMonth);
+            els.toMonth.onchange = () => updateDays(els.toDay, els.toYear, els.toMonth);
+            els.editYear.onchange = () => updateDays(els.editDay, els.editYear, els.editMonth);
+            els.editMonth.onchange = () => updateDays(els.editDay, els.editYear, els.editMonth);
+
+            // تب‌ها
+            const tabBtns = document.querySelectorAll('.tab-item');
+            const tabs = { add: document.getElementById('tab-add'), persons: document.getElementById('tab-persons'), report: document.getElementById('tab-report'), all: document.getElementById('tab-all') };
+            function switchTab(id) {
+                Object.values(tabs).forEach(t => t.classList.remove('active'));
+                tabs[id].classList.add('active');
+                tabBtns.forEach(b => b.classList.remove('active'));
+                document.querySelector(`.tab-item[data-tab="${id}"]`).classList.add('active');
+                if (id === 'persons') loadPersons();
+                if (id === 'report') loadReportPersons();
+                if (id === 'all') loadTransactions();
+            }
+            tabBtns.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+            // اشخاص
+            async function loadPersons() {
+                const persons = await db.persons.toArray();
+                const c = document.getElementById('personsList');
+                if (!persons.length) { c.innerHTML = '<div class="empty-state">👤 هیچ شخصی ثبت نشده</div>'; return; }
+                c.innerHTML = persons.map(p => `<div class="person-item"><strong>${p.name}</strong> <button class="danger" onclick="window.deletePerson(${p.id}, '${p.name}')">🗑️</button></div>`).join('');
+            }
+            window.deletePerson = async (id, name) => {
+                if (await db.transactions.where('personId').equals(id).count() > 0) return alert('این شخص تراکنش دارد و قابل حذف نیست');
+                if (confirm(`حذف ${name}؟`)) { await db.persons.delete(id); loadPersons(); loadPersonSelects(); }
+            };
+            async function loadPersonSelects() {
+                const persons = await db.persons.toArray();
+                [els.personSelect, els.reportPerson, els.editPersonId].forEach(sel => {
                     sel.innerHTML = '<option value="">انتخاب کنید</option>';
                     persons.forEach(p => sel.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+                });
+            }
+            document.getElementById('addPersonBtn').onclick = async () => {
+                const name = document.getElementById('newPersonName').value.trim();
+                if (!name) return alert('نام را وارد کنید');
+                if (await db.persons.where('name').equals(name).first()) return alert('تکراری');
+                await db.persons.add({ name });
+                document.getElementById('newPersonName').value = '';
+                loadPersons(); loadPersonSelects();
+            };
+
+            // ثبت تراکنش
+            document.getElementById('addBtn').onclick = async () => {
+                const type = document.getElementById('transType').value;
+                const personId = els.personSelect.value ? +els.personSelect.value : null;
+                const amount = +document.getElementById('amount').value;
+                const desc = document.getElementById('desc').value;
+                const bank = document.getElementById('bankSelect').value;
+                const y = +els.yearSelect.value, m = +els.monthSelect.value, d = +els.daySelect.value;
+                if (!amount || amount <= 0) return alert('مبلغ معتبر وارد کنید');
+                if (['debt_taken', 'debt_given', 'debt_taken_settle', 'debt_given_settle'].includes(type) && !personId) {
+                    return alert('برای این نوع تراکنش باید شخص را انتخاب کنید');
                 }
-            });
-        }
-        document.getElementById('addPersonBtn').addEventListener('click', async () => {
-            const name = document.getElementById('newPersonName').value.trim();
-            if (!name) return alert('نام را وارد کنید');
-            if (await db.persons.where('name').equals(name).first()) return alert('تکراری');
-            await db.persons.add({ name });
-            document.getElementById('newPersonName').value = '';
-            loadPersons(); loadPersonSelects();
-        });
+                let final = amount;
+                if (type === 'expense' || type === 'debt_given' || type === 'debt_taken_settle') final = -amount;
+                else if (type === 'debt_given_settle') final = amount;
+                await db.transactions.add({ date: formatDate(y, m, d), personId, type, amount: final, description: desc, bank });
+                document.getElementById('amount').value = '';
+                document.getElementById('desc').value = '';
+                loadTransactions();
+            };
 
-        // ثبت تراکنش
-        document.getElementById('addBtn').addEventListener('click', async () => {
-            const type = document.getElementById('transType').value;
-            const personId = els.personSelect.value;
-            const amount = +document.getElementById('amount').value;
-            const desc = document.getElementById('desc').value;
-            const bank = document.getElementById('bankSelect').value;
-            const y = +els.yearSelect.value, m = +els.monthSelect.value, d = +els.daySelect.value;
-            if (!amount || amount <= 0) return alert('مبلغ معتبر');
-            if (type.includes('debt') && !personId) return alert('شخص را انتخاب کنید');
-            let final = amount;
-            if (type === 'expense' || type === 'debt_given') final = -amount;
-            await db.transactions.add({ date: formatDate(y,m,d), personId: personId||null, type, amount: final, isSettled: false, description: desc, bank });
-            document.getElementById('amount').value = '';
-            document.getElementById('desc').value = '';
-            loadTransactions(); loadDebts();
-        });
-
-        // تسویه
-        async function loadDebts() {
-            const all = await db.transactions.toArray();
-            const debts = all.filter(t => !t.isSettled && (t.type==='debt_taken'||t.type==='debt_given'));
-            const c = document.getElementById('debtList');
-            if (!debts.length) { c.innerHTML = '<div class="empty-state">✅ همه تسویه شده‌اند</div>'; return; }
-            let html = '';
-            for (let d of debts) {
-                const person = d.personId ? await db.persons.get(+d.personId) : null;
-                const pName = person ? person.name : 'نامشخص';
-                const text = d.amount>0 ? `${Math.abs(d.amount).toLocaleString()} تومان بدهکارم` : `${Math.abs(d.amount).toLocaleString()} تومان طلبکارم`;
-                html += `<div class="debt-item"><b>${pName}</b><div>${text} | ${d.date}</div><button class="success" onclick="window.settleDebt(${d.id})">✅ تسویه شد</button></div>`;
+            // گزارش قرض
+            async function loadReportPersons() {
+                const persons = await db.persons.toArray();
+                els.reportPerson.innerHTML = '<option value="">انتخاب کنید</option>' + persons.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
             }
-            c.innerHTML = html;
-        }
-        window.settleDebt = async (id) => {
-            const orig = await db.transactions.get(id);
-            if (!orig) return;
-            const today = getToday();
-            await db.transactions.add({
-                date: formatDate(today.year, today.month, today.day),
-                personId: orig.personId,
-                type: orig.type==='debt_taken' ? 'debt_taken_settle' : 'debt_given_settle',
-                amount: -orig.amount,
-                isSettled: true,
-                description: 'تسویه قرض',
-                bank: orig.bank
-            });
-            await db.transactions.update(id, { isSettled: true });
-            loadDebts(); loadPersons(); loadTransactions();
-        };
+            document.getElementById('showReportBtn').onclick = async () => {
+                const personId = els.reportPerson.value ? +els.reportPerson.value : null;
+                if (!personId) return alert('شخص را انتخاب کنید');
+                const from = formatDate(+els.fromYear.value, +els.fromMonth.value, +els.fromDay.value);
+                const to = formatDate(+els.toYear.value, +els.toMonth.value, +els.toDay.value);
+                const all = await db.transactions.where('personId').equals(personId).toArray();
+                const filtered = all.filter(t => t.date >= from && t.date <= to);
 
-        // گزارش
-        async function loadReportPersons() {
-            const persons = await db.persons.toArray();
-            if (els.reportPerson) {
-                els.reportPerson.innerHTML = '<option value="">انتخاب کنید</option>';
-                persons.forEach(p => els.reportPerson.innerHTML += `<option value="${p.id}">${p.name}</option>`);
-            }
-        }
-        document.getElementById('showReportBtn').addEventListener('click', async () => {
-            const personId = els.reportPerson.value;
-            const pName = els.reportPerson.selectedOptions[0]?.text;
-            if (!personId) return alert('شخص را انتخاب کنید');
-            const from = formatDate(+els.fromYear.value, +els.fromMonth.value, +els.fromDay.value);
-            const to = formatDate(+els.toYear.value, +els.toMonth.value, +els.toDay.value);
-            const all = await db.transactions.toArray();
-            const filtered = all.filter(t => +t.personId === +personId && t.date >= from && t.date <= to);
-            let youOwe=0, theyOwe=0, totalGiven=0, totalTaken=0;
-            filtered.forEach(t => {
-                const abs = Math.abs(t.amount);
-                if (t.type==='debt_taken') { totalTaken+=abs; if(!t.isSettled) youOwe+=abs; }
-                else if (t.type==='debt_given') { totalGiven+=abs; if(!t.isSettled) theyOwe+=abs; }
-            });
-            const net = theyOwe - youOwe;
-            document.getElementById('reportResult').innerHTML = `
+                let totalTaken = 0, totalGiven = 0, totalSettleTaken = 0, totalSettleGiven = 0;
+                filtered.forEach(t => {
+                    if (t.type === 'debt_taken') totalTaken += Math.abs(t.amount);
+                    else if (t.type === 'debt_given') totalGiven += Math.abs(t.amount);
+                    else if (t.type === 'debt_taken_settle') totalSettleTaken += Math.abs(t.amount);
+                    else if (t.type === 'debt_given_settle') totalSettleGiven += Math.abs(t.amount);
+                });
+
+                const net = (totalTaken - totalSettleTaken) - (totalGiven - totalSettleGiven);
+                const absNet = Math.abs(net);
+                let statusText = '', color = '#64748b';
+                if (net > 0) { statusText = `شما <b>${absNet.toLocaleString()}</b> تومان <span style="color:#ef4444">بدهکار</span> هستید`; color = '#ef4444'; }
+                else if (net < 0) { statusText = `شما <b>${absNet.toLocaleString()}</b> تومان <span style="color:#10b981">طلبکار</span> هستید`; color = '#10b981'; }
+                else { statusText = '✅ تسویه کامل'; }
+
+                document.getElementById('reportResult').innerHTML = `
                 <div style="background:#f8fafc; padding:16px; border-radius:20px;">
-                    <h4>📊 گزارش ${pName}</h4>
+                    <h4>📊 گزارش ${els.reportPerson.selectedOptions[0]?.text}</h4>
                     <p>📅 ${from} تا ${to}</p>
-                    <p>💵 قرض داده شده: ${totalGiven.toLocaleString()} | 💸 قرض گرفته شده: ${totalTaken.toLocaleString()}</p>
-                    <p style="font-weight:bold; color:${net>0?'#10b981':net<0?'#ef4444':'#64748b'}">
-                        ${net>0?`طلب: ${net.toLocaleString()}`:net<0?`بدهی: ${Math.abs(net).toLocaleString()}`:'تسویه کامل'}
-                    </p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0;">
+                        <div>🤝 قرض گرفته شده: <b>${totalTaken.toLocaleString()}</b></div>
+                        <div>✅ تسویه آن: <b>${totalSettleTaken.toLocaleString()}</b></div>
+                        <div>🤝 قرض داده شده: <b>${totalGiven.toLocaleString()}</b></div>
+                        <div>✅ وصول آن: <b>${totalSettleGiven.toLocaleString()}</b></div>
+                    </div>
+                    <p style="font-weight:bold; font-size:1.1rem; color:${color}">${statusText}</p>
                 </div>`;
-        });
+            };
 
-        // همه تراکنش‌ها
-        async function loadTransactions() {
-            let trans = await db.transactions.toArray();
-            const fType = document.getElementById('filterType').value;
-            const fBank = document.getElementById('filterBank').value;
-            if (fType !== 'all') trans = trans.filter(t => t.type === fType);
-            if (fBank !== 'all') trans = trans.filter(t => t.bank === fBank);
-            trans.sort((a,b) => a.date.localeCompare(b.date));
-            const tbody = document.getElementById('transactionsTableBody');
-            if (!trans.length) { tbody.innerHTML = '<tr><td colspan="9">هیچ تراکنشی نیست</td></tr>'; return; }
-            let html = '';
-            for (let i=0; i<trans.length; i++) {
-                const t = trans[i];
-                const person = t.personId ? await db.persons.get(+t.personId) : null;
-                let cls='', txt='';
-                if (t.type==='income') { txt='💰 درآمد'; cls='row-income'; }
-                else if (t.type==='expense') { txt='💸 هزینه'; cls='row-expense'; }
-                else if (t.type==='debt_taken') { txt='🤝 قرض گرفتم'; cls='row-debt_taken'; }
-                else if (t.type==='debt_given') { txt='🤝 قرض دادم'; cls='row-debt_given'; }
-                else { txt='✅ تسویه'; cls='row-settle'; }
-                html += `<tr class="${cls}">
-                    <td>${i+1}</td><td>${t.date}</td><td>${Math.abs(t.amount).toLocaleString()}</td><td>${txt}</td>
-                    <td>${person?person.name:'---'}</td><td>${t.bank||'---'}</td><td>${t.description||'---'}</td>
-                    <td>${t.isSettled?'تسویه':'جاری'}</td>
-                    <td class="action-btns"><button class="secondary" onclick="window.openEditModal(${t.id})">✏️</button><button class="danger" onclick="window.deleteTrans(${t.id})">🗑️</button></td>
-                </tr>`;
+            // همه تراکنش‌ها
+            async function loadTransactions() {
+                let trans = await db.transactions.toArray();
+                const fType = document.getElementById('filterType').value;
+                const fBank = document.getElementById('filterBank').value;
+                if (fType !== 'all') trans = trans.filter(t => t.type === fType);
+                if (fBank !== 'all') trans = trans.filter(t => t.bank === fBank);
+                trans.sort((a, b) => a.date.localeCompare(b.date));
+                const tbody = document.getElementById('transactionsTableBody');
+                if (!trans.length) { tbody.innerHTML = '<tr><td colspan="8">هیچ تراکنشی نیست</td></tr>'; return; }
+
+                const personsMap = Object.fromEntries((await db.persons.toArray()).map(p => [p.id, p.name]));
+                const typeLabels = { income: '💰 درآمد', expense: '💸 هزینه', debt_taken: '🤝 قرض گرفتم', debt_given: '🤝 قرض دادم', debt_taken_settle: '✅ تسویه قرض گرفته شده', debt_given_settle: '✅ تسویه قرض داده شده' };
+                const rowClass = { income: 'row-income', expense: 'row-expense', debt_taken: 'row-debt_taken', debt_given: 'row-debt_given', debt_taken_settle: 'row-settle', debt_given_settle: 'row-settle' };
+
+                tbody.innerHTML = trans.map((t, i) => `
+                <tr class="${rowClass[t.type] || ''}">
+                    <td>${i + 1}</td><td>${t.date}</td><td>${Math.abs(t.amount).toLocaleString()}</td>
+                    <td>${typeLabels[t.type] || t.type}</td>
+                    <td>${t.personId ? (personsMap[t.personId] || '---') : '---'}</td>
+                    <td>${t.bank || '---'}</td><td>${t.description || '---'}</td>
+                    <td class="action-btns">
+                        <button class="secondary" onclick="window.openEditModal(${t.id})">✏️</button>
+                        <button class="danger" onclick="window.deleteTrans(${t.id})">🗑️</button>
+                    </td>
+                </tr>`).join('');
             }
-            tbody.innerHTML = html;
-        }
-        window.deleteTrans = async (id) => { if (confirm('حذف؟')) { await db.transactions.delete(id); loadTransactions(); loadDebts(); } };
-        window.openEditModal = async (id) => {
-            const t = await db.transactions.get(id);
-            if (!t) return;
-            const date = parseDate(t.date);
-            document.getElementById('editId').value = t.id;
-            document.getElementById('editType').value = t.type;
-            els.editPersonId.value = t.personId||'';
-            document.getElementById('editAmount').value = Math.abs(t.amount);
-            document.getElementById('editBank').value = t.bank||'';
-            document.getElementById('editDesc').value = t.description||'';
-            fillYear(els.editYear, date.year);
-            fillMonth(els.editMonth, date.month);
-            updateDays(els.editDay, els.editYear, els.editMonth);
-            els.editDay.value = date.day;
-            document.getElementById('editModal').style.display='flex';
-        };
-        document.getElementById('saveEditBtn').addEventListener('click', async () => {
-            const id = +document.getElementById('editId').value;
-            const type = document.getElementById('editType').value;
-            const personId = els.editPersonId.value;
-            const amount = +document.getElementById('editAmount').value;
-            const bank = document.getElementById('editBank').value;
-            const desc = document.getElementById('editDesc').value;
-            const y=+els.editYear.value, m=+els.editMonth.value, d=+els.editDay.value;
-            if (!amount) return alert('مبلغ وارد شود');
-            let final = amount;
-            if (type==='expense'||type==='debt_given') final = -amount;
-            await db.transactions.update(id, { date: formatDate(y,m,d), type, personId: personId||null, amount: final, bank, description: desc });
-            closeModal(); loadTransactions(); loadDebts();
-        });
-        document.getElementById('filterBtn').addEventListener('click', loadTransactions);
-        document.getElementById('exportBtn').addEventListener('click', async () => {
-            let trans = await db.transactions.toArray();
-            if (document.getElementById('filterType').value!=='all') trans = trans.filter(t=>t.type===document.getElementById('filterType').value);
-            if (document.getElementById('filterBank').value!=='all') trans = trans.filter(t=>t.bank===document.getElementById('filterBank').value);
-            let csv = "\uFEFFردیف,تاریخ,مبلغ,نوع,شخص,بانک,توضیحات,وضعیت\n";
-            for (let i=0; i<trans.length; i++) {
-                const t = trans[i]; const p = t.personId ? await db.persons.get(+t.personId) : null;
-                csv += `${i+1},${t.date},${Math.abs(t.amount)},${t.type},${p?p.name:''},${t.bank||''},${t.description||''},${t.isSettled?'تسویه':'جاری'}\n`;
-            }
-            const blob = new Blob([csv],{type:'text/csv'});
-            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='transactions.csv'; a.click();
-        });
+            window.deleteTrans = async (id) => { if (confirm('حذف؟')) { await db.transactions.delete(id); loadTransactions(); } };
+            window.openEditModal = async (id) => {
+                const t = await db.transactions.get(id);
+                if (!t) return;
+                const d = parseDate(t.date);
+                document.getElementById('editId').value = t.id;
+                document.getElementById('editType').value = t.type;
+                els.editPersonId.value = t.personId || '';
+                document.getElementById('editAmount').value = Math.abs(t.amount);
+                document.getElementById('editBank').value = t.bank || '';
+                document.getElementById('editDesc').value = t.description || '';
+                fillYear(els.editYear, d.year); fillMonth(els.editMonth, d.month);
+                updateDays(els.editDay, els.editYear, els.editMonth);
+                els.editDay.value = d.day;
+                document.getElementById('editModal').style.display = 'flex';
+            };
+            document.getElementById('saveEditBtn').onclick = async () => {
+                const id = +document.getElementById('editId').value;
+                const type = document.getElementById('editType').value;
+                const personId = els.editPersonId.value ? +els.editPersonId.value : null;
+                const amount = +document.getElementById('editAmount').value;
+                const bank = document.getElementById('editBank').value;
+                const desc = document.getElementById('editDesc').value;
+                const y = +els.editYear.value, m = +els.editMonth.value, d = +els.editDay.value;
+                if (!amount) return alert('مبلغ وارد شود');
+                let final = amount;
+                if (type === 'expense' || type === 'debt_given' || type === 'debt_taken_settle') final = -amount;
+                else if (type === 'debt_given_settle') final = amount;
+                await db.transactions.update(id, { date: formatDate(y, m, d), type, personId, amount: final, bank, description: desc });
+                closeModal(); loadTransactions();
+            };
+            document.getElementById('filterBtn').onclick = loadTransactions;
+            document.getElementById('exportBtn').onclick = async () => {
+                let trans = await db.transactions.toArray();
+                if (document.getElementById('filterType').value !== 'all') trans = trans.filter(t => t.type === document.getElementById('filterType').value);
+                if (document.getElementById('filterBank').value !== 'all') trans = trans.filter(t => t.bank === document.getElementById('filterBank').value);
+                const personsMap = Object.fromEntries((await db.persons.toArray()).map(p => [p.id, p.name]));
+                const map = { income: 'درآمد', expense: 'هزینه', debt_taken: 'قرض گرفتم', debt_given: 'قرض دادم', debt_taken_settle: 'تسویه قرض گرفته شده', debt_given_settle: 'تسویه قرض داده شده' };
+                let csv = "\uFEFFردیف,تاریخ,مبلغ,نوع,شخص,بانک,توضیحات\n";
+                trans.forEach((t, i) => {
+                    csv += `${i + 1},${t.date},${Math.abs(t.amount)},${map[t.type] || t.type},${t.personId ? (personsMap[t.personId] || '') : ''},${t.bank || ''},${t.description || ''}\n`;
+                });
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'transactions.csv'; a.click();
+            };
 
-        function closeModal(){ document.getElementById('editModal').style.display='none'; }
-        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-        window.addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeModal(); });
+            function closeModal() { document.getElementById('editModal').style.display = 'none'; }
+            document.getElementById('closeModalBtn').onclick = closeModal;
+            window.onclick = e => { if (e.target === document.getElementById('editModal')) closeModal(); };
 
-        loadPersonSelects();
-        loadTransactions();
-    });
-</script>
+            loadPersonSelects();
+            loadTransactions();
+        });
+    </script>
 </body>
+
 </html>
