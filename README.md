@@ -2,27 +2,29 @@
 
 اپ مدیریت مالی شخصی، آفلاین و نصب‌پذیر.
 
-## اجرای محلی (لازم برای PWA)
+## آدرس آنلاین
 
-Service Worker روی `file://` کار نمی‌کند. از یک سرور محلی استفاده کنید:
+**https://ali01ch.github.io/accounting/**
+
+## نصب روی گوشی
+
+1. همین لینک `https` را در Chrome (اندروید) یا Safari (آیفون) باز کنید
+2. اندروید: منو → **Install app / نصب برنامه**
+3. آیفون: Share → **Add to Home Screen**
+
+> با `http://192.168...` نصب نمی‌شود. حتماً از لینک `https` استفاده کنید.
+
+## اجرای محلی
 
 ```bash
 npx --yes serve .
 ```
 
-یا با Python:
+یا:
 
 ```bash
 python -m http.server 8080
 ```
-
-سپس در مرورگر باز کنید: `http://localhost:3000` یا `http://localhost:8080`
-
-## نصب روی موبایل
-
-1. سایت را با HTTPS یا localhost باز کنید
-2. در Android/Chrome گزینه **Install app / افزودن به صفحه اصلی** را بزنید
-3. در iPhone: Share → **Add to Home Screen**
 
 ## پشتیبان داده
 
