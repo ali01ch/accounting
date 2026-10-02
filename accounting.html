@@ -40,7 +40,7 @@
             --info-soft: #eff6ff;
             --radius: 12px;
             --radius-sm: 8px;
-            --nav-h: 68px;
+            --nav-h: 72px;
             --space: 16px;
             --shadow-soft: 0 1px 0 rgba(21, 32, 43, 0.04);
             --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -54,6 +54,7 @@
 
         html {
             scroll-behavior: smooth;
+            overflow-x: clip;
         }
 
         body {
@@ -65,9 +66,11 @@
                 linear-gradient(180deg, #eef3f7 0%, var(--surface) 40%, #e9eef4 100%);
             min-height: 100vh;
             min-height: 100dvh;
-            padding: 0 0 calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+            padding: 0 0 calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 8px);
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
+            overflow-x: clip;
+            touch-action: manipulation;
         }
 
         body::before {
@@ -89,10 +92,11 @@
             z-index: 1;
             width: min(100%, 720px);
             margin: 0 auto;
-            padding: 20px 16px 28px;
+            padding: 16px 14px 24px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 16px;
+            min-width: 0;
         }
 
         /* Header */
@@ -231,6 +235,8 @@
         select,
         textarea {
             width: 100%;
+            max-width: 100%;
+            min-width: 0;
             padding: 13px 14px;
             border-radius: var(--radius-sm);
             border: 1px solid var(--line);
@@ -240,6 +246,13 @@
             transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s;
             -webkit-appearance: none;
             appearance: none;
+            font-size: 16px; /* جلوگیری از زوم خودکار iOS */
+        }
+
+        select:disabled {
+            opacity: 0.72;
+            background-color: #f1f5f9;
+            color: var(--muted);
         }
 
         select {
@@ -262,7 +275,7 @@
         }
 
         .amount-field input {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
             letter-spacing: 0.01em;
             font-variant-numeric: tabular-nums;
@@ -270,16 +283,22 @@
 
         .date-selectors {
             display: grid;
-            grid-template-columns: 1.1fr 1.4fr 0.9fr;
-            gap: 8px;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr) minmax(0, 0.85fr);
+            gap: 6px;
+            width: 100%;
+            min-width: 0;
         }
 
         .date-selectors select {
             text-align: center;
-            padding: 12px 8px;
-            padding-left: 28px;
-            font-size: 0.85rem;
-            background-position: left 10px center;
+            text-align-last: center;
+            padding: 12px 6px;
+            padding-left: 22px;
+            font-size: 0.8rem;
+            background-position: left 8px center;
+            background-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .date-range {
@@ -314,14 +333,18 @@
             background: var(--surface-raised);
             color: var(--ink-soft);
             border-radius: var(--radius-sm);
-            padding: 12px 10px;
-            font-size: 0.82rem;
+            padding: 11px 8px;
+            font-size: 0.78rem;
             font-weight: 600;
+            line-height: 1.35;
             cursor: pointer;
             text-align: center;
             transition: all 0.2s var(--ease);
             box-shadow: none;
             width: 100%;
+            min-height: 44px;
+            white-space: normal;
+            hyphens: auto;
         }
 
         .type-chip:hover {
@@ -423,10 +446,23 @@
             display: flex;
             gap: 8px;
             align-items: stretch;
+            flex-wrap: wrap;
+            min-width: 0;
         }
 
         .row > input {
-            flex: 1;
+            flex: 1 1 160px;
+            min-width: 0;
+        }
+
+        .row > .btn-primary,
+        .row > .btn-add-person {
+            flex: 0 0 auto;
+            width: auto;
+            margin: 0;
+            min-height: 48px;
+            padding: 0 18px;
+            white-space: nowrap;
         }
 
         /* Persons */
@@ -485,6 +521,7 @@
             font-weight: 500;
             color: var(--warn);
             line-height: 1.4;
+            overflow-wrap: anywhere;
         }
 
         .person-item.is-locked {
@@ -542,17 +579,20 @@
         }
 
         .stat-box strong {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-variant-numeric: tabular-nums;
+            overflow-wrap: anywhere;
+            line-height: 1.35;
         }
 
         .report-status {
             padding: 14px;
             border-radius: var(--radius-sm);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 700;
             text-align: center;
             line-height: 1.7;
+            overflow-wrap: anywhere;
         }
 
         .report-status.is-debt {
@@ -573,19 +613,33 @@
         /* Filters & transactions */
         .toolbar {
             display: flex;
+            flex-direction: column;
             gap: 8px;
             align-items: stretch;
-            flex-wrap: wrap;
+            min-width: 0;
+        }
+
+        .toolbar-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            min-width: 0;
         }
 
         .toolbar select {
-            flex: 1;
-            min-width: 120px;
+            width: 100%;
+            min-width: 0;
         }
 
         .toolbar-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
+        }
+
+        .toolbar-actions .btn-icon {
+            width: 100%;
+            height: 44px;
         }
 
         .tx-list {
@@ -621,8 +675,17 @@
         .tx-top {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
             flex-wrap: wrap;
+        }
+
+        .tx-amount {
+            font-size: 1.05rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.01em;
+            overflow-wrap: anywhere;
         }
 
         .tx-type {
@@ -653,13 +716,6 @@
         .tx-type.debt_given_settle {
             background: var(--info-soft);
             color: var(--info);
-        }
-
-        .tx-amount {
-            font-size: 1.05rem;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -0.01em;
         }
 
         .tx-amount.neg {
@@ -731,19 +787,19 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-top: 1px solid var(--line);
-            padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px));
+            padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px));
         }
 
         .bottom-nav-inner {
             width: min(100%, 720px);
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 4px;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 2px;
         }
 
         .tab-item {
@@ -751,25 +807,29 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
             background: transparent;
             border: none;
             color: var(--muted);
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             font-weight: 600;
-            padding: 8px 4px;
+            line-height: 1.15;
+            padding: 6px 2px;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            min-height: 54px;
+            min-height: 52px;
             width: 100%;
+            min-width: 0;
             box-shadow: none;
             transition: color 0.2s, background 0.2s;
+            overflow: hidden;
         }
 
         .tab-item svg {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             stroke-width: 1.8;
+            flex-shrink: 0;
         }
 
         .tab-item.active {
@@ -785,9 +845,9 @@
         /* Install / backup */
         .install-banner {
             display: none;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
             padding: 12px 14px;
             background: var(--accent-soft);
             border: 1px solid rgba(15, 118, 110, 0.2);
@@ -811,9 +871,17 @@
         }
 
         .install-actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .install-actions .btn-secondary,
+        .install-actions .btn-primary {
+            width: 100%;
+            margin: 0;
+            min-height: 42px;
+            padding: 8px 10px;
         }
 
         .data-card {
@@ -1002,11 +1070,13 @@
         .modal-content {
             background: var(--surface-raised);
             border-radius: 20px 20px 0 0;
-            padding: 20px 18px calc(24px + env(safe-area-inset-bottom, 0px));
+            padding: 16px 14px calc(20px + env(safe-area-inset-bottom, 0px));
             width: 100%;
             max-width: 560px;
-            max-height: 90vh;
+            max-height: min(92dvh, 92vh);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             animation: sheetUp 0.35s var(--ease);
             box-shadow: 0 -12px 40px rgba(21, 32, 43, 0.15);
         }
@@ -1069,14 +1139,68 @@
                 gap: 22px;
             }
 
+            input,
+            select,
+            textarea {
+                font-size: 0.92rem;
+            }
+
             .type-grid {
                 grid-template-columns: repeat(3, 1fr);
+            }
+
+            .type-chip {
+                font-size: 0.82rem;
+                padding: 12px 10px;
             }
 
             .date-range {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 12px;
+            }
+
+            .toolbar {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: stretch;
+            }
+
+            .toolbar-filters {
+                flex: 1;
+                display: flex;
+                gap: 8px;
+            }
+
+            .toolbar-filters select {
+                flex: 1;
+            }
+
+            .toolbar-actions {
+                display: flex;
+                width: auto;
+            }
+
+            .toolbar-actions .btn-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .install-banner {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .install-actions {
+                display: flex;
+                width: auto;
+                flex-shrink: 0;
+            }
+
+            .install-actions .btn-secondary,
+            .install-actions .btn-primary {
+                width: auto;
             }
 
             .modal {
@@ -1102,19 +1226,65 @@
             .tx-actions {
                 flex-direction: row;
             }
+
+            .tab-item {
+                font-size: 0.7rem;
+                padding: 8px 4px;
+            }
+
+            .tab-item svg {
+                width: 22px;
+                height: 22px;
+            }
         }
 
-        @media (max-width: 380px) {
+        @media (max-width: 420px) {
+            .brand p {
+                font-size: 0.75rem;
+                max-width: 16rem;
+            }
+
+            .report-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .header-chip {
+                display: none;
+            }
+
+            .tx-actions button {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 360px) {
             .type-grid {
                 grid-template-columns: 1fr;
             }
 
             .brand h1 {
-                font-size: 1.4rem;
+                font-size: 1.35rem;
             }
 
-            .header-chip {
-                display: none;
+            .toolbar-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .date-selectors {
+                grid-template-columns: 1fr;
+            }
+
+            .date-selectors select {
+                text-align: right;
+                text-align-last: right;
+                padding-left: 36px;
+                background-position: left 14px center;
+            }
+
+            .row > .btn-primary,
+            .row > .btn-add-person {
+                width: 100%;
             }
         }
     </style>
@@ -1142,8 +1312,8 @@
         <div id="installBanner" class="install-banner" role="status">
             <p><strong>نصب اپ</strong><br>حساب‌کده را به صفحه اصلی گوشی اضافه کنید.</p>
             <div class="install-actions">
-                <button type="button" class="btn-secondary" id="dismissInstallBtn" style="padding:8px 10px;">بعداً</button>
-                <button type="button" class="btn-primary" id="installAppBtn" style="width:auto;margin:0;padding:8px 14px;">نصب</button>
+                <button type="button" class="btn-secondary" id="dismissInstallBtn">بعداً</button>
+                <button type="button" class="btn-primary" id="installAppBtn">نصب</button>
             </div>
         </div>
 
@@ -1231,7 +1401,7 @@
 
             <div class="row">
                 <input type="text" id="newPersonName" placeholder="نام شخص جدید">
-                <button id="addPersonBtn" class="btn-primary" type="button" style="width:auto; margin:0; padding:0 18px; white-space:nowrap;">افزودن</button>
+                <button id="addPersonBtn" class="btn-primary btn-add-person" type="button">افزودن</button>
             </div>
 
             <div id="personsList" class="person-list">
@@ -1287,27 +1457,29 @@
             </div>
 
             <div class="toolbar">
-                <select id="filterType" aria-label="فیلتر نوع">
-                    <option value="all">همه نوع‌ها</option>
-                    <option value="income">درآمد</option>
-                    <option value="expense">هزینه</option>
-                    <option value="debt_taken">قرض گرفتم</option>
-                    <option value="debt_given">قرض دادم</option>
-                    <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
-                    <option value="debt_given_settle">تسویه قرض داده‌شده</option>
-                </select>
-                <select id="filterBank" aria-label="فیلتر بانک">
-                    <option value="all">همه بانک‌ها</option>
-                    <option value="ملت">ملت</option>
-                    <option value="ملی">ملی</option>
-                    <option value="صادرات">صادرات</option>
-                    <option value="تجارت">تجارت</option>
-                    <option value="رفاه">رفاه</option>
-                    <option value="پاسارگاد">پاسارگاد</option>
-                    <option value="سامان">سامان</option>
-                    <option value="نقدی">نقدی</option>
-                    <option value="سایر">سایر</option>
-                </select>
+                <div class="toolbar-filters">
+                    <select id="filterType" aria-label="فیلتر نوع">
+                        <option value="all">همه نوع‌ها</option>
+                        <option value="income">درآمد</option>
+                        <option value="expense">هزینه</option>
+                        <option value="debt_taken">قرض گرفتم</option>
+                        <option value="debt_given">قرض دادم</option>
+                        <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
+                        <option value="debt_given_settle">تسویه قرض داده‌شده</option>
+                    </select>
+                    <select id="filterBank" aria-label="فیلتر بانک">
+                        <option value="all">همه بانک‌ها</option>
+                        <option value="ملت">ملت</option>
+                        <option value="ملی">ملی</option>
+                        <option value="صادرات">صادرات</option>
+                        <option value="تجارت">تجارت</option>
+                        <option value="رفاه">رفاه</option>
+                        <option value="پاسارگاد">پاسارگاد</option>
+                        <option value="سامان">سامان</option>
+                        <option value="نقدی">نقدی</option>
+                        <option value="سایر">سایر</option>
+                    </select>
+                </div>
                 <div class="toolbar-actions">
                     <button id="filterBtn" class="btn-secondary btn-icon" type="button" title="اعمال فیلتر" aria-label="اعمال فیلتر">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
