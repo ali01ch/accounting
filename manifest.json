@@ -1,7 +1,7 @@
 {
   "id": "/accounting/",
-  "name": "حساب‌کده",
-  "short_name": "حساب‌کده",
+  "name": "حساب‌یار",
+  "short_name": "حساب‌یار",
   "description": "مدیریت شخصی درآمد، هزینه و قرض",
   "lang": "fa",
   "dir": "rtl",
@@ -9,8 +9,8 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#eef3f7",
-  "theme_color": "#0f766e",
+  "background_color": "#f3effa",
+  "theme_color": "#5b21b6",
   "categories": ["finance", "productivity"],
   "icons": [
     {

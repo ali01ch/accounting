@@ -5,65 +5,73 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
-    <title>حساب‌کده | مدیریت مالی شخصی</title>
+    <title>حساب‌یار | مدیریت مالی شخصی</title>
     <meta name="description" content="مدیریت شخصی درآمد، هزینه و قرض — آفلاین و نصب‌پذیر">
-    <meta name="theme-color" content="#0f766e">
+    <meta name="theme-color" content="#5b21b6">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="حساب‌کده">
+    <meta name="apple-mobile-web-app-title" content="حساب‌یار">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
     <script src="js/Dexie.js"></script>
     <link href="style/css/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <style>
         :root {
-            --ink: #15202b;
-            --ink-soft: #3d4f5f;
-            --muted: #6b7c8c;
-            --line: #d5dde6;
-            --line-soft: #e8eef4;
-            --surface: #f4f7fa;
+            --ink: #1a1525;
+            --ink-soft: #4a3f5c;
+            --muted: #7a6f8c;
+            --line: #ddd6e8;
+            --line-soft: #efeaf6;
+            --surface: #f6f3fa;
             --surface-raised: #ffffff;
-            --accent: #0f766e;
-            --accent-hover: #0d9488;
-            --accent-soft: #e6f5f3;
+            --accent: #5b21b6;
+            --accent-hover: #6d28d9;
+            --accent-deep: #4c1d95;
+            --accent-soft: #f3e8ff;
+            --accent-mist: rgba(91, 33, 182, 0.10);
             --danger: #c2410c;
             --danger-soft: #fff4ed;
             --success: #047857;
             --success-soft: #ecfdf5;
             --warn: #b45309;
             --warn-soft: #fffbeb;
-            --info: #1d4e78;
-            --info-soft: #eff6ff;
+            --info: #5b21b6;
+            --info-soft: #f5f3ff;
             --radius: 12px;
             --radius-sm: 8px;
             --nav-h: 72px;
             --space: 16px;
-            --shadow-soft: 0 1px 0 rgba(21, 32, 43, 0.04);
+            --shadow-soft: 0 1px 0 rgba(26, 21, 37, 0.04);
             --ease: cubic-bezier(0.22, 1, 0.36, 1);
+            --font: 'Vazirmatn', Tahoma, 'Segoe UI', sans-serif;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: var(--font);
         }
 
         html {
             scroll-behavior: smooth;
             overflow-x: clip;
+            font-family: var(--font);
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
 
         body {
-            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            font-family: var(--font);
             color: var(--ink);
             background:
-                radial-gradient(1200px 600px at 100% -10%, rgba(15, 118, 110, 0.08), transparent 55%),
-                radial-gradient(900px 500px at -10% 30%, rgba(29, 78, 120, 0.06), transparent 50%),
-                linear-gradient(180deg, #eef3f7 0%, var(--surface) 40%, #e9eef4 100%);
+                radial-gradient(1200px 600px at 100% -10%, rgba(91, 33, 182, 0.10), transparent 55%),
+                radial-gradient(900px 500px at -10% 30%, rgba(124, 58, 237, 0.07), transparent 50%),
+                linear-gradient(180deg, #f3effa 0%, var(--surface) 40%, #efeaf7 100%);
             min-height: 100vh;
             min-height: 100dvh;
             padding: 0 0 calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 8px);
@@ -102,7 +110,7 @@
         /* Header */
         .app-header {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             justify-content: space-between;
             gap: 12px;
             padding: 4px 2px 2px;
@@ -112,24 +120,37 @@
         .brand {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .brand-title {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
         }
 
         .brand-mark {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(145deg, var(--accent) 0%, #115e59 100%);
+            width: 80px;
+            height: 80px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: transparent;
             display: grid;
             place-items: center;
-            color: #fff;
-            margin-bottom: 6px;
-            box-shadow: 0 8px 20px rgba(15, 118, 110, 0.22);
+            margin: 0;
+            flex-shrink: 0;
+            order: -1; /* در RTL می‌آید سمت راست عنوان */
+            box-shadow: 0 8px 20px rgba(91, 33, 182, 0.28);
         }
 
-        .brand-mark svg {
-            width: 18px;
-            height: 18px;
+        .brand-mark img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
         }
 
         .brand h1 {
@@ -138,6 +159,7 @@
             letter-spacing: -0.02em;
             line-height: 1.15;
             color: var(--ink);
+            margin: 0;
         }
 
         .brand p {
@@ -151,7 +173,7 @@
             font-weight: 600;
             color: var(--accent);
             background: var(--accent-soft);
-            border: 1px solid rgba(15, 118, 110, 0.15);
+            border: 1px solid rgba(91, 33, 182, 0.16);
             padding: 6px 10px;
             border-radius: var(--radius-sm);
             white-space: nowrap;
@@ -227,7 +249,7 @@
         select,
         textarea,
         button {
-            font-family: inherit;
+            font-family: var(--font);
             font-size: 0.92rem;
         }
 
@@ -266,7 +288,7 @@
         select:focus,
         textarea:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+            box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.14);
             background: #fff;
         }
 
@@ -356,7 +378,7 @@
             border-color: var(--accent);
             background: var(--accent-soft);
             color: var(--accent);
-            box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.15);
+            box-shadow: inset 0 0 0 1px rgba(91, 33, 182, 0.18);
         }
 
         .type-chip:active {
@@ -376,7 +398,7 @@
             border: none;
             cursor: pointer;
             border-radius: var(--radius-sm);
-            font-weight: 650;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -416,9 +438,13 @@
 
         .btn-success {
             padding: 11px 14px;
-            background: var(--success);
+            background: var(--accent);
             color: #fff;
             width: auto;
+        }
+
+        .btn-success:hover {
+            background: var(--accent-hover);
         }
 
         .btn-danger {
@@ -486,7 +512,7 @@
 
         .person-item strong {
             font-size: 0.95rem;
-            font-weight: 650;
+            font-weight: 600;
         }
 
         .person-avatar {
@@ -850,7 +876,7 @@
             gap: 10px;
             padding: 12px 14px;
             background: var(--accent-soft);
-            border: 1px solid rgba(15, 118, 110, 0.2);
+            border: 1px solid rgba(91, 33, 182, 0.22);
             border-radius: var(--radius);
             animation: riseIn 0.4s var(--ease) both;
         }
@@ -983,7 +1009,7 @@
         }
 
         .toast-success {
-            background: #065f46;
+            background: var(--accent-deep);
             border-color: rgba(255, 255, 255, 0.08);
         }
 
@@ -1294,23 +1320,22 @@
     <div class="app-shell">
         <header class="app-header">
             <div class="brand">
-                <div class="brand-mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="8" />
-                        <path d="M12 8v8" />
-                        <path d="M9.5 10.5h5" />
-                        <path d="M9.5 13.5h5" />
-                    </svg>
+                <div class="brand-title">
+                    <div style="display: flex; flex-direction: column;">
+                        <h1>حساب‌یار</h1>
+                        <p>مدیریت شخصی درآمد، هزینه و قرض</p>
+                    </div>
+           
+                    <div class="brand-mark" aria-hidden="true">
+                        <img src="icons/icon-192.png" alt="" width="80" height="80">
+                    </div>
                 </div>
-                <h1>حساب‌کده</h1>
-                <p>مدیریت شخصی درآمد، هزینه و قرض</p>
             </div>
             <div class="header-chip">دفتر آنلاین</div>
         </header>
 
         <div id="installBanner" class="install-banner" role="status">
-            <p><strong>نصب اپ</strong><br>حساب‌کده را به صفحه اصلی گوشی اضافه کنید.</p>
+            <p><strong>نصب اپ</strong><br>حساب‌یار را به صفحه اصلی گوشی اضافه کنید.</p>
             <div class="install-actions">
                 <button type="button" class="btn-secondary" id="dismissInstallBtn">بعداً</button>
                 <button type="button" class="btn-primary" id="installAppBtn">نصب</button>
@@ -2138,12 +2163,12 @@
                     csv += `${i + 1},${t.date},${Math.abs(t.amount)},${map[t.type] || t.type},${t.personId ? (personsMap[t.personId] || '') : ''},${t.bank || ''},${(t.description || '').replace(/"/g, '""')}\n`;
                 });
                 const blob = new Blob([csv], { type: 'text/csv' });
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'hesabkade-transactions.csv'; a.click();
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'hesabyar-transactions.csv'; a.click();
                 URL.revokeObjectURL(a.href);
                 notify('فایل CSV دانلود شد', 'success');
             }
 
-            const BACKUP_KEY = 'hesabkade_last_backup_at';
+            const BACKUP_KEY = 'hesabyar_last_backup_at';
 
             function formatBackupDate(ts) {
                 try {
@@ -2177,14 +2202,14 @@
                 const persons = await db.persons.toArray();
                 const transactions = await db.transactions.toArray();
                 const payload = {
-                    app: 'hesabkade',
+                    app: 'hesabyar',
                     version: 1,
                     exportedAt: new Date().toISOString(),
                     persons,
                     transactions
                 };
                 const stamp = new Date().toISOString().slice(0, 10);
-                downloadJson(`hesabkade-backup-${stamp}.json`, payload);
+                downloadJson(`hesabyar-backup-${stamp}.json`, payload);
                 localStorage.setItem(BACKUP_KEY, String(Date.now()));
                 refreshDataTab();
                 notify('پشتیبان دانلود شد — فایل را در جای امن نگه دارید', 'success', 4200);
@@ -2236,7 +2261,7 @@
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
-                if (localStorage.getItem('hesabkade_hide_install') !== '1') {
+                if (localStorage.getItem('hesabyar_hide_install') !== '1') {
                     installBanner.classList.add('show');
                 }
             });
@@ -2250,7 +2275,7 @@
             };
             dismissInstallBtn.onclick = () => {
                 installBanner.classList.remove('show');
-                localStorage.setItem('hesabkade_hide_install', '1');
+                localStorage.setItem('hesabyar_hide_install', '1');
             };
             window.addEventListener('appinstalled', () => {
                 installBanner.classList.remove('show');

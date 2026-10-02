@@ -1,14 +1,19 @@
-const CACHE_NAME = 'hesabkade-v4';
+const CACHE_NAME = 'hesabyar-v10';
 const CORE_ASSETS = [
   './index.html',
   './accounting.html',
   './manifest.json',
   './js/Dexie.js',
   './style/css/Vazirmatn-font-face.css',
+  './style/fonts/webfonts/Vazirmatn-Regular.woff2',
+  './style/fonts/webfonts/Vazirmatn-Medium.woff2',
+  './style/fonts/webfonts/Vazirmatn-SemiBold.woff2',
+  './style/fonts/webfonts/Vazirmatn-Bold.woff2',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
-  './icons/favicon-32.png'
+  './icons/favicon-32.png',
+  './icons/app-icon.png'
 ];
 
 async function precache() {
