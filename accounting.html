@@ -473,6 +473,30 @@
             min-width: 0;
         }
 
+        .person-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .person-lock-hint {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--warn);
+            line-height: 1.4;
+        }
+
+        .person-item.is-locked {
+            opacity: 0.96;
+        }
+
+        .person-item.is-locked .btn-danger:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* Report */
         .report-card {
             background: var(--surface-raised);
@@ -1154,7 +1178,7 @@
                 <div class="field">
                     <label for="personSelect">شخص مرتبط</label>
                     <select id="personSelect">
-                        <option value="">بدون شخص / انتخاب کنید</option>
+                        <option value="">ابتدا از تب اشخاص، فردی اضافه کنید</option>
                     </select>
                     <span class="field-hint">برای قرض و تسویه، انتخاب شخص الزامی است.</span>
                 </div>
@@ -1638,25 +1662,55 @@
                     c.innerHTML = `<div class="empty-state"><strong>هنوز کسی ثبت نشده</strong><p>نام اولین شخص را بالا وارد کنید.</p></div>`;
                     return;
                 }
+                const linkedCounts = {};
+                await Promise.all(persons.map(async (p) => {
+                    linkedCounts[p.id] = await countPersonTransactions(p.id);
+                }));
+
                 c.innerHTML = persons.map(p => {
                     const initial = escapeHtml(p.name.trim().charAt(0) || '?');
-                    return `<div class="person-item">
+                    const linked = linkedCounts[p.id] || 0;
+                    const locked = linked > 0;
+                    const meta = locked
+                        ? `<span class="person-lock-hint">${linked.toLocaleString('fa-IR')} تراکنش — تا حذف تراکنش‌ها قابل حذف نیست</span>`
+                        : '';
+                    return `<div class="person-item${locked ? ' is-locked' : ''}">
                         <div class="person-meta">
                             <div class="person-avatar">${initial}</div>
-                            <strong>${escapeHtml(p.name)}</strong>
+                            <div class="person-text">
+                                <strong>${escapeHtml(p.name)}</strong>
+                                ${meta}
+                            </div>
                         </div>
-                        <button class="btn-danger btn-icon" type="button" onclick="window.deletePerson(${p.id})" aria-label="حذف">${ICONS.trash}</button>
+                        <button class="btn-danger btn-icon" type="button"
+                            onclick="window.deletePerson(${p.id})"
+                            aria-label="${locked ? 'غیرقابل حذف' : 'حذف'}"
+                            title="${locked ? 'این شخص تراکنش دارد' : 'حذف شخص'}"
+                            ${locked ? 'disabled' : ''}>${ICONS.trash}</button>
                     </div>`;
                 }).join('');
             }
+
+            async function countPersonTransactions(personId) {
+                const idNum = Number(personId);
+                const all = await db.transactions.toArray();
+                return all.filter(t => t.personId != null && Number(t.personId) === idNum).length;
+            }
+
             window.deletePerson = async (id) => {
-                if (await db.transactions.where('personId').equals(id).count() > 0) {
-                    return notify('این شخص تراکنش دارد و قابل حذف نیست', 'warn');
+                const idNum = Number(id);
+                const linked = await countPersonTransactions(idNum);
+                if (linked > 0) {
+                    return notify(
+                        `این شخص ${linked.toLocaleString('fa-IR')} تراکنش دارد و تا وقتی آن تراکنش‌ها هستند قابل حذف نیست`,
+                        'warn',
+                        4200
+                    );
                 }
-                const person = await db.persons.get(id);
+                const person = await db.persons.get(idNum);
                 if (!person) return;
                 if (confirm(`حذف ${person.name}؟`)) {
-                    await db.persons.delete(id);
+                    await db.persons.delete(idNum);
                     loadPersons();
                     loadPersonSelects();
                     notify(`«${person.name}» حذف شد`, 'success');
@@ -1664,13 +1718,38 @@
             };
             async function loadPersonSelects() {
                 const persons = await db.persons.toArray();
-                [els.personSelect, els.reportPerson, els.editPersonId].forEach(sel => {
-                    sel.innerHTML = '<option value="">انتخاب کنید</option>';
+                const empty = !persons.length;
+
+                const placeholders = {
+                    personSelect: empty
+                        ? 'ابتدا از تب اشخاص، فردی اضافه کنید'
+                        : 'بدون شخص / انتخاب کنید',
+                    reportPerson: empty
+                        ? 'هنوز شخصی ثبت نشده — از تب اشخاص اضافه کنید'
+                        : 'انتخاب کنید',
+                    editPersonId: empty
+                        ? 'هنوز شخصی ثبت نشده'
+                        : 'انتخاب کنید'
+                };
+
+                [
+                    ['personSelect', els.personSelect],
+                    ['reportPerson', els.reportPerson],
+                    ['editPersonId', els.editPersonId]
+                ].forEach(([key, sel]) => {
+                    sel.innerHTML = '';
+                    const o = document.createElement('option');
+                    o.value = '';
+                    o.textContent = placeholders[key];
+                    sel.appendChild(o);
+                    // گزارش و ویرایش بدون شخص معنی ندارند؛ کمبوی ثبت برای درآمد/هزینه باز می‌ماند
+                    sel.disabled = empty && key !== 'personSelect';
+
                     persons.forEach(p => {
-                        const o = document.createElement('option');
-                        o.value = p.id;
-                        o.textContent = p.name;
-                        sel.appendChild(o);
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = p.name;
+                        sel.appendChild(opt);
                     });
                 });
             }
@@ -1694,7 +1773,13 @@
                 const y = +els.yearSelect.value, m = +els.monthSelect.value, d = +els.daySelect.value;
                 if (!amount || amount <= 0) return notify('مبلغ معتبر وارد کنید', 'warn');
                 if (['debt_taken', 'debt_given', 'debt_taken_settle', 'debt_given_settle'].includes(type) && !personId) {
-                    return notify('برای این نوع تراکنش باید شخص را انتخاب کنید', 'warn');
+                    const hasPersons = (await db.persons.count()) > 0;
+                    return notify(
+                        hasPersons
+                            ? 'برای این نوع تراکنش باید شخص را انتخاب کنید'
+                            : 'ابتدا از تب اشخاص، فردی اضافه کنید',
+                        'warn'
+                    );
                 }
                 let final = amount;
                 if (type === 'expense' || type === 'debt_given' || type === 'debt_taken_settle') final = -amount;
@@ -1708,18 +1793,17 @@
 
             // Debt report
             async function loadReportPersons() {
-                const persons = await db.persons.toArray();
-                els.reportPerson.innerHTML = '<option value="">انتخاب کنید</option>';
-                persons.forEach(p => {
-                    const o = document.createElement('option');
-                    o.value = p.id;
-                    o.textContent = p.name;
-                    els.reportPerson.appendChild(o);
-                });
+                await loadPersonSelects();
             }
             document.getElementById('showReportBtn').onclick = async () => {
                 const personId = els.reportPerson.value ? +els.reportPerson.value : null;
-                if (!personId) return notify('شخص را انتخاب کنید', 'warn');
+                if (!personId) {
+                    const hasPersons = (await db.persons.count()) > 0;
+                    return notify(
+                        hasPersons ? 'شخص را انتخاب کنید' : 'ابتدا از تب اشخاص، فردی اضافه کنید',
+                        'warn'
+                    );
+                }
                 const from = formatDate(+els.fromYear.value, +els.fromMonth.value, +els.fromDay.value);
                 const to = formatDate(+els.toYear.value, +els.toMonth.value, +els.toDay.value);
                 const all = await db.transactions.where('personId').equals(personId).toArray();
@@ -1817,6 +1901,9 @@
                 if (!confirm('این تراکنش حذف شود؟')) return;
                 await db.transactions.delete(id);
                 loadTransactions();
+                if (document.getElementById('tab-persons').classList.contains('active')) {
+                    loadPersons();
+                }
                 notify('تراکنش حذف شد', 'success');
             };
             window.openEditModal = async (id) => {
