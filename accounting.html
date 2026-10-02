@@ -1756,16 +1756,24 @@
                     sel.appendChild(o);
                 }
             }
-            function updateDays(daySel, yearSel, monthSel) {
+            function updateDays(daySel, yearSel, monthSel, preferredDay) {
                 const y = +yearSel.value, m = +monthSel.value, max = getMonthDays(y, m);
-                const cur = +daySel.value || 1;
+                let cur = preferredDay != null ? +preferredDay : (+daySel.value || 1);
+                if (cur > max) cur = max;
+                if (cur < 1) cur = 1;
                 daySel.innerHTML = '';
                 for (let d = 1; d <= max; d++) {
                     const o = document.createElement('option');
                     o.value = d; o.textContent = d;
-                    if ((d === cur && d <= max) || (d === 1 && cur > max)) o.selected = true;
+                    if (d === cur) o.selected = true;
                     daySel.appendChild(o);
                 }
+            }
+
+            function setJalaliDate(yearSel, monthSel, daySel, dateObj) {
+                fillYear(yearSel, dateObj.year);
+                fillMonth(monthSel, dateObj.month);
+                updateDays(daySel, yearSel, monthSel, dateObj.day);
             }
 
             const els = {
@@ -1777,10 +1785,10 @@
             };
 
             const today = getToday();
-            fillYear(els.yearSelect, today.year); fillMonth(els.monthSelect, today.month); updateDays(els.daySelect, els.yearSelect, els.monthSelect);
-            fillYear(els.fromYear, today.year); fillMonth(els.fromMonth, 1); updateDays(els.fromDay, els.fromYear, els.fromMonth);
-            fillYear(els.toYear, today.year); fillMonth(els.toMonth, today.month); updateDays(els.toDay, els.toYear, els.toMonth);
-            fillYear(els.editYear, today.year); fillMonth(els.editMonth, today.month); updateDays(els.editDay, els.editYear, els.editMonth);
+            setJalaliDate(els.yearSelect, els.monthSelect, els.daySelect, today);
+            fillYear(els.fromYear, today.year); fillMonth(els.fromMonth, 1); updateDays(els.fromDay, els.fromYear, els.fromMonth, 1);
+            setJalaliDate(els.toYear, els.toMonth, els.toDay, today);
+            setJalaliDate(els.editYear, els.editMonth, els.editDay, today);
 
             els.yearSelect.onchange = () => updateDays(els.daySelect, els.yearSelect, els.monthSelect);
             els.monthSelect.onchange = () => updateDays(els.daySelect, els.yearSelect, els.monthSelect);
@@ -1959,6 +1967,7 @@
                 await db.transactions.add({ date: formatDate(y, m, d), personId, type, amount: final, description: desc, bank });
                 document.getElementById('amount').value = '';
                 document.getElementById('desc').value = '';
+                setJalaliDate(els.yearSelect, els.monthSelect, els.daySelect, getToday());
                 loadTransactions();
                 notify('تراکنش ثبت شد', 'success');
             };
