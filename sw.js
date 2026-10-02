@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hesabkade-v2';
+const CACHE_NAME = 'hesabkade-v3';
 const CORE_ASSETS = [
   './index.html',
   './accounting.html',
@@ -7,7 +7,8 @@ const CORE_ASSETS = [
   './style/css/Vazirmatn-font-face.css',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
+  './icons/favicon-32.png'
 ];
 
 async function precache() {
