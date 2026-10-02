@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hesabyar-v11';
+const CACHE_NAME = 'hesabyar-v12';
 const CORE_ASSETS = [
   './index.html',
   './accounting.html',
@@ -11,8 +11,10 @@ const CORE_ASSETS = [
   './style/fonts/webfonts/Vazirmatn-Bold.woff2',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/icon-192-maskable.png',
-  './icons/icon-512-maskable.png',
+  './icons/pwa-192.png',
+  './icons/pwa-512.png',
+  './icons/pwa-192-maskable.png',
+  './icons/pwa-512-maskable.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
   './icons/app-icon.png'
