@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hesabkade-v1';
+const CACHE_NAME = 'hesabkade-v2';
 const CORE_ASSETS = [
   './index.html',
   './accounting.html',
