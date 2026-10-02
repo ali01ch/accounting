@@ -1,0 +1,61 @@
+const CACHE_NAME = 'hesabkade-v1';
+const CORE_ASSETS = [
+  './index.html',
+  './accounting.html',
+  './manifest.json',
+  './js/Dexie.js',
+  './style/css/Vazirmatn-font-face.css',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png'
+];
+
+async function precache() {
+  const cache = await caches.open(CACHE_NAME);
+  await Promise.all(
+    CORE_ASSETS.map(async (url) => {
+      try {
+        await cache.add(url);
+      } catch (err) {
+        console.warn('SW precache skip:', url, err);
+      }
+    })
+  );
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(precache().then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+
+  event.respondWith((async () => {
+    const cached = await caches.match(req);
+    const isHtml = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+
+    try {
+      const res = await fetch(req);
+      if (res && res.ok && req.url.startsWith(self.location.origin)) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(req, res.clone());
+      }
+      return res;
+    } catch (err) {
+      if (cached) return cached;
+      if (isHtml) {
+        return (await caches.match('./accounting.html')) || Response.error();
+      }
+      return Response.error();
+    }
+  })());
+});
