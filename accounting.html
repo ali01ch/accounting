@@ -1058,38 +1058,165 @@
             flex-shrink: 0;
         }
 
-        .btn-default-bank {
-            border: 1px solid var(--line);
-            background: var(--surface);
-            color: var(--muted);
-            border-radius: var(--radius-sm);
-            min-height: 36px;
-            padding: 0 10px;
-            font-family: var(--font);
-            font-size: 0.72rem;
-            font-weight: 600;
-            cursor: pointer;
+        /* Bank list — single-row account tile */
+        .bank-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 12px;
+            background: var(--surface-raised);
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-soft);
+            min-width: 0;
+        }
+
+        .bank-card.is-default-bank {
+            border-color: var(--accent);
+            box-shadow: inset -3px 0 0 var(--accent);
+        }
+
+        .bank-card-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .bank-card.is-default-bank .bank-card-avatar {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .bank-card-body {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .bank-card-name {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.35;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .bank-card-name > span:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        .btn-default-bank.is-active,
-        .btn-default-bank:hover {
-            border-color: var(--accent);
+        .bank-default-badge {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.66rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .bank-account-no {
+            margin: 0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--muted);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.05em;
+            direction: ltr;
+            unicode-bidi: plaintext;
+            font-family: var(--font);
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bank-card-hint {
+            margin: 0;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--muted);
+            line-height: 1.35;
+        }
+
+        .bank-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+            align-self: center;
+        }
+
+        .bank-card-actions .btn-icon,
+        .bank-card-actions .btn-star {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none;
+        }
+
+        .btn-star {
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .btn-star:hover {
             background: var(--accent-soft);
             color: var(--accent);
         }
 
-        .bank-default-badge {
-            display: inline-flex;
-            align-items: center;
-            width: fit-content;
-            margin-top: 2px;
-            padding: 2px 8px;
-            border-radius: 999px;
-            background: var(--accent-soft);
+        .btn-star.is-active {
             color: var(--accent);
-            font-size: 0.68rem;
-            font-weight: 700;
+            background: var(--accent-soft);
+        }
+
+        .btn-star svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .bank-card-actions .btn-danger {
+            border: 1px solid transparent;
+            background: transparent;
+        }
+
+        .bank-card-actions .btn-danger:hover:not(:disabled) {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .bank-card-actions .btn-danger:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .bank-card-actions svg {
+            width: 17px;
+            height: 17px;
         }
 
         .defs-section {
@@ -1107,6 +1234,21 @@
 
         .defs-section .panel-head h2 {
             font-size: 1.05rem;
+        }
+
+        .bank-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bank-number-input {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.04em;
+            direction: ltr;
+            text-align: right;
+            unicode-bidi: plaintext;
+            font-family: var(--font);
         }
 
         /* Report */
@@ -2091,12 +2233,15 @@
             <div class="defs-section">
                 <div class="panel-head">
                     <h2>بانک‌ها / حساب‌ها</h2>
-                    <p>بانک‌های خود را تعریف کنید و یکی را به‌عنوان پیش‌فرض بگذارید.</p>
+                    <p>بانک‌های خود را تعریف کنید، در صورت نیاز شماره کارت یا حساب بگذارید و یکی را پیش‌فرض کنید.</p>
                 </div>
 
-                <div class="row">
-                    <input type="text" id="newBankName" placeholder="نام بانک یا حساب جدید">
-                    <button id="addBankBtn" class="btn-primary btn-add-person" type="button">افزودن</button>
+                <div class="bank-form">
+                    <div class="row">
+                        <input type="text" id="newBankName" placeholder="نام بانک یا حساب جدید" autocomplete="off">
+                        <button id="addBankBtn" class="btn-primary btn-add-person" type="button">افزودن</button>
+                    </div>
+                    <input type="text" id="newBankNumber" class="bank-number-input" placeholder="شماره کارت یا حساب (اختیاری)" inputmode="numeric" autocomplete="off" lang="fa">
                 </div>
 
                 <div id="banksList" class="person-list">
@@ -2486,7 +2631,9 @@
 
             const ICONS = {
                 edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
-                trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>`
+                trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>`,
+                star: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.5 6 .9-4.4 4.3 1 6.1L12 17.8 6.7 19.8l1-6.1L3.4 9.4l6-.9Z"/></svg>`,
+                starFilled: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.5 6 .9-4.4 4.3 1 6.1L12 17.8 6.7 19.8l1-6.1L3.4 9.4l6-.9Z"/></svg>`
             };
 
             function getToday() {
@@ -3302,6 +3449,21 @@
                 return all.filter(t => (t.bank || '') === name).length;
             }
 
+            function formatAccountNumber(raw) {
+                const digits = onlyDigits(raw);
+                if (!digits) return '';
+                const grouped = digits.length % 4 === 0 || digits.length >= 12
+                    ? digits.replace(/(\d{4})(?=\d)/g, '$1 ')
+                    : digits;
+                return toFaDigits(grouped);
+            }
+            function bankDisplayLabel(bank) {
+                if (!bank) return '';
+                if (typeof bank === 'string') return bank;
+                const no = formatAccountNumber(bank.accountNumber || '');
+                return no ? `${bank.name} — ${no}` : bank.name;
+            }
+
             async function loadBanks() {
                 const banks = await db.banks.orderBy('id').toArray();
                 const c = document.getElementById('banksList');
@@ -3320,30 +3482,29 @@
                     const linked = linkedCounts[b.id] || 0;
                     const locked = linked > 0;
                     const isDefault = defaultId === b.id;
-                    const bits = [];
-                    if (isDefault) bits.push(`<span class="bank-default-badge">پیش‌فرض</span>`);
-                    if (locked) bits.push(`<span class="person-lock-hint">${linked.toLocaleString('fa-IR')} تراکنش — تا حذف تراکنش‌ها قابل حذف نیست</span>`);
-                    const meta = bits.join('');
-                    return `<div class="person-item${locked ? ' is-locked' : ''}${isDefault ? ' is-default-bank' : ''}">
-                        <div class="person-meta">
-                            <div class="person-avatar">${initial}</div>
-                            <div class="person-text">
-                                <strong>${escapeHtml(b.name)}</strong>
-                                ${meta}
-                            </div>
+                    const accountNo = formatAccountNumber(b.accountNumber || '');
+                    return `<article class="bank-card${isDefault ? ' is-default-bank' : ''}" aria-label="${escapeHtml(b.name)}">
+                        <div class="bank-card-avatar" aria-hidden="true">${initial}</div>
+                        <div class="bank-card-body">
+                            <p class="bank-card-name">
+                                <span>${escapeHtml(b.name)}</span>
+                                ${isDefault ? '<span class="bank-default-badge">پیش‌فرض</span>' : ''}
+                            </p>
+                            ${accountNo ? `<p class="bank-account-no">${escapeHtml(accountNo)}</p>` : ''}
+                            ${linked ? `<p class="bank-card-hint">${linked.toLocaleString('fa-IR')} تراکنش مرتبط</p>` : ''}
                         </div>
-                        <div class="person-actions">
-                            <button class="btn-default-bank${isDefault ? ' is-active' : ''}" type="button"
+                        <div class="bank-card-actions">
+                            <button type="button" class="btn-star${isDefault ? ' is-active' : ''}"
                                 onclick="window.setDefaultBank(${b.id})"
-                                aria-label="${isDefault ? 'بانک پیش‌فرض' : 'انتخاب به‌عنوان پیش‌فرض'}"
-                                title="${isDefault ? 'بانک پیش‌فرض' : 'انتخاب به‌عنوان پیش‌فرض'}">${isDefault ? 'پیش‌فرض' : 'پیش‌فرض کن'}</button>
-                            <button class="btn-danger btn-icon" type="button"
+                                aria-label="${isDefault ? 'برداشتن پیش‌فرض' : 'انتخاب به‌عنوان پیش‌فرض'}"
+                                title="${isDefault ? 'برداشتن پیش‌فرض' : 'پیش‌فرض'}">${isDefault ? ICONS.starFilled : ICONS.star}</button>
+                            <button type="button" class="btn-danger btn-icon"
                                 onclick="window.deleteBank(${b.id})"
-                                aria-label="${locked ? 'غیرقابل حذف' : 'حذف'}"
-                                title="${locked ? 'این بانک تراکنش دارد' : 'حذف بانک'}"
+                                aria-label="${locked ? 'غیرقابل حذف' : 'حذف بانک'}"
+                                title="${locked ? 'ابتدا تراکنش‌های مرتبط را حذف کنید' : 'حذف'}"
                                 ${locked ? 'disabled' : ''}>${ICONS.trash}</button>
                         </div>
-                    </div>`;
+                    </article>`;
                 }).join('');
             }
 
@@ -3395,6 +3556,7 @@
 
             async function loadBankSelects(preferredName) {
                 const banks = await db.banks.orderBy('id').toArray();
+                const banksByName = Object.fromEntries(banks.map(b => [b.name, b]));
                 const defaultName = preferredName != null ? preferredName : await getDefaultBankName();
                 const empty = !banks.length;
 
@@ -3410,7 +3572,7 @@
                     banks.forEach(b => {
                         const opt = document.createElement('option');
                         opt.value = b.name;
-                        opt.textContent = b.name;
+                        opt.textContent = bankDisplayLabel(b);
                         sel.appendChild(opt);
                     });
                     sel.disabled = empty;
@@ -3440,7 +3602,7 @@
                 [...usedNames].sort((a, b) => a.localeCompare(b, 'fa')).forEach(name => {
                     const opt = document.createElement('option');
                     opt.value = name;
-                    opt.textContent = name;
+                    opt.textContent = bankDisplayLabel(banksByName[name] || name);
                     els.filterBank.appendChild(opt);
                 });
                 if ([...els.filterBank.options].some(o => o.value === filterPrev)) {
@@ -3455,15 +3617,35 @@
 
             document.getElementById('addBankBtn').onclick = async () => {
                 const name = document.getElementById('newBankName').value.trim();
+                const accountNumber = onlyDigits(document.getElementById('newBankNumber').value);
                 if (!name) return notify('نام بانک را وارد کنید', 'warn');
                 if (await db.banks.where('name').equals(name).first()) return notify('این نام تکراری است', 'warn');
-                const id = await db.banks.add({ name });
+                const id = await db.banks.add({ name, accountNumber: accountNumber || '' });
                 document.getElementById('newBankName').value = '';
+                document.getElementById('newBankNumber').value = '';
                 if (!(await getDefaultBankId())) await setDefaultBankId(id);
                 await loadBanks();
                 await loadBankSelects(name);
                 notify(`«${name}» اضافه شد`, 'success');
             };
+
+            const newBankNumberInput = document.getElementById('newBankNumber');
+            if (newBankNumberInput) {
+                newBankNumberInput.addEventListener('input', () => {
+                    const cursor = newBankNumberInput.selectionStart ?? newBankNumberInput.value.length;
+                    const digitsBefore = onlyDigits(newBankNumberInput.value.slice(0, cursor)).length;
+                    const formatted = formatAccountNumber(newBankNumberInput.value);
+                    newBankNumberInput.value = formatted;
+                    let pos = formatted.length;
+                    let count = 0;
+                    for (let i = 0; i < formatted.length; i++) {
+                        if (isDigitChar(formatted[i])) count++;
+                        if (count === digitsBefore) { pos = i + 1; break; }
+                    }
+                    if (digitsBefore === 0) pos = 0;
+                    newBankNumberInput.setSelectionRange(pos, pos);
+                });
+            }
 
             // Add transaction
             document.getElementById('addBtn').onclick = async () => {
@@ -3574,6 +3756,7 @@
                 }
 
                 const personsMap = Object.fromEntries((await db.persons.toArray()).map(p => [p.id, p.name]));
+                const banksByName = Object.fromEntries((await db.banks.toArray()).map(b => [b.name, b]));
                 const typeLabels = {
                     income: 'درآمد',
                     expense: 'هزینه',
@@ -3587,13 +3770,14 @@
                     const abs = Math.abs(t.amount);
                     const isNeg = t.amount < 0;
                     const person = t.personId ? (personsMap[t.personId] || '—') : '';
-                    const bank = t.bank || '';
+                    const bankName = t.bank || '';
+                    const bankLabel = bankName ? bankDisplayLabel(banksByName[bankName] || bankName) : '';
                     const desc = t.description ? String(t.description).trim() : '';
                     const title = desc || person || (typeLabels[t.type] || 'تراکنش');
                     const titleMuted = !desc;
                     const metaParts = [
                         toFaDigits(t.date),
-                        bank || null,
+                        bankLabel || null,
                         person || null
                     ].filter(Boolean);
                     const metaHtml = metaParts.map(p => `<span>${escapeHtml(p)}</span>`).join('');
@@ -3686,10 +3870,12 @@
                 if (document.getElementById('filterBank').value !== 'all') trans = trans.filter(t => t.bank === document.getElementById('filterBank').value);
                 if (!trans.length) return notify('تراکنشی برای خروجی نیست', 'warn');
                 const personsMap = Object.fromEntries((await db.persons.toArray()).map(p => [p.id, p.name]));
+                const banksByName = Object.fromEntries((await db.banks.toArray()).map(b => [b.name, b]));
                 const map = { income: 'درآمد', expense: 'هزینه', debt_taken: 'قرض گرفتم', debt_given: 'قرض دادم', debt_taken_settle: 'تسویه قرض گرفته شده', debt_given_settle: 'تسویه قرض داده شده' };
-                let csv = "\uFEFFردیف,تاریخ,مبلغ,نوع,شخص,بانک,توضیحات\n";
+                let csv = "\uFEFFردیف,تاریخ,مبلغ,نوع,شخص,بانک,شماره حساب,توضیحات\n";
                 trans.forEach((t, i) => {
-                    csv += `${i + 1},${t.date},${Math.abs(t.amount)},${map[t.type] || t.type},${t.personId ? (personsMap[t.personId] || '') : ''},${t.bank || ''},${(t.description || '').replace(/"/g, '""')}\n`;
+                    const accountNo = onlyDigits(banksByName[t.bank]?.accountNumber || '');
+                    csv += `${i + 1},${t.date},${Math.abs(t.amount)},${map[t.type] || t.type},${t.personId ? (personsMap[t.personId] || '') : ''},${t.bank || ''},${accountNo},${(t.description || '').replace(/"/g, '""')}\n`;
                 });
                 const blob = new Blob([csv], { type: 'text/csv' });
                 const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'hesabyar-transactions.csv'; a.click();
