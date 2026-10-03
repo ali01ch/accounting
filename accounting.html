@@ -1158,6 +1158,98 @@
             color: var(--ink);
         }
 
+        /* Confirm dialog */
+        .confirm-modal {
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .confirm-modal .modal-content {
+            border-radius: 16px;
+            max-width: 380px;
+            padding: 22px 18px;
+            box-shadow: 0 16px 40px rgba(26, 21, 37, 0.22);
+            animation: confirmPop 0.28s var(--ease);
+        }
+
+        @keyframes confirmPop {
+            from {
+                opacity: 0;
+                transform: scale(0.94) translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .confirm-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 14px;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .confirm-icon.is-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .confirm-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .confirm-modal h3 {
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+
+        .confirm-modal .confirm-message {
+            text-align: center;
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.7;
+            white-space: pre-line;
+            margin-bottom: 18px;
+        }
+
+        .confirm-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .confirm-actions .btn-primary,
+        .confirm-actions .btn-secondary,
+        .confirm-actions .btn-danger-solid {
+            width: 100%;
+            margin: 0;
+            min-height: 44px;
+            padding: 11px 12px;
+        }
+
+        .btn-danger-solid {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-danger-solid:hover {
+            filter: brightness(1.05);
+        }
+
         /* Desktop */
         @media (min-width: 640px) {
             .app-shell {
@@ -1649,6 +1741,21 @@
         </div>
     </div>
 
+    <!-- مودال تأیید -->
+    <div id="confirmModal" class="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <div class="modal-content">
+            <div id="confirmIcon" class="confirm-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            </div>
+            <h3 id="confirmTitle">تأیید</h3>
+            <p id="confirmMessage" class="confirm-message"></p>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" id="confirmCancelBtn">انصراف</button>
+                <button type="button" class="btn-primary" id="confirmOkBtn">تأیید</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toastStack" class="toast-stack" aria-live="polite" aria-relevant="additions"></div>
 
     <script>
@@ -1682,6 +1789,42 @@
                 toastStack.appendChild(el);
                 if (duration > 0) setTimeout(remove, duration);
                 return el;
+            }
+
+            function askConfirm({
+                title = 'تأیید',
+                message = '',
+                confirmText = 'تأیید',
+                cancelText = 'انصراف',
+                danger = false
+            } = {}) {
+                return new Promise((resolve) => {
+                    const modal = document.getElementById('confirmModal');
+                    const icon = document.getElementById('confirmIcon');
+                    const okBtn = document.getElementById('confirmOkBtn');
+                    const cancelBtn = document.getElementById('confirmCancelBtn');
+
+                    document.getElementById('confirmTitle').textContent = title;
+                    document.getElementById('confirmMessage').textContent = message;
+                    cancelBtn.textContent = cancelText;
+                    okBtn.textContent = confirmText;
+                    okBtn.className = danger ? 'btn-danger-solid' : 'btn-primary';
+                    icon.classList.toggle('is-danger', danger);
+
+                    const finish = (value) => {
+                        modal.classList.remove('open');
+                        modal.style.display = 'none';
+                        okBtn.onclick = null;
+                        cancelBtn.onclick = null;
+                        resolve(value);
+                    };
+
+                    okBtn.onclick = () => finish(true);
+                    cancelBtn.onclick = () => finish(false);
+                    modal.classList.add('open');
+                    modal.style.display = 'flex';
+                    okBtn.focus();
+                });
             }
 
             const ICONS = {
@@ -1914,12 +2057,18 @@
                 }
                 const person = await db.persons.get(idNum);
                 if (!person) return;
-                if (confirm(`حذف ${person.name}؟`)) {
-                    await db.persons.delete(idNum);
-                    loadPersons();
-                    loadPersonSelects();
-                    notify(`«${person.name}» حذف شد`, 'success');
-                }
+                const ok = await askConfirm({
+                    title: 'حذف شخص',
+                    message: `«${person.name}» حذف شود؟`,
+                    confirmText: 'حذف',
+                    cancelText: 'انصراف',
+                    danger: true
+                });
+                if (!ok) return;
+                await db.persons.delete(idNum);
+                loadPersons();
+                loadPersonSelects();
+                notify(`«${person.name}» حذف شد`, 'success');
             };
             async function loadPersonSelects() {
                 const persons = await db.persons.toArray();
@@ -2104,7 +2253,14 @@
                 }).join('');
             }
             window.deleteTrans = async (id) => {
-                if (!confirm('این تراکنش حذف شود؟')) return;
+                const ok = await askConfirm({
+                    title: 'حذف تراکنش',
+                    message: 'این تراکنش حذف شود؟',
+                    confirmText: 'حذف',
+                    cancelText: 'انصراف',
+                    danger: true
+                });
+                if (!ok) return;
                 await db.transactions.delete(id);
                 loadTransactions();
                 if (document.getElementById('tab-persons').classList.contains('active')) {
@@ -2226,9 +2382,13 @@
                     if (!data || !Array.isArray(data.persons) || !Array.isArray(data.transactions)) {
                         return notify('فایل پشتیبان معتبر نیست', 'error');
                     }
-                    const ok = confirm(
-                        `بازیابی ${data.persons.length} شخص و ${data.transactions.length} تراکنش؟\n\nهمه داده‌های فعلی جایگزین می‌شوند.`
-                    );
+                    const ok = await askConfirm({
+                        title: 'بازیابی پشتیبان',
+                        message: `بازیابی ${data.persons.length} شخص و ${data.transactions.length} تراکنش؟\n\nهمه داده‌های فعلی جایگزین می‌شوند.`,
+                        confirmText: 'بازیابی',
+                        cancelText: 'انصراف',
+                        danger: true
+                    });
                     if (!ok) {
                         notify('بازیابی لغو شد', 'info', 2000);
                         return;
@@ -2294,7 +2454,21 @@
                 modal.style.display = 'none';
             }
             document.getElementById('closeModalBtn').onclick = closeModal;
-            window.onclick = e => { if (e.target === document.getElementById('editModal')) closeModal(); };
+            window.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('editModal')) closeModal();
+                if (e.target === document.getElementById('confirmModal')) {
+                    document.getElementById('confirmCancelBtn').click();
+                }
+            });
+            window.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                const confirmModal = document.getElementById('confirmModal');
+                if (confirmModal.classList.contains('open')) {
+                    document.getElementById('confirmCancelBtn').click();
+                    return;
+                }
+                if (document.getElementById('editModal').classList.contains('open')) closeModal();
+            });
 
             loadPersonSelects();
             loadTransactions();
