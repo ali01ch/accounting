@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hesabyar-v17';
+const CACHE_NAME = 'hesabyar-v18';
 const CORE_ASSETS = [
   './index.html',
   './accounting.html',

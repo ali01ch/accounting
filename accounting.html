@@ -504,6 +504,144 @@
             padding-left: 36px;
         }
 
+        /* Custom select — native option list ignores web fonts */
+        .csel {
+            position: relative;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .csel-native {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            background: none !important;
+        }
+
+        .csel-trigger {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            min-height: 48px;
+            padding: 13px 14px;
+            padding-left: 36px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--line);
+            background-color: var(--surface-raised);
+            background-image: var(--select-chevron);
+            background-repeat: no-repeat;
+            background-position: left 14px center;
+            color: var(--ink);
+            font-family: var(--font);
+            font-size: 16px;
+            font-weight: 500;
+            outline: none;
+            text-align: right;
+            justify-content: flex-start;
+            box-shadow: none;
+            cursor: pointer;
+            transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s;
+        }
+
+        .csel-trigger-label {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .csel-trigger:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+            background-color: var(--input-focus-bg);
+        }
+
+        .csel.is-open .csel-trigger {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        .csel.is-disabled .csel-trigger {
+            opacity: 0.72;
+            background-color: var(--disabled-bg);
+            color: var(--muted);
+            cursor: not-allowed;
+        }
+
+        .csel-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            left: 0;
+            z-index: 60;
+            max-height: 240px;
+            overflow-y: auto;
+            background: var(--surface-raised);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            box-shadow: 0 12px 28px rgba(26, 21, 37, 0.16);
+            padding: 6px;
+            font-family: var(--font);
+        }
+
+        html[data-theme="dark"] .csel-menu {
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        }
+
+        .csel.is-open .csel-menu,
+        .csel-menu:not([hidden]) {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .csel-option {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--ink);
+            font-family: var(--font);
+            font-size: 0.92rem;
+            font-weight: 500;
+            text-align: right;
+            justify-content: flex-start;
+            cursor: pointer;
+            box-shadow: none;
+            line-height: 1.4;
+        }
+
+        .csel-option:hover,
+        .csel-option.is-active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .csel-option.is-selected {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .toolbar .csel-trigger {
+            min-height: 44px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 0.88rem;
+        }
+
         input:focus,
         select:focus,
         textarea:focus {
@@ -2551,7 +2689,209 @@
                 filterBank: document.getElementById('filterBank'),
             };
 
+            function closeAllCustomSelects(exceptWrap = null) {
+                document.querySelectorAll('.csel.is-open').forEach(wrap => {
+                    if (exceptWrap && wrap === exceptWrap) return;
+                    const select = wrap.querySelector('select');
+                    if (select && select._csel) select._csel.close();
+                    else {
+                        wrap.classList.remove('is-open');
+                        const menu = wrap.querySelector('.csel-menu') || document.querySelector(`.csel-menu[data-owner="${wrap.dataset.cselId}"]`);
+                        const btn = wrap.querySelector('.csel-trigger');
+                        if (menu) menu.hidden = true;
+                        if (btn) btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+
+            function syncCustomSelect(select) {
+                if (!select) return;
+                if (select._csel) select._csel.sync();
+                else enhanceSelect(select);
+            }
+
+            function enhanceSelect(select) {
+                if (!select || select.tagName !== 'SELECT') return;
+                if (select._csel) {
+                    select._csel.sync();
+                    return;
+                }
+
+                const wrap = document.createElement('div');
+                wrap.className = 'csel';
+                select.parentNode.insertBefore(wrap, select);
+                wrap.appendChild(select);
+                select.classList.add('csel-native');
+                select.dataset.csel = '1';
+                select.setAttribute('tabindex', '-1');
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'csel-trigger';
+                btn.setAttribute('aria-haspopup', 'listbox');
+                btn.setAttribute('aria-expanded', 'false');
+                if (select.id) btn.id = `${select.id}Trigger`;
+                btn.innerHTML = '<span class="csel-trigger-label"></span>';
+                const labelEl = btn.querySelector('.csel-trigger-label');
+
+                const menu = document.createElement('div');
+                menu.className = 'csel-menu';
+                menu.hidden = true;
+                menu.setAttribute('role', 'listbox');
+                if (select.id) menu.id = `${select.id}Menu`;
+
+                wrap.appendChild(btn);
+                wrap.appendChild(menu);
+
+                let activeIndex = -1;
+
+                function positionMenu() {
+                    const rect = btn.getBoundingClientRect();
+                    const menuHeight = Math.min(240, menu.scrollHeight || 240);
+                    const spaceBelow = window.innerHeight - rect.bottom - 12;
+                    const openUp = spaceBelow < Math.min(180, menuHeight) && rect.top > spaceBelow;
+                    menu.style.position = 'fixed';
+                    menu.style.left = `${Math.max(8, rect.left)}px`;
+                    menu.style.width = `${rect.width}px`;
+                    menu.style.right = 'auto';
+                    menu.style.zIndex = '500';
+                    if (openUp) {
+                        menu.style.top = 'auto';
+                        menu.style.bottom = `${Math.max(8, window.innerHeight - rect.top + 6)}px`;
+                        menu.style.maxHeight = `${Math.min(240, rect.top - 16)}px`;
+                    } else {
+                        menu.style.bottom = 'auto';
+                        menu.style.top = `${rect.bottom + 6}px`;
+                        menu.style.maxHeight = `${Math.min(240, spaceBelow)}px`;
+                    }
+                }
+
+                function sync() {
+                    const selected = select.options[select.selectedIndex];
+                    labelEl.textContent = selected ? selected.textContent : '';
+                    btn.disabled = !!select.disabled;
+                    wrap.classList.toggle('is-disabled', !!select.disabled);
+                    const current = select.value;
+                    menu.innerHTML = '';
+                    [...select.options].forEach((opt, idx) => {
+                        const item = document.createElement('button');
+                        item.type = 'button';
+                        item.className = 'csel-option';
+                        if (opt.value === current) item.classList.add('is-selected');
+                        if (opt.disabled) item.classList.add('is-disabled');
+                        item.setAttribute('role', 'option');
+                        item.dataset.index = String(idx);
+                        item.textContent = opt.textContent;
+                        item.disabled = !!opt.disabled;
+                        item.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (opt.disabled) return;
+                            select.value = opt.value;
+                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                            sync();
+                            close();
+                            btn.focus();
+                        });
+                        menu.appendChild(item);
+                    });
+                    activeIndex = Math.max(0, [...select.options].findIndex(o => o.value === current));
+                    if (wrap.classList.contains('is-open')) positionMenu();
+                }
+
+                function open() {
+                    if (select.disabled) return;
+                    closeAllCustomSelects(wrap);
+                    sync();
+                    document.body.appendChild(menu);
+                    menu.hidden = false;
+                    wrap.classList.add('is-open');
+                    btn.setAttribute('aria-expanded', 'true');
+                    positionMenu();
+                    const selectedBtn = menu.querySelector('.csel-option.is-selected');
+                    if (selectedBtn) selectedBtn.scrollIntoView({ block: 'nearest' });
+                }
+
+                function close() {
+                    wrap.classList.remove('is-open');
+                    menu.hidden = true;
+                    btn.setAttribute('aria-expanded', 'false');
+                    activeIndex = -1;
+                    menu.querySelectorAll('.csel-option.is-active').forEach(el => el.classList.remove('is-active'));
+                    if (menu.parentElement !== wrap) wrap.appendChild(menu);
+                    menu.style.position = '';
+                    menu.style.left = '';
+                    menu.style.right = '';
+                    menu.style.top = '';
+                    menu.style.bottom = '';
+                    menu.style.width = '';
+                    menu.style.maxHeight = '';
+                    menu.style.zIndex = '';
+                }
+
+                function moveActive(delta) {
+                    const items = [...menu.querySelectorAll('.csel-option:not(:disabled)')];
+                    if (!items.length) return;
+                    if (activeIndex < 0) activeIndex = items.findIndex(el => el.classList.contains('is-selected'));
+                    if (activeIndex < 0) activeIndex = 0;
+                    else activeIndex = (activeIndex + delta + items.length) % items.length;
+                    items.forEach((el, i) => el.classList.toggle('is-active', i === activeIndex));
+                    items[activeIndex]?.scrollIntoView({ block: 'nearest' });
+                }
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (wrap.classList.contains('is-open')) close();
+                    else open();
+                });
+
+                btn.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (!wrap.classList.contains('is-open')) open();
+                        else if (e.key === 'ArrowDown') moveActive(1);
+                    } else if (e.key === 'ArrowUp' && wrap.classList.contains('is-open')) {
+                        e.preventDefault();
+                        moveActive(-1);
+                    } else if (e.key === 'Escape') {
+                        close();
+                    } else if (e.key === 'Enter' && wrap.classList.contains('is-open') && activeIndex >= 0) {
+                        e.preventDefault();
+                        const items = [...menu.querySelectorAll('.csel-option:not(:disabled)')];
+                        items[activeIndex]?.click();
+                    }
+                });
+
+                select.addEventListener('change', sync);
+                select._csel = { sync, close, open, wrap, btn };
+
+                // Keep label[for] usable: focusing native select opens custom UI
+                select.addEventListener('focus', () => {
+                    btn.focus();
+                    open();
+                });
+
+                sync();
+            }
+
+            function enhanceAllSelects() {
+                document.querySelectorAll('select').forEach(enhanceSelect);
+            }
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.csel') && !e.target.closest('.csel-menu')) {
+                    closeAllCustomSelects();
+                }
+            });
+            window.addEventListener('resize', () => closeAllCustomSelects());
+            window.addEventListener('scroll', (e) => {
+                if (e.target && e.target.closest && e.target.closest('.csel-menu')) return;
+                closeAllCustomSelects();
+            }, true);
+
             initJalaliPickers();
+            enhanceAllSelects();
 
             bindMoneyInputs();
 
@@ -2884,6 +3224,7 @@
                         opt.textContent = p.name;
                         sel.appendChild(opt);
                     });
+                    syncCustomSelect(sel);
                 });
             }
             document.getElementById('addPersonBtn').onclick = async () => {
@@ -3050,6 +3391,9 @@
                 } else {
                     els.filterBank.value = 'all';
                 }
+                syncCustomSelect(els.bankSelect);
+                syncCustomSelect(els.editBank);
+                syncCustomSelect(els.filterBank);
             }
 
             document.getElementById('addBankBtn').onclick = async () => {
@@ -3090,6 +3434,7 @@
                 document.getElementById('amount').value = '';
                 document.getElementById('desc').value = '';
                 document.getElementById('transType').value = 'expense';
+                syncCustomSelect(document.getElementById('transType'));
                 setDateField('add', getToday());
                 await loadBankSelects();
                 if (normalizeDesc(desc)) await unhideDescriptionFromHistory(desc);
@@ -3241,6 +3586,9 @@
                     els.editBank.appendChild(opt);
                 }
                 els.editBank.value = t.bank || '';
+                syncCustomSelect(document.getElementById('editType'));
+                syncCustomSelect(els.editPersonId);
+                syncCustomSelect(els.editBank);
                 document.getElementById('editModal').classList.add('open');
                 document.getElementById('editModal').style.display = 'flex';
             };
@@ -3439,6 +3787,10 @@
             });
             window.addEventListener('keydown', (e) => {
                 if (e.key !== 'Escape') return;
+                if (document.querySelector('.csel.is-open')) {
+                    closeAllCustomSelects();
+                    return;
+                }
                 if (jdp.overlay && jdp.overlay.classList.contains('open')) {
                     closeJalaliPicker();
                     return;
@@ -3453,6 +3805,7 @@
 
             ensureBanksSeeded().then(async () => {
                 document.getElementById('transType').value = 'expense';
+                syncCustomSelect(document.getElementById('transType'));
                 await loadPersonSelects();
                 await loadBankSelects();
                 await loadTransactions();
