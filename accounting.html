@@ -1220,7 +1220,7 @@
         .tx-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .tx-item {
@@ -1228,47 +1228,57 @@
             border: 1px solid var(--line-soft);
             border-radius: var(--radius);
             padding: 14px;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             box-shadow: var(--shadow-soft);
             transition: border-color 0.2s;
             animation: riseIn 0.3s var(--ease) both;
+            min-width: 0;
         }
 
         .tx-item:hover {
             border-color: var(--chip-hover-border);
         }
 
-        .tx-main {
+        .tx-content {
             display: flex;
             flex-direction: column;
             gap: 6px;
             min-width: 0;
+            flex: 1;
+            width: 100%;
         }
 
-        .tx-top {
+        .tx-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 12px;
+            min-width: 0;
         }
 
         .tx-amount {
-            font-size: 1.05rem;
+            flex-shrink: 0;
+            font-size: 1.08rem;
             font-weight: 800;
             font-variant-numeric: tabular-nums;
             letter-spacing: -0.01em;
-            overflow-wrap: anywhere;
+            white-space: nowrap;
+            line-height: 1.3;
+            direction: ltr;
+            unicode-bidi: plaintext;
+            text-align: left;
+            font-family: var(--font);
         }
 
         .tx-type {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
             white-space: nowrap;
+            line-height: 1.4;
         }
 
         .tx-type.income {
@@ -1301,36 +1311,88 @@
             color: var(--success);
         }
 
+        .tx-title {
+            margin: 0;
+            font-size: 0.94rem;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.45;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+        }
+
+        .tx-title.is-muted {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
         .tx-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px 10px;
-            font-size: 0.75rem;
+            align-items: center;
+            gap: 0;
+            font-size: 0.74rem;
             color: var(--muted);
+            line-height: 1.5;
+            min-width: 0;
         }
 
-        .tx-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+        .tx-meta > span {
+            display: inline;
+            max-width: 12rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tx-meta > span:not(:last-child)::after {
+            content: '·';
+            margin: 0 6px;
+            color: var(--line);
+            font-weight: 700;
         }
 
         .tx-actions {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
             gap: 6px;
-            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .tx-actions button {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             padding: 0;
+            border-radius: 10px;
         }
 
         .tx-actions svg {
             width: 16px;
             height: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .tx-item {
+                flex-direction: row;
+                align-items: center;
+                gap: 16px;
+                padding: 16px 16px;
+            }
+
+            .tx-actions {
+                margin-top: 0;
+                align-self: center;
+            }
+
+            .tx-actions button {
+                width: 36px;
+                height: 36px;
+            }
         }
 
         /* Empty / loading */
@@ -1876,15 +1938,6 @@
                 display: none;
             }
 
-            .tx-item {
-                grid-template-columns: 1fr auto;
-                align-items: center;
-            }
-
-            .tx-actions {
-                flex-direction: row;
-            }
-
             .tab-item {
                 font-size: 0.7rem;
                 padding: 8px 4px;
@@ -1908,11 +1961,6 @@
 
             .header-chip {
                 display: none;
-            }
-
-            .tx-actions button {
-                width: 40px;
-                height: 40px;
             }
         }
 
@@ -3538,20 +3586,25 @@
                 list.innerHTML = trans.map((t, i) => {
                     const abs = Math.abs(t.amount);
                     const isNeg = t.amount < 0;
-                    const person = t.personId ? (personsMap[t.personId] || '—') : 'بدون شخص';
-                    const desc = t.description ? escapeHtml(t.description) : '';
+                    const person = t.personId ? (personsMap[t.personId] || '—') : '';
+                    const bank = t.bank || '';
+                    const desc = t.description ? String(t.description).trim() : '';
+                    const title = desc || person || (typeLabels[t.type] || 'تراکنش');
+                    const titleMuted = !desc;
+                    const metaParts = [
+                        toFaDigits(t.date),
+                        bank || null,
+                        person || null
+                    ].filter(Boolean);
+                    const metaHtml = metaParts.map(p => `<span>${escapeHtml(p)}</span>`).join('');
                     return `<article class="tx-item" role="listitem" style="animation-delay:${Math.min(i, 8) * 0.03}s">
-                        <div class="tx-main">
-                            <div class="tx-top">
+                        <div class="tx-content">
+                            <div class="tx-head">
                                 <span class="tx-type ${t.type}">${typeLabels[t.type] || t.type}</span>
-                                <span class="tx-amount ${isNeg ? 'neg' : 'pos'}">${isNeg ? '−' : '+'} ${abs.toLocaleString('fa-IR')}</span>
+                                <span class="tx-amount ${isNeg ? 'neg' : 'pos'}">${isNeg ? '−' : '+'}‌${abs.toLocaleString('fa-IR')}</span>
                             </div>
-                            <div class="tx-meta">
-                                <span>${t.date}</span>
-                                <span>${escapeHtml(person)}</span>
-                                <span>${escapeHtml(t.bank || 'بدون بانک')}</span>
-                                ${desc ? `<span>${desc}</span>` : ''}
-                            </div>
+                            <p class="tx-title${titleMuted ? ' is-muted' : ''}">${escapeHtml(title)}</p>
+                            ${metaHtml ? `<div class="tx-meta">${metaHtml}</div>` : ''}
                         </div>
                         <div class="tx-actions">
                             <button class="btn-secondary" type="button" onclick="window.openEditModal(${t.id})" aria-label="ویرایش">${ICONS.edit}</button>
