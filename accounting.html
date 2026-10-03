@@ -2233,7 +2233,7 @@
             <div class="defs-section">
                 <div class="panel-head">
                     <h2>بانک‌ها / حساب‌ها</h2>
-                    <p>بانک‌های خود را تعریف کنید، در صورت نیاز شماره کارت یا حساب بگذارید و یکی را پیش‌فرض کنید.</p>
+                    <p>بانک یا حساب خود را اینجا اضافه کنید؛ در صورت نیاز شماره کارت/حساب بگذارید و یکی را پیش‌فرض کنید.</p>
                 </div>
 
                 <div class="bank-form">
@@ -2525,7 +2525,6 @@
             } catch (e) { /* ignore */ }
 
             const db = new Dexie('FinanceDB_V3');
-            const DEFAULT_BANKS = ['ملت', 'ملی', 'صادرات', 'تجارت', 'رفاه', 'پاسارگاد', 'سامان', 'نقدی', 'سایر'];
             db.version(1).stores({
                 transactions: '++id, date, personId, type, amount, description, bank',
                 persons: '++id, name'
@@ -2535,18 +2534,7 @@
                 persons: '++id, name',
                 banks: '++id, name',
                 settings: 'key'
-            }).upgrade(async (tx) => {
-                const table = tx.table('banks');
-                if ((await table.count()) === 0) {
-                    await table.bulkAdd(DEFAULT_BANKS.map(name => ({ name })));
-                }
             });
-
-            async function ensureBanksSeeded() {
-                if ((await db.banks.count()) === 0) {
-                    await db.banks.bulkAdd(DEFAULT_BANKS.map(name => ({ name })));
-                }
-            }
 
             async function getDefaultBankId() {
                 const row = await db.settings.get('defaultBankId');
@@ -3970,7 +3958,6 @@
                         if (settings.length) await db.settings.bulkPut(settings);
                         if (data.transactions.length) await db.transactions.bulkPut(data.transactions);
                     });
-                    await ensureBanksSeeded();
 
                     localStorage.setItem(BACKUP_KEY, String(Date.now()));
                     await loadPersonSelects();
@@ -4051,14 +4038,14 @@
                 if (document.getElementById('editModal').classList.contains('open')) closeModal();
             });
 
-            ensureBanksSeeded().then(async () => {
+            (async () => {
                 document.getElementById('transType').value = 'expense';
                 syncCustomSelect(document.getElementById('transType'));
                 await loadPersonSelects();
                 await loadBankSelects();
                 await loadTransactions();
                 await refreshDataTab();
-            });
+            })();
         });
     </script>
 </body>
