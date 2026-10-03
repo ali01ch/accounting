@@ -2052,11 +2052,11 @@
             </div>
         </section>
 
-        <!-- تب گزارش -->
-        <section id="tab-report" class="panel" aria-label="گزارش قرض">
+        <!-- تب قرض -->
+        <section id="tab-report" class="panel" aria-label="وضعیت قرض و بده‌بستان">
             <div class="panel-head">
-                <h2>گزارش قرض</h2>
-                <p>وضعیت بدهی و طلب نسبت به یک شخص را در بازه زمانی ببینید.</p>
+                <h2>وضعیت قرض</h2>
+                <p>بدهی و طلب نسبت به یک شخص را در بازه زمانی ببینید.</p>
             </div>
 
             <div class="form-stack">
@@ -2085,15 +2085,15 @@
                     </div>
                 </div>
 
-                <button id="showReportBtn" class="btn-primary" type="button">نمایش گزارش</button>
+                <button id="showReportBtn" class="btn-primary" type="button">نمایش وضعیت</button>
                 <div id="reportResult"></div>
             </div>
         </section>
 
-        <!-- تب همه تراکنش‌ها -->
-        <section id="tab-all" class="panel" aria-label="همه تراکنش‌ها">
+        <!-- تب تراکنش‌ها -->
+        <section id="tab-all" class="panel" aria-label="تراکنش‌ها">
             <div class="panel-head">
-                <h2>همه تراکنش‌ها</h2>
+                <h2>تراکنش‌ها</h2>
                 <p>فیلتر کنید، ویرایش کنید یا خروجی CSV بگیرید.</p>
             </div>
 
@@ -2176,21 +2176,21 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
                 ثبت
             </button>
-            <button class="tab-item" data-tab="persons" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                اطلاعات اولیه
+            <button class="tab-item" data-tab="all" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                تراکنش‌ها
             </button>
             <button class="tab-item" data-tab="report" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
-                گزارش
-            </button>
-            <button class="tab-item" data-tab="all" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-                همه
+                گزارش قرض
             </button>
             <button class="tab-item" data-tab="data" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 بکاپ
+            </button>
+            <button class="tab-item" data-tab="persons" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                اطلاعات اولیه
             </button>
         </div>
     </nav>
@@ -3488,7 +3488,7 @@
                 document.getElementById('reportResult').innerHTML = `
                 <div class="report-card">
                     <div>
-                        <h4>گزارش ${personName}</h4>
+                        <h4>وضعیت ${personName}</h4>
                         <p class="report-period">${from} تا ${to}</p>
                     </div>
                     <div class="report-stats">
@@ -3499,7 +3499,7 @@
                     </div>
                     <div class="report-status ${statusClass}">${statusHtml}</div>
                 </div>`;
-                notify('گزارش آماده شد', 'info', 2200);
+                notify('وضعیت قرض آماده شد', 'info', 2200);
             };
 
             // Transactions list
