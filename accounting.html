@@ -1722,6 +1722,256 @@
             line-height: 1.65;
         }
 
+        .danger-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: var(--warn-soft);
+            border: 1px solid rgba(180, 83, 9, 0.22);
+            color: var(--warn);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            font-size: 0.78rem;
+            line-height: 1.65;
+            font-weight: 500;
+        }
+
+        .danger-box svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            stroke-width: 2;
+        }
+
+        .data-card-danger {
+            border-color: rgba(194, 65, 12, 0.22);
+        }
+
+        .data-card-danger h3 {
+            color: var(--danger);
+        }
+
+        .purge-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .purge-item {
+            position: relative;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 12px 12px 10px;
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius);
+            background: var(--surface-raised);
+            cursor: pointer;
+            user-select: none;
+            transition: border-color 0.18s var(--ease), background 0.18s var(--ease), box-shadow 0.18s var(--ease);
+        }
+
+        .purge-item:hover {
+            border-color: var(--chip-hover-border);
+            background: var(--chip-hover-bg);
+        }
+
+        .purge-item:has(input:focus-visible) {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--focus-ring);
+            border-color: var(--accent);
+        }
+
+        .purge-item:has(input:checked) {
+            border-color: rgba(194, 65, 12, 0.35);
+            background: linear-gradient(90deg, var(--danger-soft) 0%, var(--surface-raised) 42%);
+            box-shadow: inset -3px 0 0 var(--danger);
+        }
+
+        .purge-item input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            height: 0;
+        }
+
+        .purge-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: var(--surface);
+            color: var(--ink-soft);
+            border: 1px solid var(--line-soft);
+            flex-shrink: 0;
+            transition: background 0.18s var(--ease), color 0.18s var(--ease), border-color 0.18s var(--ease);
+        }
+
+        .purge-item-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 1.8;
+        }
+
+        .purge-item:has(input:checked) .purge-item-icon {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: rgba(194, 65, 12, 0.2);
+        }
+
+        .purge-item-body {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .purge-item-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.35;
+        }
+
+        .purge-item-desc {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .purge-item-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .purge-count {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--muted);
+            background: var(--surface);
+            border: 1px solid var(--line-soft);
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            transition: color 0.18s var(--ease), background 0.18s var(--ease), border-color 0.18s var(--ease);
+        }
+
+        .purge-item:has(input:checked) .purge-count {
+            color: var(--danger);
+            background: var(--danger-soft);
+            border-color: rgba(194, 65, 12, 0.22);
+        }
+
+        .purge-tick {
+            width: 22px;
+            height: 22px;
+            border-radius: 7px;
+            border: 1.5px solid var(--line);
+            background: var(--surface-raised);
+            display: grid;
+            place-items: center;
+            color: transparent;
+            transition: background 0.18s var(--ease), border-color 0.18s var(--ease), color 0.18s var(--ease);
+        }
+
+        .purge-tick svg {
+            width: 13px;
+            height: 13px;
+            stroke-width: 2.6;
+        }
+
+        .purge-item:has(input:checked) .purge-tick {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+        .purge-summary {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--danger-soft);
+            border: 1px solid rgba(194, 65, 12, 0.18);
+            color: var(--danger);
+            font-size: 0.78rem;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .purge-summary.is-visible {
+            display: flex;
+        }
+
+        .purge-summary svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            stroke-width: 2;
+        }
+
+        .data-actions .btn-danger-solid {
+            width: 100%;
+            margin: 0;
+            padding: 13px 14px;
+            min-height: 48px;
+        }
+
+        .data-actions .btn-danger-solid:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            filter: grayscale(0.25);
+        }
+
+        .captcha-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 4px 0 14px;
+            text-align: right;
+        }
+
+        .captcha-question {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            border: 1px dashed var(--line);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--ink);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.04em;
+        }
+
+        .captcha-block label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+
+        .captcha-block input {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.06em;
+        }
+
         #importFile {
             display: none;
         }
@@ -2364,6 +2614,72 @@
                 <p id="storageStatus">داده‌ها فقط روی همین دستگاه و همین مرورگر نگه داشته می‌شوند و به سرور ارسال نمی‌شوند.</p>
                 <div id="storageCounts" class="backup-meta">در حال شمارش…</div>
             </div>
+
+            <div class="data-card data-card-danger">
+                <h3>پاکسازی اطلاعات</h3>
+                <p>فقط همان بخش‌هایی را که می‌خواهید خالی شود علامت بزنید. داده فقط از همین دستگاه حذف می‌شود.</p>
+                <div class="danger-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+                    <span>حذف برگشت‌ناپذیر است. قبل از ادامه یک پشتیبان کامل بگیرید. اگر فقط اشخاص یا بانک‌ها را پاک کنید، تراکنش‌های قبلی ممکن است بدون مرجع بمانند.</span>
+                </div>
+                <div class="purge-options" role="group" aria-label="انتخاب موارد پاکسازی">
+                    <label class="purge-item" for="purgeTx">
+                        <span class="purge-item-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                        </span>
+                        <span class="purge-item-body">
+                            <span class="purge-item-title">تراکنش‌ها</span>
+                            <span class="purge-item-desc">درآمد، هزینه، قرض و تسویه‌ها</span>
+                        </span>
+                        <span class="purge-item-side">
+                            <span class="purge-count" id="purgeTxCount">—</span>
+                            <span class="purge-tick" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+                            </span>
+                        </span>
+                        <input type="checkbox" id="purgeTx" autocomplete="off">
+                    </label>
+                    <label class="purge-item" for="purgeBanks">
+                        <span class="purge-item-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                        </span>
+                        <span class="purge-item-body">
+                            <span class="purge-item-title">بانک‌ها و حساب‌ها</span>
+                            <span class="purge-item-desc">شماره حساب/کارت و بانک پیش‌فرض</span>
+                        </span>
+                        <span class="purge-item-side">
+                            <span class="purge-count" id="purgeBanksCount">—</span>
+                            <span class="purge-tick" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+                            </span>
+                        </span>
+                        <input type="checkbox" id="purgeBanks" autocomplete="off">
+                    </label>
+                    <label class="purge-item" for="purgePersons">
+                        <span class="purge-item-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </span>
+                        <span class="purge-item-body">
+                            <span class="purge-item-title">اشخاص</span>
+                            <span class="purge-item-desc">فهرست افراد مرتبط با قرض</span>
+                        </span>
+                        <span class="purge-item-side">
+                            <span class="purge-count" id="purgePersonsCount">—</span>
+                            <span class="purge-tick" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+                            </span>
+                        </span>
+                        <input type="checkbox" id="purgePersons" autocomplete="off">
+                    </label>
+                </div>
+                <div id="purgeSummary" class="purge-summary" aria-live="polite">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+                    <span id="purgeSummaryText"></span>
+                </div>
+                <div class="data-actions">
+                    <button type="button" id="purgeBtn" class="btn-danger-solid" disabled>انتخاب کنید تا پاکسازی فعال شود</button>
+                </div>
+            </div>
         </section>
     </div>
 
@@ -2456,6 +2772,26 @@
             <div class="confirm-actions">
                 <button type="button" class="btn-secondary" id="confirmCancelBtn">انصراف</button>
                 <button type="button" class="btn-primary" id="confirmOkBtn">تأیید</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال کپچا برای پاکسازی -->
+    <div id="captchaModal" class="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="captchaTitle">
+        <div class="modal-content">
+            <div class="confirm-icon is-danger" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            </div>
+            <h3 id="captchaTitle">تأیید امنیتی</h3>
+            <p id="captchaWarning" class="confirm-message"></p>
+            <div class="captcha-block">
+                <div class="captcha-question" id="captchaQuestion" aria-live="polite">—</div>
+                <label for="captchaAnswer">نتیجه را وارد کنید</label>
+                <input type="text" id="captchaAnswer" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۸">
+            </div>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" id="captchaCancelBtn">انصراف</button>
+                <button type="button" class="btn-danger-solid" id="captchaOkBtn">حذف نهایی</button>
             </div>
         </div>
     </div>
@@ -2614,6 +2950,66 @@
                     modal.classList.add('open');
                     modal.style.display = 'flex';
                     okBtn.focus();
+                });
+            }
+
+            function askCaptcha({ warning = '' } = {}) {
+                return new Promise((resolve) => {
+                    const modal = document.getElementById('captchaModal');
+                    const okBtn = document.getElementById('captchaOkBtn');
+                    const cancelBtn = document.getElementById('captchaCancelBtn');
+                    const answerInput = document.getElementById('captchaAnswer');
+                    const a = 2 + Math.floor(Math.random() * 8);
+                    const b = 2 + Math.floor(Math.random() * 8);
+                    const expected = a + b;
+
+                    document.getElementById('captchaWarning').textContent = warning;
+                    document.getElementById('captchaQuestion').textContent = `${toFaDigits(a)} + ${toFaDigits(b)} = ؟`;
+                    answerInput.value = '';
+
+                    const finish = (value) => {
+                        modal.classList.remove('open');
+                        modal.style.display = 'none';
+                        okBtn.onclick = null;
+                        cancelBtn.onclick = null;
+                        answerInput.onkeydown = null;
+                        answerInput.oninput = null;
+                        resolve(value);
+                    };
+
+                    const submit = () => {
+                        const given = Number(onlyDigits(answerInput.value));
+                        if (!answerInput.value.trim() || Number.isNaN(given)) {
+                            notify('نتیجه کپچا را وارد کنید', 'warn');
+                            answerInput.focus();
+                            return;
+                        }
+                        if (given !== expected) {
+                            notify('کد تأیید نادرست است', 'error');
+                            answerInput.value = '';
+                            answerInput.focus();
+                            return;
+                        }
+                        finish(true);
+                    };
+
+                    answerInput.oninput = () => {
+                        const digits = onlyDigits(answerInput.value).slice(0, 3);
+                        answerInput.value = toFaDigits(digits);
+                    };
+
+                    okBtn.onclick = submit;
+                    cancelBtn.onclick = () => finish(false);
+                    answerInput.onkeydown = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            submit();
+                        }
+                    };
+
+                    modal.classList.add('open');
+                    modal.style.display = 'flex';
+                    setTimeout(() => answerInput.focus(), 50);
                 });
             }
 
@@ -3309,7 +3705,10 @@
                 }
                 if (id === 'report') loadReportPersons();
                 if (id === 'all') loadTransactions();
-                if (id === 'data') refreshDataTab();
+                if (id === 'data') {
+                    resetPurgeSelection();
+                    refreshDataTab();
+                }
             }
             tabBtns.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
 
@@ -3887,11 +4286,57 @@
                 const txs = await db.transactions.count();
                 document.getElementById('storageCounts').innerHTML =
                     `<strong>${persons.toLocaleString('fa-IR')}</strong> شخص · <strong>${banks.toLocaleString('fa-IR')}</strong> بانک · <strong>${txs.toLocaleString('fa-IR')}</strong> تراکنش ذخیره شده روی این دستگاه`;
+                document.getElementById('purgeTxCount').textContent = `${txs.toLocaleString('fa-IR')} مورد`;
+                document.getElementById('purgeBanksCount').textContent = `${banks.toLocaleString('fa-IR')} مورد`;
+                document.getElementById('purgePersonsCount').textContent = `${persons.toLocaleString('fa-IR')} مورد`;
                 const last = localStorage.getItem(BACKUP_KEY);
                 document.getElementById('backupMeta').innerHTML = last
                     ? `آخرین پشتیبان: <strong>${formatBackupDate(+last)}</strong>`
                     : 'هنوز پشتیبان گرفته نشده — بهتر است حداقل هفته‌ای یک‌بار ذخیره کنید.';
+                syncPurgeSelection();
             }
+
+            function syncPurgeSelection() {
+                const doTx = document.getElementById('purgeTx').checked;
+                const doBanks = document.getElementById('purgeBanks').checked;
+                const doPersons = document.getElementById('purgePersons').checked;
+                const selected = [];
+                if (doTx) selected.push('تراکنش‌ها');
+                if (doBanks) selected.push('بانک‌ها');
+                if (doPersons) selected.push('اشخاص');
+
+                const btn = document.getElementById('purgeBtn');
+                const summary = document.getElementById('purgeSummary');
+                const summaryText = document.getElementById('purgeSummaryText');
+
+                if (!selected.length) {
+                    btn.disabled = true;
+                    btn.textContent = 'انتخاب کنید تا پاکسازی فعال شود';
+                    summary.classList.remove('is-visible');
+                    summaryText.textContent = '';
+                    return;
+                }
+
+                btn.disabled = false;
+                const countFa = selected.length.toLocaleString('fa-IR');
+                btn.textContent = selected.length === 1
+                    ? `پاکسازی ${selected[0]}`
+                    : `پاکسازی ${countFa} بخش انتخاب‌شده`;
+                summaryText.textContent = `آماده حذف دائمی: ${selected.join('، ')}`;
+                summary.classList.add('is-visible');
+            }
+
+            function resetPurgeSelection() {
+                document.getElementById('purgeTx').checked = false;
+                document.getElementById('purgeBanks').checked = false;
+                document.getElementById('purgePersons').checked = false;
+                syncPurgeSelection();
+            }
+
+            ['purgeTx', 'purgeBanks', 'purgePersons'].forEach((id) => {
+                document.getElementById(id).addEventListener('change', syncPurgeSelection);
+            });
+            resetPurgeSelection();
 
             function downloadJson(filename, data) {
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
@@ -3972,6 +4417,71 @@
                 }
             };
 
+            document.getElementById('purgeBtn').onclick = async () => {
+                const doTx = document.getElementById('purgeTx').checked;
+                const doBanks = document.getElementById('purgeBanks').checked;
+                const doPersons = document.getElementById('purgePersons').checked;
+
+                if (!doTx && !doBanks && !doPersons) {
+                    return notify('حداقل یک مورد را برای پاکسازی انتخاب کنید', 'warn');
+                }
+
+                const labels = [];
+                if (doTx) labels.push('کل تراکنش‌ها');
+                if (doBanks) labels.push('کل بانک‌ها و حساب‌ها');
+                if (doPersons) labels.push('کل اشخاص');
+
+                const okConfirm = await askConfirm({
+                    title: 'هشدار پاکسازی',
+                    message: `موارد زیر برای همیشه حذف می‌شوند:\n${labels.map((l) => '• ' + l).join('\n')}\n\nاین عمل برگشت‌ناپذیر است. قبل از ادامه از داشتن پشتیبان مطمئن شوید.`,
+                    confirmText: 'ادامه',
+                    cancelText: 'انصراف',
+                    danger: true
+                });
+                if (!okConfirm) {
+                    notify('پاکسازی لغو شد', 'info', 2000);
+                    return;
+                }
+
+                const okCaptcha = await askCaptcha({
+                    warning: `برای تأیید حذف نهاییِ «${labels.join('، ')}» نتیجه جمع زیر را وارد کنید.`
+                });
+                if (!okCaptcha) {
+                    notify('پاکسازی لغو شد', 'info', 2000);
+                    return;
+                }
+
+                try {
+                    const tables = [];
+                    if (doTx) tables.push(db.transactions);
+                    if (doBanks) tables.push(db.banks, db.settings);
+                    if (doPersons) tables.push(db.persons);
+
+                    await db.transaction('rw', tables, async () => {
+                        if (doTx) await db.transactions.clear();
+                        if (doBanks) {
+                            await db.banks.clear();
+                            await db.settings.delete('defaultBankId');
+                        }
+                        if (doPersons) await db.persons.clear();
+                    });
+
+                    resetPurgeSelection();
+
+                    await loadPersons();
+                    await loadPersonSelects();
+                    await loadBanks();
+                    await loadBankSelects();
+                    await loadTransactions();
+                    await refreshDataTab();
+                    if (doTx) invalidateDescSuggestions();
+                    notify('پاکسازی با موفقیت انجام شد', 'success');
+                } catch (err) {
+                    console.error(err);
+                    notify('پاکسازی ناموفق بود', 'error');
+                }
+            };
+
             // PWA install + service worker
             let deferredPrompt = null;
             const installBanner = document.getElementById('installBanner');
@@ -4019,6 +4529,9 @@
                 if (e.target === document.getElementById('confirmModal')) {
                     document.getElementById('confirmCancelBtn').click();
                 }
+                if (e.target === document.getElementById('captchaModal')) {
+                    document.getElementById('captchaCancelBtn').click();
+                }
             });
             window.addEventListener('keydown', (e) => {
                 if (e.key !== 'Escape') return;
@@ -4028,6 +4541,11 @@
                 }
                 if (jdp.overlay && jdp.overlay.classList.contains('open')) {
                     closeJalaliPicker();
+                    return;
+                }
+                const captchaModal = document.getElementById('captchaModal');
+                if (captchaModal.classList.contains('open')) {
+                    document.getElementById('captchaCancelBtn').click();
                     return;
                 }
                 const confirmModal = document.getElementById('confirmModal');
