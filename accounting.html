@@ -345,6 +345,121 @@
             color: var(--ink-soft);
         }
 
+        .desc-suggest-wrap {
+            position: relative;
+        }
+
+        .desc-suggest {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            left: 0;
+            z-index: 40;
+            max-height: 220px;
+            overflow-y: auto;
+            background: var(--surface-raised);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            box-shadow: 0 12px 28px rgba(26, 21, 37, 0.16);
+            padding: 6px;
+        }
+
+        html[data-theme="dark"] .desc-suggest {
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        }
+
+        .desc-suggest.open {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .desc-suggest-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            padding: 4px 4px 4px 6px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--ink);
+            font-family: var(--font);
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-align: right;
+            cursor: default;
+            box-shadow: none;
+            min-height: 42px;
+        }
+
+        .desc-suggest-item:hover,
+        .desc-suggest-item.is-active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .desc-suggest-pick {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 8px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            text-align: right;
+            cursor: pointer;
+            box-shadow: none;
+            min-height: 36px;
+        }
+
+        .desc-suggest-item .desc-suggest-text {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .desc-suggest-remove {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            box-shadow: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .desc-suggest-remove:hover {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .desc-suggest-remove svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .desc-suggest-empty {
+            padding: 12px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;
+        }
+
         .field-hint {
             font-size: 0.72rem;
             color: var(--muted);
@@ -1828,7 +1943,10 @@
 
                 <div class="field">
                     <label for="desc">توضیحات</label>
-                    <input type="text" id="desc" placeholder="اختیاری — مثلاً خرید مواد غذایی">
+                    <div class="desc-suggest-wrap">
+                        <input type="text" id="desc" placeholder="اختیاری — مثلاً خرید مواد غذایی" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="descSuggest">
+                        <div id="descSuggest" class="desc-suggest" role="listbox" hidden></div>
+                    </div>
                 </div>
 
                 <button id="addBtn" class="btn-primary" type="button">ثبت تراکنش</button>
@@ -2053,7 +2171,10 @@
                 </div>
                 <div class="field">
                     <label for="editDesc">توضیحات</label>
-                    <input type="text" id="editDesc">
+                    <div class="desc-suggest-wrap">
+                        <input type="text" id="editDesc" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="editDescSuggest">
+                        <div id="editDescSuggest" class="desc-suggest" role="listbox" hidden></div>
+                    </div>
                 </div>
                 <button id="saveEditBtn" class="btn-primary" type="button">ذخیره تغییرات</button>
             </div>
@@ -2517,6 +2638,207 @@
 
             bindMoneyInputs();
 
+            // Description history (frequent suggestions)
+            let descSuggestCache = null;
+            let descSuggestCacheAt = 0;
+            let hiddenDescCache = null;
+            const DESC_REMOVE_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
+
+            function normalizeDesc(text) {
+                return String(text || '').trim().replace(/\s+/g, ' ');
+            }
+            async function getHiddenDescriptions() {
+                if (hiddenDescCache) return hiddenDescCache;
+                const row = await db.settings.get('hiddenDescriptions');
+                hiddenDescCache = Array.isArray(row?.value) ? row.value.map(normalizeDesc).filter(Boolean) : [];
+                return hiddenDescCache;
+            }
+            async function setHiddenDescriptions(list) {
+                const cleaned = [...new Set(list.map(normalizeDesc).filter(Boolean))];
+                hiddenDescCache = cleaned;
+                await db.settings.put({ key: 'hiddenDescriptions', value: cleaned });
+            }
+            async function hideDescriptionFromHistory(text) {
+                const t = normalizeDesc(text);
+                if (!t) return;
+                const list = await getHiddenDescriptions();
+                if (!list.includes(t)) {
+                    await setHiddenDescriptions([...list, t]);
+                }
+                invalidateDescSuggestions();
+            }
+            async function unhideDescriptionFromHistory(text) {
+                const t = normalizeDesc(text);
+                if (!t) return;
+                const list = await getHiddenDescriptions();
+                if (!list.includes(t)) return;
+                await setHiddenDescriptions(list.filter(x => x !== t));
+                invalidateDescSuggestions();
+            }
+            function sortDescriptionsByFrequency(items) {
+                return items.sort((a, b) => {
+                    if (b.count !== a.count) return b.count - a.count;
+                    if (a.last !== b.last) return a.last < b.last ? 1 : -1;
+                    return a.text.localeCompare(b.text, 'fa');
+                });
+            }
+            async function getFrequentDescriptions(query = '', limit = 8) {
+                const now = Date.now();
+                if (!descSuggestCache || now - descSuggestCacheAt > 5000) {
+                    const hidden = new Set(await getHiddenDescriptions());
+                    const all = await db.transactions.toArray();
+                    const map = new Map();
+                    all.forEach(t => {
+                        const text = normalizeDesc(t.description);
+                        if (!text || hidden.has(text)) return;
+                        const prev = map.get(text);
+                        const date = t.date || '';
+                        if (!prev) map.set(text, { count: 1, last: date });
+                        else {
+                            prev.count += 1;
+                            if (date > prev.last) prev.last = date;
+                        }
+                    });
+                    descSuggestCache = sortDescriptionsByFrequency(
+                        [...map.entries()].map(([text, meta]) => ({ text, count: meta.count, last: meta.last }))
+                    );
+                    descSuggestCacheAt = now;
+                }
+                const q = query.trim().toLowerCase();
+                let items = descSuggestCache.slice();
+                if (q) {
+                    items = items.filter(i => {
+                        const t = i.text.toLowerCase();
+                        return t.includes(q) && t !== q;
+                    });
+                    items.sort((a, b) => {
+                        const at = a.text.toLowerCase();
+                        const bt = b.text.toLowerCase();
+                        const aPrefix = at.startsWith(q) ? 1 : 0;
+                        const bPrefix = bt.startsWith(q) ? 1 : 0;
+                        if (bPrefix !== aPrefix) return bPrefix - aPrefix;
+                        if (b.count !== a.count) return b.count - a.count;
+                        if (a.last !== b.last) return a.last < b.last ? 1 : -1;
+                        return a.text.localeCompare(b.text, 'fa');
+                    });
+                }
+                return items.slice(0, limit);
+            }
+            function invalidateDescSuggestions() {
+                descSuggestCache = null;
+                descSuggestCacheAt = 0;
+                hiddenDescCache = null;
+            }
+            function bindDescSuggestions(inputId, listId) {
+                const input = document.getElementById(inputId);
+                const list = document.getElementById(listId);
+                if (!input || !list) return;
+                let activeIndex = -1;
+                let currentItems = [];
+                let blurTimer = null;
+
+                function closeList() {
+                    list.classList.remove('open');
+                    list.hidden = true;
+                    list.innerHTML = '';
+                    input.setAttribute('aria-expanded', 'false');
+                    activeIndex = -1;
+                    currentItems = [];
+                }
+                function applyActive() {
+                    [...list.querySelectorAll('.desc-suggest-item')].forEach((el, i) => {
+                        el.classList.toggle('is-active', i === activeIndex);
+                    });
+                }
+                function pick(text) {
+                    input.value = text;
+                    closeList();
+                    input.focus();
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                async function removeItem(text) {
+                    await hideDescriptionFromHistory(text);
+                    await render();
+                    input.focus();
+                }
+                async function render() {
+                    const items = await getFrequentDescriptions(input.value, 8);
+                    currentItems = items;
+                    activeIndex = -1;
+                    if (!items.length) {
+                        if (input.value.trim()) {
+                            closeList();
+                            return;
+                        }
+                        list.innerHTML = `<div class="desc-suggest-empty">هنوز توضیح پرتکراری ندارید</div>`;
+                        list.hidden = false;
+                        list.classList.add('open');
+                        input.setAttribute('aria-expanded', 'true');
+                        return;
+                    }
+                    list.innerHTML = items.map((item, i) => `
+                        <div class="desc-suggest-item" role="option" data-index="${i}" id="${listId}-opt-${i}">
+                            <button type="button" class="desc-suggest-pick" data-index="${i}">
+                                <span class="desc-suggest-text">${escapeHtml(item.text)}</span>
+                            </button>
+                            <button type="button" class="desc-suggest-remove" data-index="${i}" aria-label="حذف از تاریخچه" title="حذف از تاریخچه">${DESC_REMOVE_ICON}</button>
+                        </div>
+                    `).join('');
+                    list.hidden = false;
+                    list.classList.add('open');
+                    input.setAttribute('aria-expanded', 'true');
+                    list.querySelectorAll('.desc-suggest-pick').forEach(btn => {
+                        btn.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            pick(currentItems[+btn.dataset.index]?.text || '');
+                        });
+                    });
+                    list.querySelectorAll('.desc-suggest-remove').forEach(btn => {
+                        btn.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const text = currentItems[+btn.dataset.index]?.text;
+                            if (text) removeItem(text);
+                        });
+                    });
+                }
+
+                input.addEventListener('focus', () => {
+                    clearTimeout(blurTimer);
+                    render();
+                });
+                input.addEventListener('input', () => {
+                    clearTimeout(blurTimer);
+                    render();
+                });
+                input.addEventListener('blur', () => {
+                    blurTimer = setTimeout(closeList, 120);
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (!list.classList.contains('open') || !currentItems.length) {
+                        if (e.key === 'Escape') closeList();
+                        return;
+                    }
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        activeIndex = (activeIndex + 1) % currentItems.length;
+                        applyActive();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        activeIndex = activeIndex <= 0 ? currentItems.length - 1 : activeIndex - 1;
+                        applyActive();
+                    } else if (e.key === 'Enter' && activeIndex >= 0) {
+                        e.preventDefault();
+                        pick(currentItems[activeIndex].text);
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        closeList();
+                    }
+                });
+            }
+            bindDescSuggestions('desc', 'descSuggest');
+            bindDescSuggestions('editDesc', 'editDescSuggest');
+
             // Tabs
             const tabBtns = document.querySelectorAll('.tab-item');
             const tabs = {
@@ -2852,6 +3174,8 @@
                 document.getElementById('desc').value = '';
                 setDateField('add', getToday());
                 await loadBankSelects();
+                if (normalizeDesc(desc)) await unhideDescriptionFromHistory(desc);
+                invalidateDescSuggestions();
                 loadTransactions();
                 notify('تراکنش ثبت شد', 'success');
             };
@@ -2975,6 +3299,7 @@
                 if (!ok) return;
                 await db.transactions.delete(id);
                 loadTransactions();
+                invalidateDescSuggestions();
                 if (document.getElementById('tab-persons').classList.contains('active')) {
                     loadPersons();
                 }
@@ -3016,6 +3341,8 @@
                 else if (type === 'debt_given_settle') final = amount;
                 await db.transactions.update(id, { date: dateStr, type, personId, amount: final, bank, description: desc });
                 closeModal(); loadTransactions();
+                if (normalizeDesc(desc)) await unhideDescriptionFromHistory(desc);
+                invalidateDescSuggestions();
                 notify('تغییرات ذخیره شد', 'success');
             };
             document.getElementById('filterBtn').onclick = () => {
@@ -3136,6 +3463,7 @@
                     await loadBankSelects();
                     await loadTransactions();
                     await refreshDataTab();
+                    invalidateDescSuggestions();
                     notify('بازیابی با موفقیت انجام شد', 'success');
                 } catch (err) {
                     console.error(err);
