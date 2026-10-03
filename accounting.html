@@ -655,10 +655,15 @@
         }
 
         .amount-field input {
+            font-family: var(--font);
             font-size: 1.15rem;
             font-weight: 700;
             letter-spacing: 0.01em;
             font-variant-numeric: tabular-nums;
+            font-feature-settings: "ss01" 0;
+            direction: ltr;
+            text-align: right;
+            unicode-bidi: plaintext;
         }
 
         .date-range {
@@ -1991,7 +1996,7 @@
 
                 <div class="field amount-field">
                     <label for="amount">مبلغ (تومان)</label>
-                    <input type="text" id="amount" class="money-input" inputmode="numeric" autocomplete="off">
+                    <input type="text" id="amount" class="money-input" inputmode="numeric" autocomplete="off" lang="fa">
                 </div>
 
                 <div class="field">
@@ -2222,7 +2227,7 @@
                 </div>
                 <div class="field amount-field">
                     <label for="editAmount">مبلغ</label>
-                    <input type="text" id="editAmount" class="money-input" inputmode="numeric" autocomplete="off">
+                    <input type="text" id="editAmount" class="money-input" inputmode="numeric" autocomplete="off" lang="fa">
                 </div>
                 <div class="field">
                     <label for="dateEditBtn">تاریخ</label>
@@ -2472,12 +2477,19 @@
                     .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
                     .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
             }
+            function toFaDigits(str) {
+                return String(str ?? '').replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+            }
+            function isDigitChar(ch) {
+                return /[0-9۰-۹٠-٩]/.test(ch);
+            }
             function onlyDigits(str) {
                 return toEnglishDigits(str).replace(/\D/g, '');
             }
             function formatThousands(digits) {
                 if (!digits) return '';
-                return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                const grouped = String(digits).replace(/\B(?=(\d{3})+(?!\d))/g, '٬');
+                return toFaDigits(grouped);
             }
             function parseAmount(str) {
                 const digits = onlyDigits(str);
@@ -2498,7 +2510,7 @@
                         let pos = formatted.length;
                         let count = 0;
                         for (let i = 0; i < formatted.length; i++) {
-                            if (/\d/.test(formatted[i])) count++;
+                            if (isDigitChar(formatted[i])) count++;
                             if (count === digitsBefore) { pos = i + 1; break; }
                         }
                         if (digitsBefore === 0) pos = 0;
@@ -2509,9 +2521,6 @@
                         el.value = formatThousands(digits.replace(/^0+(?=\d)/, ''));
                     });
                 });
-            }
-            function toFaDigits(str) {
-                return String(str ?? '').replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
             }
             function formatDateFa(y, m, d) {
                 return toFaDigits(formatDate(y, m, d));
