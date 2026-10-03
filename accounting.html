@@ -7,16 +7,27 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
     <title>حساب‌یار | مدیریت مالی شخصی</title>
     <meta name="description" content="مدیریت شخصی درآمد، هزینه و قرض — آفلاین و نصب‌پذیر">
-    <meta name="theme-color" content="#5b21b6">
+    <meta name="theme-color" content="#5b21b6" id="metaThemeColor">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" id="metaStatusBar">
     <meta name="apple-mobile-web-app-title" content="حساب‌یار">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png">
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('hesabyar_theme');
+                if (t !== 'light' && t !== 'dark') {
+                    t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
     <script src="js/Dexie.js"></script>
     <link href="style/css/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <style>
@@ -48,6 +59,68 @@
             --shadow-soft: 0 1px 0 rgba(26, 21, 37, 0.04);
             --ease: cubic-bezier(0.22, 1, 0.36, 1);
             --font: 'Vazirmatn', Tahoma, 'Segoe UI', sans-serif;
+            --bg-grad:
+                radial-gradient(1200px 600px at 100% -10%, rgba(91, 33, 182, 0.10), transparent 55%),
+                radial-gradient(900px 500px at -10% 30%, rgba(124, 58, 237, 0.07), transparent 50%),
+                linear-gradient(180deg, #f3effa 0%, var(--surface) 40%, #efeaf7 100%);
+            --grid-line: rgba(21, 32, 43, 0.03);
+            --overlay: rgba(26, 21, 37, 0.45);
+            --focus-ring: rgba(91, 33, 182, 0.14);
+            --placeholder: #9aa8b5;
+            --input-focus-bg: #ffffff;
+            --chip-hover-bg: #fbfcfd;
+            --chip-hover-border: #c4b8d4;
+            --btn-secondary-hover: #f3effa;
+            --tab-hover-bg: rgba(21, 32, 43, 0.03);
+            --nav-bg: rgba(255, 255, 255, 0.94);
+            --empty-bg: rgba(255, 255, 255, 0.55);
+            --disabled-bg: #f1f5f9;
+            --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7c8c' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+            --theme-meta: #5b21b6;
+            color-scheme: light;
+        }
+
+        html[data-theme="dark"] {
+            --ink: #f1ebff;
+            --ink-soft: #c9bddf;
+            --muted: #9a8cb3;
+            --line: #3a314d;
+            --line-soft: #2a2338;
+            --surface: #140f1c;
+            --surface-raised: #1c1629;
+            --accent: #8b5cf6;
+            --accent-hover: #a78bfa;
+            --accent-deep: #7c3aed;
+            --accent-soft: rgba(139, 92, 246, 0.18);
+            --accent-mist: rgba(139, 92, 246, 0.14);
+            --danger: #fb923c;
+            --danger-soft: rgba(251, 146, 60, 0.14);
+            --success: #34d399;
+            --success-soft: rgba(52, 211, 153, 0.14);
+            --warn: #fbbf24;
+            --warn-soft: rgba(251, 191, 36, 0.14);
+            --info: #a78bfa;
+            --info-soft: rgba(167, 139, 250, 0.16);
+            --shadow-soft: 0 1px 0 rgba(0, 0, 0, 0.28);
+            --bg-grad:
+                radial-gradient(1000px 520px at 100% -10%, rgba(124, 58, 237, 0.22), transparent 55%),
+                radial-gradient(800px 460px at -10% 35%, rgba(91, 33, 182, 0.18), transparent 50%),
+                linear-gradient(180deg, #100c18 0%, var(--surface) 42%, #171122 100%);
+            --grid-line: rgba(255, 255, 255, 0.035);
+            --overlay: rgba(8, 6, 14, 0.72);
+            --focus-ring: rgba(139, 92, 246, 0.28);
+            --placeholder: #7d7196;
+            --input-focus-bg: #231b34;
+            --chip-hover-bg: #241c36;
+            --chip-hover-border: #4a3f63;
+            --btn-secondary-hover: #241c36;
+            --tab-hover-bg: rgba(255, 255, 255, 0.04);
+            --nav-bg: rgba(22, 17, 32, 0.92);
+            --empty-bg: rgba(255, 255, 255, 0.04);
+            --disabled-bg: #1a1524;
+            --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a899c0' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+            --theme-meta: #1c1629;
+            color-scheme: dark;
         }
 
         * {
@@ -68,10 +141,7 @@
         body {
             font-family: var(--font);
             color: var(--ink);
-            background:
-                radial-gradient(1200px 600px at 100% -10%, rgba(91, 33, 182, 0.10), transparent 55%),
-                radial-gradient(900px 500px at -10% 30%, rgba(124, 58, 237, 0.07), transparent 50%),
-                linear-gradient(180deg, #f3effa 0%, var(--surface) 40%, #efeaf7 100%);
+            background: var(--bg-grad);
             min-height: 100vh;
             min-height: 100dvh;
             padding: 0 0 calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 8px);
@@ -79,6 +149,7 @@
             -webkit-font-smoothing: antialiased;
             overflow-x: clip;
             touch-action: manipulation;
+            transition: background 0.25s var(--ease), color 0.25s var(--ease);
         }
 
         body::before {
@@ -88,8 +159,8 @@
             pointer-events: none;
             opacity: 0.35;
             background-image:
-                linear-gradient(rgba(21, 32, 43, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(21, 32, 43, 0.03) 1px, transparent 1px);
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
             background-size: 28px 28px;
             mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 70%);
             z-index: 0;
@@ -173,11 +244,45 @@
             font-weight: 600;
             color: var(--accent);
             background: var(--accent-soft);
-            border: 1px solid rgba(91, 33, 182, 0.16);
+            border: 1px solid var(--accent-mist);
             padding: 6px 10px;
             border-radius: var(--radius-sm);
             white-space: nowrap;
         }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle {
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: var(--surface-raised);
+            color: var(--accent);
+            box-shadow: var(--shadow-soft);
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .theme-toggle .icon-sun { display: none; }
+        .theme-toggle .icon-moon { display: block; }
+        html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+        html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
         /* Panels */
         .panel {
@@ -273,12 +378,12 @@
 
         select:disabled {
             opacity: 0.72;
-            background-color: #f1f5f9;
+            background-color: var(--disabled-bg);
             color: var(--muted);
         }
 
         select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7c8c' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+            background-image: var(--select-chevron);
             background-repeat: no-repeat;
             background-position: left 14px center;
             padding-left: 36px;
@@ -288,12 +393,12 @@
         select:focus,
         textarea:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.14);
-            background: #fff;
+            box-shadow: 0 0 0 3px var(--focus-ring);
+            background: var(--input-focus-bg);
         }
 
         input::placeholder {
-            color: #9aa8b5;
+            color: var(--placeholder);
         }
 
         .amount-field input {
@@ -344,7 +449,7 @@
 
         .jdp-trigger:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.14);
+            box-shadow: 0 0 0 3px var(--focus-ring);
             outline: none;
         }
 
@@ -366,7 +471,7 @@
             position: fixed;
             inset: 0;
             z-index: 320;
-            background: rgba(26, 21, 37, 0.45);
+            background: var(--overlay);
             backdrop-filter: blur(4px);
             align-items: flex-end;
             justify-content: center;
@@ -472,7 +577,7 @@
         }
 
         .jdp-day.is-muted {
-            color: #c4b8d4;
+            color: var(--muted);
             font-weight: 500;
         }
 
@@ -549,15 +654,15 @@
         }
 
         .type-chip:hover {
-            border-color: #b8c5d1;
-            background: #fbfcfd;
+            border-color: var(--chip-hover-border);
+            background: var(--chip-hover-bg);
         }
 
         .type-chip.active {
             border-color: var(--accent);
             background: var(--accent-soft);
             color: var(--accent);
-            box-shadow: inset 0 0 0 1px rgba(91, 33, 182, 0.18);
+            box-shadow: inset 0 0 0 1px var(--accent-mist);
         }
 
         .type-chip:active {
@@ -612,7 +717,7 @@
         }
 
         .btn-secondary:hover {
-            background: #f8fafc;
+            background: var(--btn-secondary-hover);
         }
 
         .btn-success {
@@ -925,7 +1030,7 @@
         }
 
         .tx-item:hover {
-            border-color: #c9d4df;
+            border-color: var(--chip-hover-border);
         }
 
         .tx-main {
@@ -1026,7 +1131,7 @@
             text-align: center;
             padding: 36px 20px;
             color: var(--muted);
-            background: rgba(255, 255, 255, 0.55);
+            background: var(--empty-bg);
             border: 1px dashed var(--line);
             border-radius: var(--radius);
         }
@@ -1050,7 +1155,7 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.94);
+            background: var(--nav-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-top: 1px solid var(--line);
@@ -1102,7 +1207,7 @@
 
         .tab-item:hover:not(.active) {
             color: var(--ink-soft);
-            background: rgba(21, 32, 43, 0.03);
+            background: var(--tab-hover-bg);
         }
 
         /* Install / backup */
@@ -1318,7 +1423,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(21, 32, 43, 0.45);
+            background: var(--overlay);
             backdrop-filter: blur(4px);
             z-index: 200;
             align-items: flex-end;
@@ -1650,7 +1755,13 @@
                     -->
                 </div>
             </div>
-            <div class="header-chip">دفتر آنلاین</div>
+            <div class="header-actions">
+                <button type="button" class="theme-toggle" id="themeToggle" aria-label="تغییر حالت روشن/تاریک" title="تغییر تم">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 7 7 0 1 0 21 14.5z"/></svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                </button>
+                <div class="header-chip">دفتر آنلاین</div>
+            </div>
         </header>
 
         <div id="installBanner" class="install-banner" role="status">
@@ -1992,6 +2103,42 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const THEME_KEY = 'hesabyar_theme';
+            function getTheme() {
+                return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            }
+            function applyTheme(theme, persist = true) {
+                const next = theme === 'dark' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', next);
+                if (persist) {
+                    try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* ignore */ }
+                }
+                const meta = document.getElementById('metaThemeColor');
+                if (meta) {
+                    meta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--theme-meta').trim() || (next === 'dark' ? '#1c1629' : '#5b21b6'));
+                }
+                const statusBar = document.getElementById('metaStatusBar');
+                if (statusBar) {
+                    statusBar.setAttribute('content', next === 'dark' ? 'black-translucent' : 'default');
+                }
+                const btn = document.getElementById('themeToggle');
+                if (btn) {
+                    btn.setAttribute('aria-label', next === 'dark' ? 'تغییر به حالت روشن' : 'تغییر به حالت تاریک');
+                    btn.title = next === 'dark' ? 'حالت روشن' : 'حالت تاریک';
+                }
+            }
+            applyTheme(getTheme(), false);
+            document.getElementById('themeToggle')?.addEventListener('click', () => {
+                applyTheme(getTheme() === 'dark' ? 'light' : 'dark', true);
+            });
+            try {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (!localStorage.getItem(THEME_KEY)) {
+                        applyTheme(e.matches ? 'dark' : 'light', false);
+                    }
+                });
+            } catch (e) { /* ignore */ }
+
             const db = new Dexie('FinanceDB_V3');
             const DEFAULT_BANKS = ['ملت', 'ملی', 'صادرات', 'تجارت', 'رفاه', 'پاسارگاد', 'سامان', 'نقدی', 'سایر'];
             db.version(1).stores({
