@@ -303,26 +303,6 @@
             font-variant-numeric: tabular-nums;
         }
 
-        .date-selectors {
-            display: grid;
-            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr) minmax(0, 0.85fr);
-            gap: 6px;
-            width: 100%;
-            min-width: 0;
-        }
-
-        .date-selectors select {
-            text-align: center;
-            text-align-last: center;
-            padding: 12px 6px;
-            padding-left: 22px;
-            font-size: 0.8rem;
-            background-position: left 8px center;
-            background-size: 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .date-range {
             display: flex;
             flex-direction: column;
@@ -340,6 +320,205 @@
             font-size: 0.78rem;
             font-weight: 600;
             color: var(--muted);
+        }
+
+        .jdp-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 13px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--line);
+            background: var(--surface-raised);
+            color: var(--ink);
+            font-family: var(--font);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: none;
+            min-height: 48px;
+            text-align: right;
+        }
+
+        .jdp-trigger:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.14);
+            outline: none;
+        }
+
+        .jdp-trigger svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .jdp-trigger-text {
+            flex: 1;
+            min-width: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .jdp-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 320;
+            background: rgba(26, 21, 37, 0.45);
+            backdrop-filter: blur(4px);
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .jdp-overlay.open {
+            display: flex;
+        }
+
+        .jdp-sheet {
+            width: 100%;
+            max-width: 420px;
+            background: var(--surface-raised);
+            border-radius: 20px 20px 0 0;
+            padding: 14px 14px calc(16px + env(safe-area-inset-bottom, 0px));
+            box-shadow: 0 -12px 40px rgba(26, 21, 37, 0.18);
+            animation: sheetUp 0.3s var(--ease);
+        }
+
+        .jdp-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--line);
+            border-radius: 4px;
+            margin: 0 auto 12px;
+        }
+
+        .jdp-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .jdp-nav {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--ink);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .jdp-nav svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .jdp-title {
+            flex: 1;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .jdp-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .jdp-weekdays span {
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--muted);
+            padding: 6px 0;
+        }
+
+        .jdp-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .jdp-day {
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--ink);
+            font-family: var(--font);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: none;
+            padding: 0;
+            min-height: 40px;
+        }
+
+        .jdp-day:hover:not(:disabled):not(.is-selected) {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .jdp-day.is-muted {
+            color: #c4b8d4;
+            font-weight: 500;
+        }
+
+        .jdp-day.is-today:not(.is-selected) {
+            box-shadow: inset 0 0 0 1.5px var(--accent);
+            color: var(--accent);
+        }
+
+        .jdp-day.is-selected {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .jdp-day:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+
+        .jdp-footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .jdp-footer .btn-primary,
+        .jdp-footer .btn-secondary {
+            width: 100%;
+            margin: 0;
+            min-height: 44px;
+        }
+
+        @media (min-width: 640px) {
+            .jdp-overlay {
+                align-items: center;
+                padding: 24px;
+            }
+
+            .jdp-sheet {
+                border-radius: 16px;
+                padding: 18px;
+            }
+
+            .jdp-handle {
+                display: none;
+            }
         }
 
         /* Type chips */
@@ -1389,17 +1568,6 @@
                 grid-template-columns: 1fr;
             }
 
-            .date-selectors {
-                grid-template-columns: 1fr;
-            }
-
-            .date-selectors select {
-                text-align: right;
-                text-align-last: right;
-                padding-left: 36px;
-                background-position: left 14px center;
-            }
-
             .row > .btn-primary,
             .row > .btn-add-person {
                 width: 100%;
@@ -1476,12 +1644,11 @@
                 </div>
 
                 <div class="field">
-                    <label>تاریخ</label>
-                    <div class="date-selectors">
-                        <select id="yearSelect" aria-label="سال"></select>
-                        <select id="monthSelect" aria-label="ماه"></select>
-                        <select id="daySelect" aria-label="روز"></select>
-                    </div>
+                    <label for="dateAddBtn">تاریخ</label>
+                    <button type="button" class="jdp-trigger" id="dateAddBtn" aria-label="انتخاب تاریخ">
+                        <span class="jdp-trigger-text" id="dateAddText">—</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                    </button>
                 </div>
 
                 <div class="field">
@@ -1544,19 +1711,17 @@
                     <div class="date-range">
                         <div class="date-range-row">
                             <span>از</span>
-                            <div class="date-selectors">
-                                <select id="fromYearSelect" aria-label="از سال"></select>
-                                <select id="fromMonthSelect" aria-label="از ماه"></select>
-                                <select id="fromDaySelect" aria-label="از روز"></select>
-                            </div>
+                            <button type="button" class="jdp-trigger" id="dateFromBtn" aria-label="از تاریخ">
+                                <span class="jdp-trigger-text" id="dateFromText">—</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                            </button>
                         </div>
                         <div class="date-range-row">
                             <span>تا</span>
-                            <div class="date-selectors">
-                                <select id="toYearSelect" aria-label="تا سال"></select>
-                                <select id="toMonthSelect" aria-label="تا ماه"></select>
-                                <select id="toDaySelect" aria-label="تا روز"></select>
-                            </div>
+                            <button type="button" class="jdp-trigger" id="dateToBtn" aria-label="تا تاریخ">
+                                <span class="jdp-trigger-text" id="dateToText">—</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1710,12 +1875,11 @@
                     <input type="text" id="editAmount" class="money-input" inputmode="numeric" autocomplete="off">
                 </div>
                 <div class="field">
-                    <label>تاریخ</label>
-                    <div class="date-selectors">
-                        <select id="editYear" aria-label="سال ویرایش"></select>
-                        <select id="editMonth" aria-label="ماه ویرایش"></select>
-                        <select id="editDay" aria-label="روز ویرایش"></select>
-                    </div>
+                    <label for="dateEditBtn">تاریخ</label>
+                    <button type="button" class="jdp-trigger" id="dateEditBtn" aria-label="انتخاب تاریخ ویرایش">
+                        <span class="jdp-trigger-text" id="dateEditText">—</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                    </button>
                 </div>
                 <div class="field">
                     <label for="editBank">بانک</label>
@@ -1752,6 +1916,30 @@
             <div class="confirm-actions">
                 <button type="button" class="btn-secondary" id="confirmCancelBtn">انصراف</button>
                 <button type="button" class="btn-primary" id="confirmOkBtn">تأیید</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- دیت‌پیکر شمسی -->
+    <div id="jdpOverlay" class="jdp-overlay" role="dialog" aria-modal="true" aria-label="انتخاب تاریخ شمسی">
+        <div class="jdp-sheet">
+            <div class="jdp-handle" aria-hidden="true"></div>
+            <div class="jdp-head">
+                <button type="button" class="jdp-nav" id="jdpPrev" aria-label="ماه قبل">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <div class="jdp-title" id="jdpTitle">—</div>
+                <button type="button" class="jdp-nav" id="jdpNext" aria-label="ماه بعد">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+            </div>
+            <div class="jdp-weekdays" aria-hidden="true">
+                <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+            </div>
+            <div class="jdp-grid" id="jdpGrid"></div>
+            <div class="jdp-footer">
+                <button type="button" class="btn-secondary" id="jdpTodayBtn">امروز</button>
+                <button type="button" class="btn-primary" id="jdpConfirmBtn">تأیید</button>
             </div>
         </div>
     </div>
@@ -1854,7 +2042,7 @@
             function isLeapYear(y) { return [1, 5, 9, 13, 17, 22, 26, 30].includes(y % 33); }
             function getMonthDays(y, m) { return m <= 6 ? 31 : m <= 11 ? 30 : isLeapYear(y) ? 30 : 29; }
             function formatDate(y, m, d) { return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`; }
-            function parseDate(str) { const p = str.split('/'); return { year: +p[0], month: +p[1], day: +p[2] }; }
+            function parseDate(str) { const p = String(str || '').split('/'); return { year: +p[0], month: +p[1], day: +p[2] }; }
             function escapeHtml(str) {
                 return String(str ?? '')
                     .replace(/&/g, '&amp;')
@@ -1863,7 +2051,6 @@
                     .replace(/"/g, '&quot;')
                     .replace(/'/g, '&#39;');
             }
-
             function toEnglishDigits(str) {
                 return String(str ?? '')
                     .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
@@ -1907,65 +2094,183 @@
                     });
                 });
             }
+            function toFaDigits(str) {
+                return String(str ?? '').replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+            }
+            function formatDateFa(y, m, d) {
+                return toFaDigits(formatDate(y, m, d));
+            }
+            function div(a, b) { return Math.trunc(a / b); }
+            function mod(a, b) { return a - Math.trunc(a / b) * b; }
+            function toGregorian(jy, jm, jd) {
+                jy = +jy; jm = +jm; jd = +jd;
+                const jy2 = jy - 979;
+                let days = 365 * jy2 + div(jy2, 33) * 8 + div(mod(jy2, 33) + 3, 4) + 78 + jd
+                    + (jm < 7 ? (jm - 1) * 31 : ((jm - 7) * 30 + 186));
+                let gy = 1600 + 400 * div(days, 146097);
+                days = mod(days, 146097);
+                let leap = true;
+                if (days >= 36525) {
+                    days--;
+                    gy += 100 * div(days, 36524);
+                    days = mod(days, 36524);
+                    if (days >= 365) days++;
+                    else leap = false;
+                }
+                gy += 4 * div(days, 1461);
+                days = mod(days, 1461);
+                if (days >= 366) {
+                    leap = false;
+                    days--;
+                    gy += div(days, 365);
+                    days = mod(days, 365);
+                }
+                const sal = [0, 31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                let gm = 1;
+                for (; gm <= 12 && days >= sal[gm]; gm++) days -= sal[gm];
+                return { gy, gm, gd: days + 1 };
+            }
+            function jalaliWeekStartOffset(jy, jm) {
+                const g = toGregorian(jy, jm, 1);
+                const wd = new Date(g.gy, g.gm - 1, g.gd).getDay(); // 0=Sun
+                return (wd + 1) % 7; // Saturday=0
+            }
 
-            function fillYear(sel, def) {
-                sel.innerHTML = '';
-                for (let y = 1400; y <= 1430; y++) {
-                    const o = document.createElement('option');
-                    o.value = y; o.textContent = y; if (y === def) o.selected = true;
-                    sel.appendChild(o);
-                }
+            const dateFields = {
+                add: { value: null, btn: null, text: null },
+                from: { value: null, btn: null, text: null },
+                to: { value: null, btn: null, text: null },
+                edit: { value: null, btn: null, text: null }
+            };
+
+            function setDateField(key, dateObj) {
+                const field = dateFields[key];
+                field.value = { year: dateObj.year, month: dateObj.month, day: dateObj.day };
+                if (field.text) field.text.textContent = formatDateFa(dateObj.year, dateObj.month, dateObj.day);
+                if (field.btn) field.btn.dataset.date = formatDate(dateObj.year, dateObj.month, dateObj.day);
             }
-            function fillMonth(sel, def) {
-                sel.innerHTML = '';
-                for (let m = 1; m <= 12; m++) {
-                    const o = document.createElement('option');
-                    o.value = m; o.textContent = monthNames[m - 1]; if (m === def) o.selected = true;
-                    sel.appendChild(o);
-                }
+            function getDateField(key) {
+                return dateFields[key].value;
             }
-            function updateDays(daySel, yearSel, monthSel, preferredDay) {
-                const y = +yearSel.value, m = +monthSel.value, max = getMonthDays(y, m);
-                let cur = preferredDay != null ? +preferredDay : (+daySel.value || 1);
-                if (cur > max) cur = max;
-                if (cur < 1) cur = 1;
-                daySel.innerHTML = '';
-                for (let d = 1; d <= max; d++) {
-                    const o = document.createElement('option');
-                    o.value = d; o.textContent = d;
-                    if (d === cur) o.selected = true;
-                    daySel.appendChild(o);
+            function getDateFieldStr(key) {
+                const v = dateFields[key].value;
+                return v ? formatDate(v.year, v.month, v.day) : '';
+            }
+
+            const jdp = {
+                overlay: null,
+                grid: null,
+                title: null,
+                activeKey: null,
+                viewYear: 1400,
+                viewMonth: 1,
+                temp: null
+            };
+
+            function openJalaliPicker(key) {
+                const current = dateFields[key].value || getToday();
+                jdp.activeKey = key;
+                jdp.temp = { ...current };
+                jdp.viewYear = current.year;
+                jdp.viewMonth = current.month;
+                renderJalaliPicker();
+                jdp.overlay.classList.add('open');
+            }
+            function closeJalaliPicker() {
+                jdp.overlay.classList.remove('open');
+                jdp.activeKey = null;
+            }
+            function shiftJalaliMonth(delta) {
+                let y = jdp.viewYear, m = jdp.viewMonth + delta;
+                if (m < 1) { m = 12; y--; }
+                if (m > 12) { m = 1; y++; }
+                if (y < 1400 || y > 1430) return;
+                jdp.viewYear = y;
+                jdp.viewMonth = m;
+                renderJalaliPicker();
+            }
+            function renderJalaliPicker() {
+                const y = jdp.viewYear, m = jdp.viewMonth;
+                jdp.title.textContent = `${monthNames[m - 1]} ${toFaDigits(y)}`;
+                const daysInMonth = getMonthDays(y, m);
+                const offset = jalaliWeekStartOffset(y, m);
+                const today = getToday();
+                const selected = jdp.temp;
+                jdp.grid.innerHTML = '';
+
+                for (let i = 0; i < offset; i++) {
+                    const empty = document.createElement('button');
+                    empty.type = 'button';
+                    empty.className = 'jdp-day is-muted';
+                    empty.disabled = true;
+                    empty.textContent = '';
+                    jdp.grid.appendChild(empty);
+                }
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'jdp-day';
+                    btn.textContent = toFaDigits(d);
+                    if (selected && selected.year === y && selected.month === m && selected.day === d) btn.classList.add('is-selected');
+                    if (today.year === y && today.month === m && today.day === d) btn.classList.add('is-today');
+                    btn.addEventListener('click', () => {
+                        jdp.temp = { year: y, month: m, day: d };
+                        renderJalaliPicker();
+                    });
+                    jdp.grid.appendChild(btn);
                 }
             }
 
-            function setJalaliDate(yearSel, monthSel, daySel, dateObj) {
-                fillYear(yearSel, dateObj.year);
-                fillMonth(monthSel, dateObj.month);
-                updateDays(daySel, yearSel, monthSel, dateObj.day);
+            function initJalaliPickers() {
+                jdp.overlay = document.getElementById('jdpOverlay');
+                jdp.grid = document.getElementById('jdpGrid');
+                jdp.title = document.getElementById('jdpTitle');
+
+                dateFields.add.btn = document.getElementById('dateAddBtn');
+                dateFields.add.text = document.getElementById('dateAddText');
+                dateFields.from.btn = document.getElementById('dateFromBtn');
+                dateFields.from.text = document.getElementById('dateFromText');
+                dateFields.to.btn = document.getElementById('dateToBtn');
+                dateFields.to.text = document.getElementById('dateToText');
+                dateFields.edit.btn = document.getElementById('dateEditBtn');
+                dateFields.edit.text = document.getElementById('dateEditText');
+
+                Object.keys(dateFields).forEach(key => {
+                    dateFields[key].btn.addEventListener('click', () => openJalaliPicker(key));
+                });
+
+                document.getElementById('jdpPrev').onclick = () => shiftJalaliMonth(-1);
+                document.getElementById('jdpNext').onclick = () => shiftJalaliMonth(1);
+                document.getElementById('jdpTodayBtn').onclick = () => {
+                    const t = getToday();
+                    jdp.temp = { ...t };
+                    jdp.viewYear = t.year;
+                    jdp.viewMonth = t.month;
+                    renderJalaliPicker();
+                };
+                document.getElementById('jdpConfirmBtn').onclick = () => {
+                    if (jdp.activeKey && jdp.temp) setDateField(jdp.activeKey, jdp.temp);
+                    closeJalaliPicker();
+                };
+                jdp.overlay.addEventListener('click', (e) => {
+                    if (e.target === jdp.overlay) closeJalaliPicker();
+                });
+
+                const today = getToday();
+                setDateField('add', today);
+                setDateField('from', { year: today.year, month: 1, day: 1 });
+                setDateField('to', today);
+                setDateField('edit', today);
             }
 
             const els = {
-                yearSelect: document.getElementById('yearSelect'), monthSelect: document.getElementById('monthSelect'), daySelect: document.getElementById('daySelect'),
-                fromYear: document.getElementById('fromYearSelect'), fromMonth: document.getElementById('fromMonthSelect'), fromDay: document.getElementById('fromDaySelect'),
-                toYear: document.getElementById('toYearSelect'), toMonth: document.getElementById('toMonthSelect'), toDay: document.getElementById('toDaySelect'),
-                editYear: document.getElementById('editYear'), editMonth: document.getElementById('editMonth'), editDay: document.getElementById('editDay'),
-                personSelect: document.getElementById('personSelect'), reportPerson: document.getElementById('reportPerson'), editPersonId: document.getElementById('editPersonId'),
+                personSelect: document.getElementById('personSelect'),
+                reportPerson: document.getElementById('reportPerson'),
+                editPersonId: document.getElementById('editPersonId'),
             };
 
-            const today = getToday();
-            setJalaliDate(els.yearSelect, els.monthSelect, els.daySelect, today);
-            fillYear(els.fromYear, today.year); fillMonth(els.fromMonth, 1); updateDays(els.fromDay, els.fromYear, els.fromMonth, 1);
-            setJalaliDate(els.toYear, els.toMonth, els.toDay, today);
-            setJalaliDate(els.editYear, els.editMonth, els.editDay, today);
-
-            els.yearSelect.onchange = () => updateDays(els.daySelect, els.yearSelect, els.monthSelect);
-            els.monthSelect.onchange = () => updateDays(els.daySelect, els.yearSelect, els.monthSelect);
-            els.fromYear.onchange = () => updateDays(els.fromDay, els.fromYear, els.fromMonth);
-            els.fromMonth.onchange = () => updateDays(els.fromDay, els.fromYear, els.fromMonth);
-            els.toYear.onchange = () => updateDays(els.toDay, els.toYear, els.toMonth);
-            els.toMonth.onchange = () => updateDays(els.toDay, els.toYear, els.toMonth);
-            els.editYear.onchange = () => updateDays(els.editDay, els.editYear, els.editMonth);
-            els.editMonth.onchange = () => updateDays(els.editDay, els.editYear, els.editMonth);
+            initJalaliPickers();
 
             // Type chips sync
             const transType = document.getElementById('transType');
@@ -2124,8 +2429,9 @@
                 const amount = parseAmount(document.getElementById('amount').value);
                 const desc = document.getElementById('desc').value;
                 const bank = document.getElementById('bankSelect').value;
-                const y = +els.yearSelect.value, m = +els.monthSelect.value, d = +els.daySelect.value;
+                const dateStr = getDateFieldStr('add');
                 if (!amount || amount <= 0) return notify('مبلغ معتبر وارد کنید', 'warn');
+                if (!dateStr) return notify('تاریخ را انتخاب کنید', 'warn');
                 if (['debt_taken', 'debt_given', 'debt_taken_settle', 'debt_given_settle'].includes(type) && !personId) {
                     const hasPersons = (await db.persons.count()) > 0;
                     return notify(
@@ -2138,10 +2444,10 @@
                 let final = amount;
                 if (type === 'expense' || type === 'debt_given' || type === 'debt_taken_settle') final = -amount;
                 else if (type === 'debt_given_settle') final = amount;
-                await db.transactions.add({ date: formatDate(y, m, d), personId, type, amount: final, description: desc, bank });
+                await db.transactions.add({ date: dateStr, personId, type, amount: final, description: desc, bank });
                 document.getElementById('amount').value = '';
                 document.getElementById('desc').value = '';
-                setJalaliDate(els.yearSelect, els.monthSelect, els.daySelect, getToday());
+                setDateField('add', getToday());
                 loadTransactions();
                 notify('تراکنش ثبت شد', 'success');
             };
@@ -2159,8 +2465,10 @@
                         'warn'
                     );
                 }
-                const from = formatDate(+els.fromYear.value, +els.fromMonth.value, +els.fromDay.value);
-                const to = formatDate(+els.toYear.value, +els.toMonth.value, +els.toDay.value);
+                const from = getDateFieldStr('from');
+                const to = getDateFieldStr('to');
+                if (!from || !to) return notify('بازه تاریخ را انتخاب کنید', 'warn');
+                if (from > to) return notify('تاریخ شروع نباید بعد از تاریخ پایان باشد', 'warn');
                 const all = await db.transactions.where('personId').equals(personId).toArray();
                 const filtered = all.filter(t => t.date >= from && t.date <= to);
 
@@ -2278,9 +2586,7 @@
                 setMoneyInput(document.getElementById('editAmount'), Math.abs(t.amount));
                 document.getElementById('editBank').value = t.bank || '';
                 document.getElementById('editDesc').value = t.description || '';
-                fillYear(els.editYear, d.year); fillMonth(els.editMonth, d.month);
-                updateDays(els.editDay, els.editYear, els.editMonth);
-                els.editDay.value = d.day;
+                setDateField('edit', d);
                 document.getElementById('editModal').classList.add('open');
                 document.getElementById('editModal').style.display = 'flex';
             };
@@ -2291,12 +2597,13 @@
                 const amount = parseAmount(document.getElementById('editAmount').value);
                 const bank = document.getElementById('editBank').value;
                 const desc = document.getElementById('editDesc').value;
-                const y = +els.editYear.value, m = +els.editMonth.value, d = +els.editDay.value;
+                const dateStr = getDateFieldStr('edit');
                 if (!amount) return notify('مبلغ وارد شود', 'warn');
+                if (!dateStr) return notify('تاریخ را انتخاب کنید', 'warn');
                 let final = amount;
                 if (type === 'expense' || type === 'debt_given' || type === 'debt_taken_settle') final = -amount;
                 else if (type === 'debt_given_settle') final = amount;
-                await db.transactions.update(id, { date: formatDate(y, m, d), type, personId, amount: final, bank, description: desc });
+                await db.transactions.update(id, { date: dateStr, type, personId, amount: final, bank, description: desc });
                 closeModal(); loadTransactions();
                 notify('تغییرات ذخیره شد', 'success');
             };
@@ -2462,6 +2769,10 @@
             });
             window.addEventListener('keydown', (e) => {
                 if (e.key !== 'Escape') return;
+                if (jdp.overlay && jdp.overlay.classList.contains('open')) {
+                    closeJalaliPicker();
+                    return;
+                }
                 const confirmModal = document.getElementById('confirmModal');
                 if (confirmModal.classList.contains('open')) {
                     document.getElementById('confirmCancelBtn').click();
