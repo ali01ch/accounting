@@ -739,6 +739,64 @@
             transform: none;
         }
 
+        .person-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-default-bank {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--muted);
+            border-radius: var(--radius-sm);
+            min-height: 36px;
+            padding: 0 10px;
+            font-family: var(--font);
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-default-bank.is-active,
+        .btn-default-bank:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .bank-default-badge {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            margin-top: 2px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        .defs-section {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--line);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .defs-section .panel-head {
+            margin-bottom: 0;
+        }
+
+        .defs-section .panel-head h2 {
+            font-size: 1.05rem;
+        }
+
         /* Report */
         .report-card {
             background: var(--surface-raised);
@@ -1634,7 +1692,7 @@
                 <div class="field">
                     <label for="personSelect">شخص مرتبط</label>
                     <select id="personSelect">
-                        <option value="">ابتدا از تب اشخاص، فردی اضافه کنید</option>
+                        <option value="">ابتدا از تب اطلاعات اولیه، فردی اضافه کنید</option>
                     </select>
                     <span class="field-hint">برای قرض و تسویه، انتخاب شخص الزامی است.</span>
                 </div>
@@ -1654,18 +1712,7 @@
 
                 <div class="field">
                     <label for="bankSelect">بانک / حساب</label>
-                    <select id="bankSelect">
-                        <option value="">انتخاب کنید</option>
-                        <option value="ملت">ملت</option>
-                        <option value="ملی">ملی</option>
-                        <option value="صادرات">صادرات</option>
-                        <option value="تجارت">تجارت</option>
-                        <option value="رفاه">رفاه</option>
-                        <option value="پاسارگاد">پاسارگاد</option>
-                        <option value="سامان">سامان</option>
-                        <option value="نقدی">نقدی</option>
-                        <option value="سایر">سایر</option>
-                    </select>
+                    <select id="bankSelect"></select>
                 </div>
 
                 <div class="field">
@@ -1677,8 +1724,8 @@
             </div>
         </section>
 
-        <!-- تب اشخاص -->
-        <section id="tab-persons" class="panel" aria-label="مدیریت اشخاص">
+        <!-- تب ورود اطلاعات اولیه (اشخاص و بانک‌ها) -->
+        <section id="tab-persons" class="panel" aria-label="ورود اطلاعات اولیه اشخاص و بانک‌ها">
             <div class="panel-head">
                 <h2>اشخاص</h2>
                 <p>افراد مرتبط با قرض و تسویه را اینجا مدیریت کنید.</p>
@@ -1691,6 +1738,22 @@
 
             <div id="personsList" class="person-list">
                 <div class="empty-state"><strong>در حال بارگذاری</strong><p>لطفاً صبر کنید…</p></div>
+            </div>
+
+            <div class="defs-section">
+                <div class="panel-head">
+                    <h2>بانک‌ها / حساب‌ها</h2>
+                    <p>بانک‌های خود را تعریف کنید و یکی را به‌عنوان پیش‌فرض بگذارید.</p>
+                </div>
+
+                <div class="row">
+                    <input type="text" id="newBankName" placeholder="نام بانک یا حساب جدید">
+                    <button id="addBankBtn" class="btn-primary btn-add-person" type="button">افزودن</button>
+                </div>
+
+                <div id="banksList" class="person-list">
+                    <div class="empty-state"><strong>در حال بارگذاری</strong><p>لطفاً صبر کنید…</p></div>
+                </div>
             </div>
         </section>
 
@@ -1752,15 +1815,6 @@
                     </select>
                     <select id="filterBank" aria-label="فیلتر بانک">
                         <option value="all">همه بانک‌ها</option>
-                        <option value="ملت">ملت</option>
-                        <option value="ملی">ملی</option>
-                        <option value="صادرات">صادرات</option>
-                        <option value="تجارت">تجارت</option>
-                        <option value="رفاه">رفاه</option>
-                        <option value="پاسارگاد">پاسارگاد</option>
-                        <option value="سامان">سامان</option>
-                        <option value="نقدی">نقدی</option>
-                        <option value="سایر">سایر</option>
                     </select>
                 </div>
                 <div class="toolbar-actions">
@@ -1787,7 +1841,7 @@
 
             <div class="data-card">
                 <h3>پشتیبان کامل</h3>
-                <p>فایل JSON شامل همه اشخاص و تراکنش‌ها. این فایل را در جای امن نگه دارید.</p>
+                <p>فایل JSON شامل همه اشخاص، بانک‌ها و تراکنش‌ها. این فایل را در جای امن نگه دارید.</p>
                 <div class="data-actions">
                     <button type="button" id="backupBtn" class="btn-primary">دانلود پشتیبان کامل</button>
                 </div>
@@ -1829,7 +1883,7 @@
             </button>
             <button class="tab-item" data-tab="persons" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                اشخاص
+                اطلاعات اولیه
             </button>
             <button class="tab-item" data-tab="report" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
@@ -1884,18 +1938,7 @@
                 </div>
                 <div class="field">
                     <label for="editBank">بانک</label>
-                    <select id="editBank">
-                        <option value="">انتخاب</option>
-                        <option value="ملت">ملت</option>
-                        <option value="ملی">ملی</option>
-                        <option value="صادرات">صادرات</option>
-                        <option value="تجارت">تجارت</option>
-                        <option value="رفاه">رفاه</option>
-                        <option value="پاسارگاد">پاسارگاد</option>
-                        <option value="سامان">سامان</option>
-                        <option value="نقدی">نقدی</option>
-                        <option value="سایر">سایر</option>
-                    </select>
+                    <select id="editBank"></select>
                 </div>
                 <div class="field">
                     <label for="editDesc">توضیحات</label>
@@ -1950,10 +1993,48 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const db = new Dexie('FinanceDB_V3');
+            const DEFAULT_BANKS = ['ملت', 'ملی', 'صادرات', 'تجارت', 'رفاه', 'پاسارگاد', 'سامان', 'نقدی', 'سایر'];
             db.version(1).stores({
                 transactions: '++id, date, personId, type, amount, description, bank',
                 persons: '++id, name'
             });
+            db.version(2).stores({
+                transactions: '++id, date, personId, type, amount, description, bank',
+                persons: '++id, name',
+                banks: '++id, name',
+                settings: 'key'
+            }).upgrade(async (tx) => {
+                const table = tx.table('banks');
+                if ((await table.count()) === 0) {
+                    await table.bulkAdd(DEFAULT_BANKS.map(name => ({ name })));
+                }
+            });
+
+            async function ensureBanksSeeded() {
+                if ((await db.banks.count()) === 0) {
+                    await db.banks.bulkAdd(DEFAULT_BANKS.map(name => ({ name })));
+                }
+            }
+
+            async function getDefaultBankId() {
+                const row = await db.settings.get('defaultBankId');
+                return row && row.value != null ? Number(row.value) : null;
+            }
+
+            async function getDefaultBankName() {
+                const id = await getDefaultBankId();
+                if (!id) return '';
+                const bank = await db.banks.get(id);
+                return bank ? bank.name : '';
+            }
+
+            async function setDefaultBankId(id) {
+                if (id == null) {
+                    await db.settings.delete('defaultBankId');
+                    return;
+                }
+                await db.settings.put({ key: 'defaultBankId', value: Number(id) });
+            }
 
             const toastStack = document.getElementById('toastStack');
             const TOAST_ICONS = {
@@ -2269,6 +2350,9 @@
                 personSelect: document.getElementById('personSelect'),
                 reportPerson: document.getElementById('reportPerson'),
                 editPersonId: document.getElementById('editPersonId'),
+                bankSelect: document.getElementById('bankSelect'),
+                editBank: document.getElementById('editBank'),
+                filterBank: document.getElementById('filterBank'),
             };
 
             initJalaliPickers();
@@ -2301,7 +2385,10 @@
                 tabBtns.forEach(b => b.classList.remove('active'));
                 document.querySelector(`.tab-item[data-tab="${id}"]`).classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                if (id === 'persons') loadPersons();
+                if (id === 'persons') {
+                    loadPersons();
+                    loadBanks();
+                }
                 if (id === 'report') loadReportPersons();
                 if (id === 'all') loadTransactions();
                 if (id === 'data') refreshDataTab();
@@ -2382,10 +2469,10 @@
 
                 const placeholders = {
                     personSelect: empty
-                        ? 'ابتدا از تب اشخاص، فردی اضافه کنید'
+                        ? 'ابتدا از تب اطلاعات اولیه، فردی اضافه کنید'
                         : 'بدون شخص / انتخاب کنید',
                     reportPerson: empty
-                        ? 'هنوز شخصی ثبت نشده — از تب اشخاص اضافه کنید'
+                        ? 'هنوز شخصی ثبت نشده — از تب اطلاعات اولیه اضافه کنید'
                         : 'انتخاب کنید',
                     editPersonId: empty
                         ? 'هنوز شخصی ثبت نشده'
@@ -2423,6 +2510,174 @@
                 notify(`«${name}» اضافه شد`, 'success');
             };
 
+            // Banks
+            async function countBankTransactions(bankName) {
+                const name = String(bankName || '');
+                if (!name) return 0;
+                const all = await db.transactions.toArray();
+                return all.filter(t => (t.bank || '') === name).length;
+            }
+
+            async function loadBanks() {
+                const banks = await db.banks.orderBy('id').toArray();
+                const c = document.getElementById('banksList');
+                if (!banks.length) {
+                    c.innerHTML = `<div class="empty-state"><strong>هنوز بانکی ثبت نشده</strong><p>نام اولین بانک یا حساب را بالا وارد کنید.</p></div>`;
+                    return;
+                }
+                const defaultId = await getDefaultBankId();
+                const linkedCounts = {};
+                await Promise.all(banks.map(async (b) => {
+                    linkedCounts[b.id] = await countBankTransactions(b.name);
+                }));
+
+                c.innerHTML = banks.map(b => {
+                    const initial = escapeHtml(b.name.trim().charAt(0) || '?');
+                    const linked = linkedCounts[b.id] || 0;
+                    const locked = linked > 0;
+                    const isDefault = defaultId === b.id;
+                    const bits = [];
+                    if (isDefault) bits.push(`<span class="bank-default-badge">پیش‌فرض</span>`);
+                    if (locked) bits.push(`<span class="person-lock-hint">${linked.toLocaleString('fa-IR')} تراکنش — تا حذف تراکنش‌ها قابل حذف نیست</span>`);
+                    const meta = bits.join('');
+                    return `<div class="person-item${locked ? ' is-locked' : ''}${isDefault ? ' is-default-bank' : ''}">
+                        <div class="person-meta">
+                            <div class="person-avatar">${initial}</div>
+                            <div class="person-text">
+                                <strong>${escapeHtml(b.name)}</strong>
+                                ${meta}
+                            </div>
+                        </div>
+                        <div class="person-actions">
+                            <button class="btn-default-bank${isDefault ? ' is-active' : ''}" type="button"
+                                onclick="window.setDefaultBank(${b.id})"
+                                aria-label="${isDefault ? 'بانک پیش‌فرض' : 'انتخاب به‌عنوان پیش‌فرض'}"
+                                title="${isDefault ? 'بانک پیش‌فرض' : 'انتخاب به‌عنوان پیش‌فرض'}">${isDefault ? 'پیش‌فرض' : 'پیش‌فرض کن'}</button>
+                            <button class="btn-danger btn-icon" type="button"
+                                onclick="window.deleteBank(${b.id})"
+                                aria-label="${locked ? 'غیرقابل حذف' : 'حذف'}"
+                                title="${locked ? 'این بانک تراکنش دارد' : 'حذف بانک'}"
+                                ${locked ? 'disabled' : ''}>${ICONS.trash}</button>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            window.setDefaultBank = async (id) => {
+                const idNum = Number(id);
+                const bank = await db.banks.get(idNum);
+                if (!bank) return;
+                const current = await getDefaultBankId();
+                if (current === idNum) {
+                    await setDefaultBankId(null);
+                    await loadBanks();
+                    await loadBankSelects();
+                    notify('بانک پیش‌فرض برداشته شد', 'info');
+                    return;
+                }
+                await setDefaultBankId(idNum);
+                await loadBanks();
+                await loadBankSelects();
+                notify(`«${bank.name}» پیش‌فرض شد`, 'success');
+            };
+
+            window.deleteBank = async (id) => {
+                const idNum = Number(id);
+                const bank = await db.banks.get(idNum);
+                if (!bank) return;
+                const linked = await countBankTransactions(bank.name);
+                if (linked > 0) {
+                    return notify(
+                        `این بانک ${linked.toLocaleString('fa-IR')} تراکنش دارد و تا وقتی آن تراکنش‌ها هستند قابل حذف نیست`,
+                        'warn',
+                        4200
+                    );
+                }
+                const ok = await askConfirm({
+                    title: 'حذف بانک',
+                    message: `«${bank.name}» حذف شود؟`,
+                    confirmText: 'حذف',
+                    cancelText: 'انصراف',
+                    danger: true
+                });
+                if (!ok) return;
+                const defaultId = await getDefaultBankId();
+                if (defaultId === idNum) await setDefaultBankId(null);
+                await db.banks.delete(idNum);
+                await loadBanks();
+                await loadBankSelects();
+                notify(`«${bank.name}» حذف شد`, 'success');
+            };
+
+            async function loadBankSelects(preferredName) {
+                const banks = await db.banks.orderBy('id').toArray();
+                const defaultName = preferredName != null ? preferredName : await getDefaultBankName();
+                const empty = !banks.length;
+
+                const fillSelect = (sel, { includeEmpty, emptyLabel, selected }) => {
+                    const prev = selected != null ? selected : sel.value;
+                    sel.innerHTML = '';
+                    if (includeEmpty) {
+                        const o = document.createElement('option');
+                        o.value = '';
+                        o.textContent = emptyLabel;
+                        sel.appendChild(o);
+                    }
+                    banks.forEach(b => {
+                        const opt = document.createElement('option');
+                        opt.value = b.name;
+                        opt.textContent = b.name;
+                        sel.appendChild(opt);
+                    });
+                    sel.disabled = empty;
+                    if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+                    else if (defaultName && [...sel.options].some(o => o.value === defaultName)) sel.value = defaultName;
+                    else if (includeEmpty) sel.value = '';
+                };
+
+                fillSelect(els.bankSelect, {
+                    includeEmpty: true,
+                    emptyLabel: empty ? 'ابتدا از تب اطلاعات اولیه، بانکی اضافه کنید' : 'بدون بانک / انتخاب کنید',
+                    selected: preferredName != null ? preferredName : defaultName
+                });
+                fillSelect(els.editBank, {
+                    includeEmpty: true,
+                    emptyLabel: empty ? 'هنوز بانکی ثبت نشده' : 'انتخاب کنید'
+                });
+
+                const filterPrev = els.filterBank.value || 'all';
+                const usedNames = new Set((await db.transactions.toArray()).map(t => t.bank).filter(Boolean));
+                banks.forEach(b => usedNames.add(b.name));
+                els.filterBank.innerHTML = '';
+                const allOpt = document.createElement('option');
+                allOpt.value = 'all';
+                allOpt.textContent = 'همه بانک‌ها';
+                els.filterBank.appendChild(allOpt);
+                [...usedNames].sort((a, b) => a.localeCompare(b, 'fa')).forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    els.filterBank.appendChild(opt);
+                });
+                if ([...els.filterBank.options].some(o => o.value === filterPrev)) {
+                    els.filterBank.value = filterPrev;
+                } else {
+                    els.filterBank.value = 'all';
+                }
+            }
+
+            document.getElementById('addBankBtn').onclick = async () => {
+                const name = document.getElementById('newBankName').value.trim();
+                if (!name) return notify('نام بانک را وارد کنید', 'warn');
+                if (await db.banks.where('name').equals(name).first()) return notify('این نام تکراری است', 'warn');
+                const id = await db.banks.add({ name });
+                document.getElementById('newBankName').value = '';
+                if (!(await getDefaultBankId())) await setDefaultBankId(id);
+                await loadBanks();
+                await loadBankSelects(name);
+                notify(`«${name}» اضافه شد`, 'success');
+            };
+
             // Add transaction
             document.getElementById('addBtn').onclick = async () => {
                 const type = document.getElementById('transType').value;
@@ -2438,7 +2693,7 @@
                     return notify(
                         hasPersons
                             ? 'برای این نوع تراکنش باید شخص را انتخاب کنید'
-                            : 'ابتدا از تب اشخاص، فردی اضافه کنید',
+                            : 'ابتدا از تب اطلاعات اولیه، فردی اضافه کنید',
                         'warn'
                     );
                 }
@@ -2449,6 +2704,7 @@
                 document.getElementById('amount').value = '';
                 document.getElementById('desc').value = '';
                 setDateField('add', getToday());
+                await loadBankSelects();
                 loadTransactions();
                 notify('تراکنش ثبت شد', 'success');
             };
@@ -2462,7 +2718,7 @@
                 if (!personId) {
                     const hasPersons = (await db.persons.count()) > 0;
                     return notify(
-                        hasPersons ? 'شخص را انتخاب کنید' : 'ابتدا از تب اشخاص، فردی اضافه کنید',
+                        hasPersons ? 'شخص را انتخاب کنید' : 'ابتدا از تب اطلاعات اولیه، فردی اضافه کنید',
                         'warn'
                     );
                 }
@@ -2585,9 +2841,16 @@
                 document.getElementById('editType').value = t.type;
                 els.editPersonId.value = t.personId || '';
                 setMoneyInput(document.getElementById('editAmount'), Math.abs(t.amount));
-                document.getElementById('editBank').value = t.bank || '';
                 document.getElementById('editDesc').value = t.description || '';
                 setDateField('edit', d);
+                await loadBankSelects();
+                if (t.bank && ![...els.editBank.options].some(o => o.value === t.bank)) {
+                    const opt = document.createElement('option');
+                    opt.value = t.bank;
+                    opt.textContent = t.bank;
+                    els.editBank.appendChild(opt);
+                }
+                els.editBank.value = t.bank || '';
                 document.getElementById('editModal').classList.add('open');
                 document.getElementById('editModal').style.display = 'flex';
             };
@@ -2644,9 +2907,10 @@
 
             async function refreshDataTab() {
                 const persons = await db.persons.count();
+                const banks = await db.banks.count();
                 const txs = await db.transactions.count();
                 document.getElementById('storageCounts').innerHTML =
-                    `<strong>${persons.toLocaleString('fa-IR')}</strong> شخص · <strong>${txs.toLocaleString('fa-IR')}</strong> تراکنش ذخیره شده روی این دستگاه`;
+                    `<strong>${persons.toLocaleString('fa-IR')}</strong> شخص · <strong>${banks.toLocaleString('fa-IR')}</strong> بانک · <strong>${txs.toLocaleString('fa-IR')}</strong> تراکنش ذخیره شده روی این دستگاه`;
                 const last = localStorage.getItem(BACKUP_KEY);
                 document.getElementById('backupMeta').innerHTML = last
                     ? `آخرین پشتیبان: <strong>${formatBackupDate(+last)}</strong>`
@@ -2664,12 +2928,16 @@
 
             document.getElementById('backupBtn').onclick = async () => {
                 const persons = await db.persons.toArray();
+                const banks = await db.banks.toArray();
+                const settings = await db.settings.toArray();
                 const transactions = await db.transactions.toArray();
                 const payload = {
                     app: 'hesabyar',
-                    version: 1,
+                    version: 2,
                     exportedAt: new Date().toISOString(),
                     persons,
+                    banks,
+                    settings,
                     transactions
                 };
                 const stamp = new Date().toISOString().slice(0, 10);
@@ -2690,9 +2958,11 @@
                     if (!data || !Array.isArray(data.persons) || !Array.isArray(data.transactions)) {
                         return notify('فایل پشتیبان معتبر نیست', 'error');
                     }
+                    const banks = Array.isArray(data.banks) ? data.banks : [];
+                    const settings = Array.isArray(data.settings) ? data.settings : [];
                     const ok = await askConfirm({
                         title: 'بازیابی پشتیبان',
-                        message: `بازیابی ${data.persons.length} شخص و ${data.transactions.length} تراکنش؟\n\nهمه داده‌های فعلی جایگزین می‌شوند.`,
+                        message: `بازیابی ${data.persons.length} شخص، ${banks.length || '—'} بانک و ${data.transactions.length} تراکنش؟\n\nهمه داده‌های فعلی جایگزین می‌شوند.`,
                         confirmText: 'بازیابی',
                         cancelText: 'انصراف',
                         danger: true
@@ -2702,15 +2972,21 @@
                         return;
                     }
 
-                    await db.transaction('rw', db.persons, db.transactions, async () => {
+                    await db.transaction('rw', db.persons, db.banks, db.settings, db.transactions, async () => {
                         await db.transactions.clear();
                         await db.persons.clear();
+                        await db.banks.clear();
+                        await db.settings.clear();
                         if (data.persons.length) await db.persons.bulkPut(data.persons);
+                        if (banks.length) await db.banks.bulkPut(banks);
+                        if (settings.length) await db.settings.bulkPut(settings);
                         if (data.transactions.length) await db.transactions.bulkPut(data.transactions);
                     });
+                    await ensureBanksSeeded();
 
                     localStorage.setItem(BACKUP_KEY, String(Date.now()));
                     await loadPersonSelects();
+                    await loadBankSelects();
                     await loadTransactions();
                     await refreshDataTab();
                     notify('بازیابی با موفقیت انجام شد', 'success');
@@ -2782,9 +3058,12 @@
                 if (document.getElementById('editModal').classList.contains('open')) closeModal();
             });
 
-            loadPersonSelects();
-            loadTransactions();
-            refreshDataTab();
+            ensureBanksSeeded().then(async () => {
+                await loadPersonSelects();
+                await loadBankSelects();
+                await loadTransactions();
+                await refreshDataTab();
+            });
         });
     </script>
 </body>
