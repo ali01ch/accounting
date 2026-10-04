@@ -2037,6 +2037,26 @@
             gap: 8px;
         }
 
+        @media (min-width: 480px) {
+            .ob-filters {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .tx-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .tx-summary .stat-box strong.pos {
+            color: var(--success);
+        }
+
+        .tx-summary .stat-box strong.neg {
+            color: var(--danger);
+        }
+
         .ob-item.is-overdue {
             border-color: rgba(194, 65, 12, 0.35);
         }
@@ -2762,6 +2782,11 @@
             </div>
 
             <div id="reportTxPanel" class="subpanel active">
+                <div id="txSummary" class="tx-summary" aria-live="polite">
+                    <div class="stat-box"><span>جمع دخل</span><strong id="txSumIncome" class="pos">۰</strong></div>
+                    <div class="stat-box"><span>جمع خرج</span><strong id="txSumExpense" class="neg">۰</strong></div>
+                </div>
+
                 <div class="toolbar">
                     <div class="toolbar-filters">
                         <select id="filterType" aria-label="فیلتر نوع">
@@ -2836,6 +2861,26 @@
                         <option value="open" selected>باز</option>
                         <option value="paid">پرداخت‌شده</option>
                         <option value="overdue">سررسید گذشته</option>
+                    </select>
+                    <select id="obFilterMonth" aria-label="فیلتر ماه">
+                        <option value="all">همه ماه‌ها</option>
+                        <option value="current">ماه جاری</option>
+                        <option value="1">فروردین</option>
+                        <option value="2">اردیبهشت</option>
+                        <option value="3">خرداد</option>
+                        <option value="4">تیر</option>
+                        <option value="5">مرداد</option>
+                        <option value="6">شهریور</option>
+                        <option value="7">مهر</option>
+                        <option value="8">آبان</option>
+                        <option value="9">آذر</option>
+                        <option value="10">دی</option>
+                        <option value="11">بهمن</option>
+                        <option value="12">اسفند</option>
+                    </select>
+                    <select id="obFilterDay" aria-label="فیلتر روز">
+                        <option value="all">همه روزها</option>
+                        <option value="today">امروز</option>
                     </select>
                     <select id="obFilterKind" aria-label="فیلتر نوع" hidden>
                         <option value="all">چک و قسط</option>
@@ -4551,6 +4596,18 @@
             });
 
             document.getElementById('obFilterStatus').addEventListener('change', () => loadObligations());
+            document.getElementById('obFilterMonth').addEventListener('change', () => loadObligations());
+            document.getElementById('obFilterDay').addEventListener('change', () => loadObligations());
+
+            (function fillObDayOptions() {
+                const sel = document.getElementById('obFilterDay');
+                for (let d = 1; d <= 31; d++) {
+                    const opt = document.createElement('option');
+                    opt.value = String(d);
+                    opt.textContent = toFaDigits(d);
+                    sel.appendChild(opt);
+                }
+            })();
 
             function makeSeriesId() {
                 return `s_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
@@ -4659,7 +4716,10 @@
                 let items = await db.obligations.toArray();
                 const fStatus = document.getElementById('obFilterStatus').value;
                 const fKind = document.getElementById('obFilterKind').value;
-                const todayStr = formatDate(getToday().year, getToday().month, getToday().day);
+                const fMonth = document.getElementById('obFilterMonth').value;
+                const fDay = document.getElementById('obFilterDay').value;
+                const today = getToday();
+                const todayStr = formatDate(today.year, today.month, today.day);
 
                 const scoped = fKind === 'all' ? items : items.filter((o) => o.kind === fKind);
                 let openPayable = 0;
@@ -4672,7 +4732,27 @@
                 document.getElementById('obSumPayable').textContent = openPayable.toLocaleString('fa-IR');
                 document.getElementById('obSumReceivable').textContent = openReceivable.toLocaleString('fa-IR');
 
-                items = scoped;
+                items = scoped.filter((o) => {
+                    const d = parseDate(o.dueDate);
+                    if (!d.year || !d.month || !d.day) return false;
+
+                    if (fDay === 'today') {
+                        return d.year === today.year && d.month === today.month && d.day === today.day;
+                    }
+
+                    if (fMonth === 'current') {
+                        if (d.year !== today.year || d.month !== today.month) return false;
+                    } else if (fMonth !== 'all') {
+                        if (d.month !== Number(fMonth) || d.year !== today.year) return false;
+                    }
+
+                    if (fDay !== 'all' && fDay !== 'today') {
+                        if (d.day !== Number(fDay)) return false;
+                    }
+
+                    return true;
+                });
+
                 if (fStatus === 'open') items = items.filter((o) => o.status === 'open');
                 else if (fStatus === 'paid') items = items.filter((o) => o.status === 'paid');
                 else if (fStatus === 'overdue') {
@@ -4821,6 +4901,17 @@
                 if (fType !== 'all') trans = trans.filter(t => t.type === fType);
                 if (fBank !== 'all') trans = trans.filter(t => t.bank === fBank);
                 trans.sort((a, b) => b.date.localeCompare(a.date));
+
+                let sumIn = 0;
+                let sumOut = 0;
+                trans.forEach((t) => {
+                    const abs = Math.abs(t.amount || 0);
+                    if (t.amount >= 0) sumIn += abs;
+                    else sumOut += abs;
+                });
+                document.getElementById('txSumIncome').textContent = sumIn.toLocaleString('fa-IR');
+                document.getElementById('txSumExpense').textContent = sumOut.toLocaleString('fa-IR');
+
                 const list = document.getElementById('transactionsTableBody');
                 if (!trans.length) {
                     list.innerHTML = `<div class="empty-state"><strong>تراکنشی نیست</strong><p>با ثبت اولین تراکنش، اینجا نمایش داده می‌شود.</p></div>`;
