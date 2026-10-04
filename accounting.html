@@ -2660,6 +2660,12 @@
                         <input type="text" id="obCount" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۱۲" value="۱۲">
                     </div>
 
+                    <div class="field" id="obIntervalField" hidden>
+                        <label for="obInterval">بازه پرداخت (روز)</label>
+                        <input type="text" id="obInterval" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۳۰" value="۳۰">
+                        <span class="field-hint">فاصلهٔ هر قسط از قسط قبلی بر حسب روز — پیش‌فرض ۳۰ روز</span>
+                    </div>
+
                     <div class="field">
                         <label for="dateObBtn" id="obDateLabel">تاریخ سررسید</label>
                         <button type="button" class="jdp-trigger" id="dateObBtn" aria-label="انتخاب سررسید">
@@ -2732,18 +2738,18 @@
         <!-- تب گزارشات -->
         <section id="tab-reports" class="panel" aria-label="گزارشات">
             <div class="panel-head">
-                <h2 id="reportsHeadTitle">گزارشات</h2>
-                <p id="reportsHeadDesc">گزارش قرض، تراکنش‌ها، اقساط و چک‌ها را اینجا ببینید.</p>
+                <h2 id="reportsHeadTitle">تراکنش‌ها</h2>
+                <p id="reportsHeadDesc">فیلتر کنید، ویرایش کنید یا خروجی CSV بگیرید.</p>
             </div>
 
             <div class="mode-switch cols-4" role="radiogroup" aria-label="نوع گزارش">
                 <label>
-                    <input type="radio" name="reportsMode" value="debt" checked>
-                    گزارش قرض
+                    <input type="radio" name="reportsMode" value="transactions" checked>
+                    تراکنش‌ها
                 </label>
                 <label>
-                    <input type="radio" name="reportsMode" value="transactions">
-                    تراکنش‌ها
+                    <input type="radio" name="reportsMode" value="debt">
+                    گزارش قرض
                 </label>
                 <label>
                     <input type="radio" name="reportsMode" value="installments">
@@ -2755,7 +2761,38 @@
                 </label>
             </div>
 
-            <div id="reportDebtPanel" class="subpanel active">
+            <div id="reportTxPanel" class="subpanel active">
+                <div class="toolbar">
+                    <div class="toolbar-filters">
+                        <select id="filterType" aria-label="فیلتر نوع">
+                            <option value="all">همه نوع‌ها</option>
+                            <option value="income">درآمد</option>
+                            <option value="expense">هزینه</option>
+                            <option value="debt_taken">قرض گرفتم</option>
+                            <option value="debt_given">قرض دادم</option>
+                            <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
+                            <option value="debt_given_settle">تسویه قرض داده‌شده</option>
+                        </select>
+                        <select id="filterBank" aria-label="فیلتر بانک">
+                            <option value="all">همه بانک‌ها</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-actions">
+                        <button id="filterBtn" class="btn-secondary btn-icon" type="button" title="اعمال فیلتر" aria-label="اعمال فیلتر">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                        </button>
+                        <button id="exportBtn" class="btn-success btn-icon" type="button" title="خروجی CSV" aria-label="خروجی CSV">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="transactionsTableBody" class="tx-list" role="list">
+                    <div class="empty-state"><strong>در حال بارگذاری</strong><p>لطفاً صبر کنید…</p></div>
+                </div>
+            </div>
+
+            <div id="reportDebtPanel" class="subpanel">
                 <div class="form-stack">
                     <div class="field">
                         <label for="reportPerson">انتخاب شخص</label>
@@ -2784,37 +2821,6 @@
 
                     <button id="showReportBtn" class="btn-primary" type="button">نمایش وضعیت</button>
                     <div id="reportResult"></div>
-                </div>
-            </div>
-
-            <div id="reportTxPanel" class="subpanel">
-                <div class="toolbar">
-                    <div class="toolbar-filters">
-                        <select id="filterType" aria-label="فیلتر نوع">
-                            <option value="all">همه نوع‌ها</option>
-                            <option value="income">درآمد</option>
-                            <option value="expense">هزینه</option>
-                            <option value="debt_taken">قرض گرفتم</option>
-                            <option value="debt_given">قرض دادم</option>
-                            <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
-                            <option value="debt_given_settle">تسویه قرض داده‌شده</option>
-                        </select>
-                        <select id="filterBank" aria-label="فیلتر بانک">
-                            <option value="all">همه بانک‌ها</option>
-                        </select>
-                    </div>
-                    <div class="toolbar-actions">
-                        <button id="filterBtn" class="btn-secondary btn-icon" type="button" title="اعمال فیلتر" aria-label="اعمال فیلتر">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-                        </button>
-                        <button id="exportBtn" class="btn-success btn-icon" type="button" title="خروجی CSV" aria-label="خروجی CSV">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="transactionsTableBody" class="tx-list" role="list">
-                    <div class="empty-state"><strong>در حال بارگذاری</strong><p>لطفاً صبر کنید…</p></div>
                 </div>
             </div>
 
@@ -3342,6 +3348,13 @@
                 const maxD = getMonthDays(y, m);
                 if (d > maxD) d = maxD;
                 return { year: y, month: m, day: d };
+            }
+            function addJalaliDays(dateObj, days) {
+                const g = toGregorian(dateObj.year, dateObj.month, dateObj.day);
+                const dt = new Date(g.gy, g.gm - 1, g.gd);
+                dt.setDate(dt.getDate() + Number(days || 0));
+                const j = toJalali(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
+                return { year: j.jy, month: j.jm, day: j.jd };
             }
             function escapeHtml(str) {
                 return String(str ?? '')
@@ -4006,7 +4019,7 @@
 
             function getReportsMode() {
                 const checked = document.querySelector('input[name="reportsMode"]:checked');
-                return checked ? checked.value : 'debt';
+                return checked ? checked.value : 'transactions';
             }
 
             function syncRegisterMode() {
@@ -4037,12 +4050,12 @@
                 document.getElementById('reportObPanel').classList.toggle('active', mode === 'installments' || mode === 'checks');
 
                 const titles = {
-                    debt: ['گزارش قرض', 'بدهی و طلب نسبت به یک شخص را در بازه زمانی ببینید.'],
                     transactions: ['تراکنش‌ها', 'فیلتر کنید، ویرایش کنید یا خروجی CSV بگیرید.'],
+                    debt: ['گزارش قرض', 'بدهی و طلب نسبت به یک شخص را در بازه زمانی ببینید.'],
                     installments: ['اقساط', 'وضعیت و سررسید اقساط باز و پرداخت‌شده.'],
                     checks: ['چک‌ها', 'وضعیت و سررسید چک‌های باز و پرداخت‌شده.']
                 };
-                const [title, desc] = titles[mode] || titles.debt;
+                const [title, desc] = titles[mode] || titles.transactions;
                 document.getElementById('reportsHeadTitle').textContent = title;
                 document.getElementById('reportsHeadDesc').textContent = desc;
 
@@ -4517,6 +4530,7 @@
                 const isInst = kind === 'installment';
                 document.getElementById('obTitleField').hidden = !isInst;
                 document.getElementById('obCountField').hidden = !isInst;
+                document.getElementById('obIntervalField').hidden = !isInst;
                 document.getElementById('obCheckNoField').hidden = isInst;
                 document.getElementById('obAmountLabel').textContent = isInst ? 'مبلغ هر قسط (تومان)' : 'مبلغ چک (تومان)';
                 document.getElementById('obDateLabel').textContent = isInst ? 'اولین سررسید' : 'تاریخ سررسید';
@@ -4525,6 +4539,10 @@
 
             document.getElementById('obCount').addEventListener('input', (e) => {
                 const digits = onlyDigits(e.target.value).slice(0, 2);
+                e.target.value = digits ? toFaDigits(digits) : '';
+            });
+            document.getElementById('obInterval').addEventListener('input', (e) => {
+                const digits = onlyDigits(e.target.value).slice(0, 3);
                 e.target.value = digits ? toFaDigits(digits) : '';
             });
             document.getElementById('obCheckNumber').addEventListener('input', (e) => {
@@ -4562,12 +4580,16 @@
                 const title = document.getElementById('obTitle').value.trim();
                 const checkNumber = onlyDigits(document.getElementById('obCheckNumber').value);
                 const count = Number(onlyDigits(document.getElementById('obCount').value)) || 0;
+                const intervalDays = Number(onlyDigits(document.getElementById('obInterval').value)) || 0;
 
                 if (!amount) return notify('مبلغ را وارد کنید', 'warn');
                 if (!dueStr) return notify('تاریخ سررسید را انتخاب کنید', 'warn');
                 if (kind === 'installment' && !title) return notify('عنوان سری اقساط را وارد کنید', 'warn');
                 if (kind === 'installment' && (count < 1 || count > 60)) {
                     return notify('تعداد اقساط باید بین ۱ تا ۶۰ باشد', 'warn');
+                }
+                if (kind === 'installment' && (intervalDays < 1 || intervalDays > 365)) {
+                    return notify('بازه پرداخت باید بین ۱ تا ۳۶۵ روز باشد', 'warn');
                 }
 
                 const firstDue = getDateField('ob');
@@ -4586,6 +4608,7 @@
                         seriesId: null,
                         installmentIndex: null,
                         installmentCount: null,
+                        intervalDays: null,
                         status: 'open',
                         paidAt: null,
                         linkedTxId: null,
@@ -4596,7 +4619,7 @@
                     const seriesId = makeSeriesId();
                     const rows = [];
                     for (let i = 0; i < count; i++) {
-                        const due = addJalaliMonths(firstDue, i);
+                        const due = addJalaliDays(firstDue, i * intervalDays);
                         rows.push({
                             kind: 'installment',
                             direction,
@@ -4610,6 +4633,7 @@
                             seriesId,
                             installmentIndex: i + 1,
                             installmentCount: count,
+                            intervalDays,
                             status: 'open',
                             paidAt: null,
                             linkedTxId: null,
@@ -4617,7 +4641,7 @@
                         });
                     }
                     await db.obligations.bulkAdd(rows);
-                    notify(`${count.toLocaleString('fa-IR')} قسط ثبت شد`, 'success');
+                    notify(`${count.toLocaleString('fa-IR')} قسط با بازه ${intervalDays.toLocaleString('fa-IR')} روزه ثبت شد`, 'success');
                 }
 
                 document.getElementById('obAmount').value = '';
@@ -4626,6 +4650,7 @@
                 document.getElementById('obTitle').value = '';
                 if (kind === 'installment') {
                     document.getElementById('obCount').value = toFaDigits('12');
+                    document.getElementById('obInterval').value = toFaDigits('30');
                 }
                 await loadObligations();
             };
