@@ -339,6 +339,10 @@
             gap: 7px;
         }
 
+        .field[hidden] {
+            display: none !important;
+        }
+
         .field label {
             font-size: 0.78rem;
             font-weight: 600;
@@ -1585,8 +1589,8 @@
             width: min(100%, 720px);
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-            gap: 1px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 2px;
         }
 
         .tab-item {
@@ -1598,10 +1602,10 @@
             background: transparent;
             border: none;
             color: var(--muted);
-            font-size: 0.58rem;
+            font-size: 0.68rem;
             font-weight: 600;
             line-height: 1.15;
-            padding: 6px 1px;
+            padding: 6px 2px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             min-height: 52px;
@@ -1959,6 +1963,31 @@
             border-radius: var(--radius);
         }
 
+        .mode-switch {
+            display: grid;
+            gap: 6px;
+            padding: 4px;
+            background: var(--surface);
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius);
+            margin-bottom: 4px;
+        }
+
+        .mode-switch.cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .mode-switch.cols-4 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (min-width: 520px) {
+            .mode-switch.cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        .mode-switch label,
         .ob-kind-toggle label {
             display: flex;
             align-items: center;
@@ -1967,14 +1996,16 @@
             margin: 0;
             padding: 10px 8px;
             border-radius: var(--radius-sm);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--muted);
             cursor: pointer;
             user-select: none;
+            text-align: center;
             transition: background 0.18s var(--ease), color 0.18s var(--ease);
         }
 
+        .mode-switch input,
         .ob-kind-toggle input {
             position: absolute;
             opacity: 0;
@@ -1983,15 +2014,26 @@
             height: 0;
         }
 
+        .mode-switch label:has(input:checked),
         .ob-kind-toggle label:has(input:checked) {
             background: var(--surface-raised);
             color: var(--accent);
             box-shadow: var(--shadow-soft);
         }
 
+        .subpanel {
+            display: none;
+            flex-direction: column;
+            gap: var(--space);
+        }
+
+        .subpanel.active {
+            display: flex;
+        }
+
         .ob-filters {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 8px;
         }
 
@@ -2518,60 +2560,136 @@
         </div>
 
         <!-- تب ثبت -->
-        <section id="tab-add" class="panel active" aria-label="ثبت تراکنش">
+        <section id="tab-add" class="panel active" aria-label="ثبت">
             <div class="panel-head">
-                <h2>ثبت تراکنش</h2>
-                <p>نوع، مبلغ و جزئیات را وارد کنید تا در دفتر ذخیره شود.</p>
+                <h2 id="registerHeadTitle">ثبت تراکنش</h2>
+                <p id="registerHeadDesc">نوع، مبلغ و جزئیات را وارد کنید تا در دفتر ذخیره شود.</p>
             </div>
 
-            <div class="form-stack">
-                <div class="field">
-                    <label for="transType">نوع تراکنش</label>
-                    <select id="transType" autocomplete="off">
-                        <option value="expense" selected>هزینه</option>
-                        <option value="income">درآمد</option>
-                        <option value="debt_taken">قرض گرفتم</option>
-                        <option value="debt_given">قرض دادم</option>
-                        <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
-                        <option value="debt_given_settle">تسویه قرض داده‌شده</option>
-                    </select>
-                </div>
+            <div class="mode-switch cols-3" role="radiogroup" aria-label="نوع ثبت">
+                <label>
+                    <input type="radio" name="registerMode" value="transaction" checked>
+                    تراکنش
+                </label>
+                <label>
+                    <input type="radio" name="registerMode" value="installment">
+                    قسط
+                </label>
+                <label>
+                    <input type="radio" name="registerMode" value="check">
+                    چک
+                </label>
+            </div>
 
-                <div class="field">
-                    <label for="personSelect">شخص مرتبط</label>
-                    <select id="personSelect">
-                        <option value="">ابتدا از تب اطلاعات اولیه، فردی اضافه کنید</option>
-                    </select>
-                    <span class="field-hint">برای قرض و تسویه، انتخاب شخص الزامی است.</span>
-                </div>
-
-                <div class="field amount-field">
-                    <label for="amount">مبلغ (تومان)</label>
-                    <input type="text" id="amount" class="money-input" inputmode="numeric" autocomplete="off" lang="fa">
-                </div>
-
-                <div class="field">
-                    <label for="dateAddBtn">تاریخ</label>
-                    <button type="button" class="jdp-trigger" id="dateAddBtn" aria-label="انتخاب تاریخ">
-                        <span class="jdp-trigger-text" id="dateAddText">—</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
-                    </button>
-                </div>
-
-                <div class="field">
-                    <label for="bankSelect">بانک / حساب</label>
-                    <select id="bankSelect"></select>
-                </div>
-
-                <div class="field">
-                    <label for="desc">توضیحات</label>
-                    <div class="desc-suggest-wrap">
-                        <input type="text" id="desc" placeholder="اختیاری — مثلاً خرید مواد غذایی" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="descSuggest">
-                        <div id="descSuggest" class="desc-suggest" role="listbox" hidden></div>
+            <div id="registerTxPanel" class="subpanel active">
+                <div class="form-stack">
+                    <div class="field">
+                        <label for="transType">نوع تراکنش</label>
+                        <select id="transType" autocomplete="off">
+                            <option value="expense" selected>هزینه</option>
+                            <option value="income">درآمد</option>
+                            <option value="debt_taken">قرض گرفتم</option>
+                            <option value="debt_given">قرض دادم</option>
+                            <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
+                            <option value="debt_given_settle">تسویه قرض داده‌شده</option>
+                        </select>
                     </div>
-                </div>
 
-                <button id="addBtn" class="btn-primary" type="button">ثبت تراکنش</button>
+                    <div class="field">
+                        <label for="personSelect">شخص مرتبط</label>
+                        <select id="personSelect">
+                            <option value="">ابتدا از تب اطلاعات اولیه، فردی اضافه کنید</option>
+                        </select>
+                        <span class="field-hint">برای قرض و تسویه، انتخاب شخص الزامی است.</span>
+                    </div>
+
+                    <div class="field amount-field">
+                        <label for="amount">مبلغ (تومان)</label>
+                        <input type="text" id="amount" class="money-input" inputmode="numeric" autocomplete="off" lang="fa">
+                    </div>
+
+                    <div class="field">
+                        <label for="dateAddBtn">تاریخ</label>
+                        <button type="button" class="jdp-trigger" id="dateAddBtn" aria-label="انتخاب تاریخ">
+                            <span class="jdp-trigger-text" id="dateAddText">—</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="field">
+                        <label for="bankSelect">بانک / حساب</label>
+                        <select id="bankSelect"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="desc">توضیحات</label>
+                        <div class="desc-suggest-wrap">
+                            <input type="text" id="desc" placeholder="اختیاری — مثلاً خرید مواد غذایی" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="descSuggest">
+                            <div id="descSuggest" class="desc-suggest" role="listbox" hidden></div>
+                        </div>
+                    </div>
+
+                    <button id="addBtn" class="btn-primary" type="button">ثبت تراکنش</button>
+                </div>
+            </div>
+
+            <div id="registerObPanel" class="subpanel">
+                <div class="form-stack">
+                    <input type="hidden" id="obKindValue" value="check">
+
+                    <div class="field">
+                        <label for="obDirection">جهت</label>
+                        <select id="obDirection">
+                            <option value="payable" selected>باید بپردازم</option>
+                            <option value="receivable">باید بگیرم</option>
+                        </select>
+                    </div>
+
+                    <div class="field" id="obTitleField" hidden>
+                        <label for="obTitle">عنوان سری اقساط</label>
+                        <input type="text" id="obTitle" placeholder="مثلاً قسط موبایل" autocomplete="off">
+                    </div>
+
+                    <div class="field amount-field">
+                        <label for="obAmount" id="obAmountLabel">مبلغ چک (تومان)</label>
+                        <input type="text" id="obAmount" class="money-input" inputmode="numeric" autocomplete="off" lang="fa">
+                    </div>
+
+                    <div class="field" id="obCountField" hidden>
+                        <label for="obCount">تعداد اقساط</label>
+                        <input type="text" id="obCount" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۱۲" value="۱۲">
+                    </div>
+
+                    <div class="field">
+                        <label for="dateObBtn" id="obDateLabel">تاریخ سررسید</label>
+                        <button type="button" class="jdp-trigger" id="dateObBtn" aria-label="انتخاب سررسید">
+                            <span class="jdp-trigger-text" id="dateObText">—</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="field" id="obCheckNoField">
+                        <label for="obCheckNumber">شماره چک</label>
+                        <input type="text" id="obCheckNumber" inputmode="numeric" autocomplete="off" lang="fa" placeholder="اختیاری">
+                    </div>
+
+                    <div class="field">
+                        <label for="obPerson">شخص مرتبط</label>
+                        <select id="obPerson"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="obBank">بانک / حساب</label>
+                        <select id="obBank"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="obNote">توضیحات</label>
+                        <input type="text" id="obNote" placeholder="اختیاری" autocomplete="off">
+                    </div>
+
+                    <button id="addObBtn" class="btn-primary" type="button">ثبت چک</button>
+                </div>
             </div>
         </section>
 
@@ -2605,184 +2723,124 @@
                     <input type="text" id="newBankNumber" class="bank-number-input" placeholder="شماره کارت یا حساب (اختیاری)" inputmode="numeric" autocomplete="off" lang="fa">
                 </div>
 
-                <div id="banksList" class="person-list">
+                <div id="banksList" class="bank-list">
                     <div class="empty-state"><strong>در حال بارگذاری</strong><p>لطفاً صبر کنید…</p></div>
                 </div>
             </div>
         </section>
 
-        <!-- تب قرض -->
-        <section id="tab-report" class="panel" aria-label="وضعیت قرض و بده‌بستان">
+        <!-- تب گزارشات -->
+        <section id="tab-reports" class="panel" aria-label="گزارشات">
             <div class="panel-head">
-                <h2>وضعیت قرض</h2>
-                <p>بدهی و طلب نسبت به یک شخص را در بازه زمانی ببینید.</p>
+                <h2 id="reportsHeadTitle">گزارشات</h2>
+                <p id="reportsHeadDesc">گزارش قرض، تراکنش‌ها، اقساط و چک‌ها را اینجا ببینید.</p>
             </div>
 
-            <div class="form-stack">
-                <div class="field">
-                    <label for="reportPerson">انتخاب شخص</label>
-                    <select id="reportPerson"></select>
-                </div>
+            <div class="mode-switch cols-4" role="radiogroup" aria-label="نوع گزارش">
+                <label>
+                    <input type="radio" name="reportsMode" value="debt" checked>
+                    گزارش قرض
+                </label>
+                <label>
+                    <input type="radio" name="reportsMode" value="transactions">
+                    تراکنش‌ها
+                </label>
+                <label>
+                    <input type="radio" name="reportsMode" value="installments">
+                    اقساط
+                </label>
+                <label>
+                    <input type="radio" name="reportsMode" value="checks">
+                    چک‌ها
+                </label>
+            </div>
 
-                <div class="field">
-                    <label>بازه زمانی</label>
-                    <div class="date-range">
-                        <div class="date-range-row">
-                            <span>از</span>
-                            <button type="button" class="jdp-trigger" id="dateFromBtn" aria-label="از تاریخ">
-                                <span class="jdp-trigger-text" id="dateFromText">—</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
-                            </button>
+            <div id="reportDebtPanel" class="subpanel active">
+                <div class="form-stack">
+                    <div class="field">
+                        <label for="reportPerson">انتخاب شخص</label>
+                        <select id="reportPerson"></select>
+                    </div>
+
+                    <div class="field">
+                        <label>بازه زمانی</label>
+                        <div class="date-range">
+                            <div class="date-range-row">
+                                <span>از</span>
+                                <button type="button" class="jdp-trigger" id="dateFromBtn" aria-label="از تاریخ">
+                                    <span class="jdp-trigger-text" id="dateFromText">—</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                                </button>
+                            </div>
+                            <div class="date-range-row">
+                                <span>تا</span>
+                                <button type="button" class="jdp-trigger" id="dateToBtn" aria-label="تا تاریخ">
+                                    <span class="jdp-trigger-text" id="dateToText">—</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                                </button>
+                            </div>
                         </div>
-                        <div class="date-range-row">
-                            <span>تا</span>
-                            <button type="button" class="jdp-trigger" id="dateToBtn" aria-label="تا تاریخ">
-                                <span class="jdp-trigger-text" id="dateToText">—</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
-                            </button>
-                        </div>
+                    </div>
+
+                    <button id="showReportBtn" class="btn-primary" type="button">نمایش وضعیت</button>
+                    <div id="reportResult"></div>
+                </div>
+            </div>
+
+            <div id="reportTxPanel" class="subpanel">
+                <div class="toolbar">
+                    <div class="toolbar-filters">
+                        <select id="filterType" aria-label="فیلتر نوع">
+                            <option value="all">همه نوع‌ها</option>
+                            <option value="income">درآمد</option>
+                            <option value="expense">هزینه</option>
+                            <option value="debt_taken">قرض گرفتم</option>
+                            <option value="debt_given">قرض دادم</option>
+                            <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
+                            <option value="debt_given_settle">تسویه قرض داده‌شده</option>
+                        </select>
+                        <select id="filterBank" aria-label="فیلتر بانک">
+                            <option value="all">همه بانک‌ها</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-actions">
+                        <button id="filterBtn" class="btn-secondary btn-icon" type="button" title="اعمال فیلتر" aria-label="اعمال فیلتر">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                        </button>
+                        <button id="exportBtn" class="btn-success btn-icon" type="button" title="خروجی CSV" aria-label="خروجی CSV">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </button>
                     </div>
                 </div>
 
-                <button id="showReportBtn" class="btn-primary" type="button">نمایش وضعیت</button>
-                <div id="reportResult"></div>
-            </div>
-        </section>
-
-        <!-- تب تراکنش‌ها -->
-        <section id="tab-all" class="panel" aria-label="تراکنش‌ها">
-            <div class="panel-head">
-                <h2>تراکنش‌ها</h2>
-                <p>فیلتر کنید، ویرایش کنید یا خروجی CSV بگیرید.</p>
+                <div id="transactionsTableBody" class="tx-list" role="list">
+                    <div class="empty-state"><strong>در حال بارگذاری</strong><p>لطفاً صبر کنید…</p></div>
+                </div>
             </div>
 
-            <div class="toolbar">
-                <div class="toolbar-filters">
-                    <select id="filterType" aria-label="فیلتر نوع">
-                        <option value="all">همه نوع‌ها</option>
-                        <option value="income">درآمد</option>
-                        <option value="expense">هزینه</option>
-                        <option value="debt_taken">قرض گرفتم</option>
-                        <option value="debt_given">قرض دادم</option>
-                        <option value="debt_taken_settle">تسویه قرض گرفته‌شده</option>
-                        <option value="debt_given_settle">تسویه قرض داده‌شده</option>
+            <div id="reportObPanel" class="subpanel">
+                <div id="obSummary" class="ob-summary" aria-live="polite">
+                    <div class="stat-box"><span>بازِ پرداختنی</span><strong id="obSumPayable">۰</strong></div>
+                    <div class="stat-box"><span>بازِ دریافتنی</span><strong id="obSumReceivable">۰</strong></div>
+                </div>
+
+                <div class="ob-filters">
+                    <select id="obFilterStatus" aria-label="فیلتر وضعیت">
+                        <option value="all">همه وضعیت‌ها</option>
+                        <option value="open" selected>باز</option>
+                        <option value="paid">پرداخت‌شده</option>
+                        <option value="overdue">سررسید گذشته</option>
                     </select>
-                    <select id="filterBank" aria-label="فیلتر بانک">
-                        <option value="all">همه بانک‌ها</option>
-                    </select>
-                </div>
-                <div class="toolbar-actions">
-                    <button id="filterBtn" class="btn-secondary btn-icon" type="button" title="اعمال فیلتر" aria-label="اعمال فیلتر">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-                    </button>
-                    <button id="exportBtn" class="btn-success btn-icon" type="button" title="خروجی CSV" aria-label="خروجی CSV">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div id="transactionsTableBody" class="tx-list" role="list">
-                <div class="empty-state"><strong>در حال بارگذاری</strong><p>لطفاً صبر کنید…</p></div>
-            </div>
-        </section>
-
-        <!-- تب قسط و چک -->
-        <section id="tab-obligations" class="panel" aria-label="قسط و چک">
-            <div class="panel-head">
-                <h2>قسط و چک</h2>
-                <p>تعهدهای زمان‌دار را ثبت کنید و سررسیدها را پیگیری کنید.</p>
-            </div>
-
-            <div id="obSummary" class="ob-summary" aria-live="polite">
-                <div class="stat-box"><span>بازِ پرداختنی</span><strong id="obSumPayable">۰</strong></div>
-                <div class="stat-box"><span>بازِ دریافتنی</span><strong id="obSumReceivable">۰</strong></div>
-            </div>
-
-            <div class="form-stack">
-                <div class="field">
-                    <label>نوع</label>
-                    <div class="ob-kind-toggle" role="radiogroup" aria-label="نوع تعهد">
-                        <label>
-                            <input type="radio" name="obKind" value="check" checked>
-                            چک
-                        </label>
-                        <label>
-                            <input type="radio" name="obKind" value="installment">
-                            قسط
-                        </label>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label for="obDirection">جهت</label>
-                    <select id="obDirection">
-                        <option value="payable" selected>باید بپردازم</option>
-                        <option value="receivable">باید بگیرم</option>
+                    <select id="obFilterKind" aria-label="فیلتر نوع" hidden>
+                        <option value="all">چک و قسط</option>
+                        <option value="check">فقط چک</option>
+                        <option value="installment" selected>فقط قسط</option>
                     </select>
                 </div>
 
-                <div class="field" id="obTitleField" hidden>
-                    <label for="obTitle">عنوان سری اقساط</label>
-                    <input type="text" id="obTitle" placeholder="مثلاً قسط موبایل" autocomplete="off">
+                <div id="obligationsList" class="tx-list" role="list">
+                    <div class="empty-state"><strong>هنوز موردی نیست</strong><p>از تب ثبت، قسط یا چک اضافه کنید.</p></div>
                 </div>
-
-                <div class="field amount-field">
-                    <label for="obAmount" id="obAmountLabel">مبلغ چک (تومان)</label>
-                    <input type="text" id="obAmount" class="money-input" inputmode="numeric" autocomplete="off" lang="fa">
-                </div>
-
-                <div class="field" id="obCountField" hidden>
-                    <label for="obCount">تعداد اقساط</label>
-                    <input type="text" id="obCount" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۱۲" value="۱۲">
-                </div>
-
-                <div class="field">
-                    <label for="dateObBtn" id="obDateLabel">تاریخ سررسید</label>
-                    <button type="button" class="jdp-trigger" id="dateObBtn" aria-label="انتخاب سررسید">
-                        <span class="jdp-trigger-text" id="dateObText">—</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
-                    </button>
-                </div>
-
-                <div class="field" id="obCheckNoField">
-                    <label for="obCheckNumber">شماره چک</label>
-                    <input type="text" id="obCheckNumber" inputmode="numeric" autocomplete="off" lang="fa" placeholder="اختیاری">
-                </div>
-
-                <div class="field">
-                    <label for="obPerson">شخص مرتبط</label>
-                    <select id="obPerson"></select>
-                </div>
-
-                <div class="field">
-                    <label for="obBank">بانک / حساب</label>
-                    <select id="obBank"></select>
-                </div>
-
-                <div class="field">
-                    <label for="obNote">توضیحات</label>
-                    <input type="text" id="obNote" placeholder="اختیاری" autocomplete="off">
-                </div>
-
-                <button id="addObBtn" class="btn-primary" type="button">ثبت چک</button>
-            </div>
-
-            <div class="ob-filters">
-                <select id="obFilterStatus" aria-label="فیلتر وضعیت">
-                    <option value="all">همه وضعیت‌ها</option>
-                    <option value="open" selected>باز</option>
-                    <option value="paid">پرداخت‌شده</option>
-                    <option value="overdue">سررسید گذشته</option>
-                </select>
-                <select id="obFilterKind" aria-label="فیلتر نوع">
-                    <option value="all">چک و قسط</option>
-                    <option value="check">فقط چک</option>
-                    <option value="installment">فقط قسط</option>
-                </select>
-            </div>
-
-            <div id="obligationsList" class="tx-list" role="list">
-                <div class="empty-state"><strong>هنوز موردی نیست</strong><p>اولین چک یا سری اقساط را بالا ثبت کنید.</p></div>
             </div>
         </section>
 
@@ -2917,17 +2975,9 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
                 ثبت
             </button>
-            <button class="tab-item" data-tab="all" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-                تراکنش‌ها
-            </button>
-            <button class="tab-item" data-tab="obligations" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M8 15h3"/></svg>
-                قسط/چک
-            </button>
-            <button class="tab-item" data-tab="report" type="button">
+            <button class="tab-item" data-tab="reports" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
-                گزارش قرض
+                گزارشات
             </button>
             <button class="tab-item" data-tab="data" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -3945,11 +3995,72 @@
             const tabs = {
                 add: document.getElementById('tab-add'),
                 persons: document.getElementById('tab-persons'),
-                report: document.getElementById('tab-report'),
-                all: document.getElementById('tab-all'),
-                obligations: document.getElementById('tab-obligations'),
+                reports: document.getElementById('tab-reports'),
                 data: document.getElementById('tab-data')
             };
+
+            function getRegisterMode() {
+                const checked = document.querySelector('input[name="registerMode"]:checked');
+                return checked ? checked.value : 'transaction';
+            }
+
+            function getReportsMode() {
+                const checked = document.querySelector('input[name="reportsMode"]:checked');
+                return checked ? checked.value : 'debt';
+            }
+
+            function syncRegisterMode() {
+                const mode = getRegisterMode();
+                const isTx = mode === 'transaction';
+                document.getElementById('registerTxPanel').classList.toggle('active', isTx);
+                document.getElementById('registerObPanel').classList.toggle('active', !isTx);
+
+                const titles = {
+                    transaction: ['ثبت تراکنش', 'نوع، مبلغ و جزئیات را وارد کنید تا در دفتر ذخیره شود.'],
+                    installment: ['ثبت قسط', 'سری اقساط ماهانه را با مبلغ و تعداد تعریف کنید.'],
+                    check: ['ثبت چک', 'چک پرداختنی یا دریافتنی را با سررسید ثبت کنید.']
+                };
+                const [title, desc] = titles[mode] || titles.transaction;
+                document.getElementById('registerHeadTitle').textContent = title;
+                document.getElementById('registerHeadDesc').textContent = desc;
+
+                if (!isTx) {
+                    document.getElementById('obKindValue').value = mode;
+                    syncObFormKind();
+                }
+            }
+
+            function syncReportsMode() {
+                const mode = getReportsMode();
+                document.getElementById('reportDebtPanel').classList.toggle('active', mode === 'debt');
+                document.getElementById('reportTxPanel').classList.toggle('active', mode === 'transactions');
+                document.getElementById('reportObPanel').classList.toggle('active', mode === 'installments' || mode === 'checks');
+
+                const titles = {
+                    debt: ['گزارش قرض', 'بدهی و طلب نسبت به یک شخص را در بازه زمانی ببینید.'],
+                    transactions: ['تراکنش‌ها', 'فیلتر کنید، ویرایش کنید یا خروجی CSV بگیرید.'],
+                    installments: ['اقساط', 'وضعیت و سررسید اقساط باز و پرداخت‌شده.'],
+                    checks: ['چک‌ها', 'وضعیت و سررسید چک‌های باز و پرداخت‌شده.']
+                };
+                const [title, desc] = titles[mode] || titles.debt;
+                document.getElementById('reportsHeadTitle').textContent = title;
+                document.getElementById('reportsHeadDesc').textContent = desc;
+
+                if (mode === 'debt') loadReportPersons();
+                if (mode === 'transactions') loadTransactions();
+                if (mode === 'installments' || mode === 'checks') {
+                    document.getElementById('obFilterKind').value = mode === 'checks' ? 'check' : 'installment';
+                    loadObligations();
+                }
+            }
+
+            document.querySelectorAll('input[name="registerMode"]').forEach((el) => {
+                el.addEventListener('change', syncRegisterMode);
+            });
+            document.querySelectorAll('input[name="reportsMode"]').forEach((el) => {
+                el.addEventListener('change', syncReportsMode);
+            });
+
             function switchTab(id) {
                 Object.values(tabs).forEach(t => t.classList.remove('active'));
                 tabs[id].classList.add('active');
@@ -3960,15 +4071,15 @@
                     loadPersons();
                     loadBanks();
                 }
-                if (id === 'report') loadReportPersons();
-                if (id === 'all') loadTransactions();
-                if (id === 'obligations') loadObligations();
+                if (id === 'reports') syncReportsMode();
+                if (id === 'add') syncRegisterMode();
                 if (id === 'data') {
                     resetPurgeSelection();
                     refreshDataTab();
                 }
             }
             tabBtns.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+            syncRegisterMode();
 
             // Persons
             async function loadPersons() {
@@ -4398,8 +4509,7 @@
 
             // Obligations — قسط و چک
             function getObKind() {
-                const checked = document.querySelector('input[name="obKind"]:checked');
-                return checked ? checked.value : 'check';
+                return document.getElementById('obKindValue').value === 'installment' ? 'installment' : 'check';
             }
 
             function syncObFormKind() {
@@ -4413,11 +4523,6 @@
                 document.getElementById('addObBtn').textContent = isInst ? 'ثبت سری اقساط' : 'ثبت چک';
             }
 
-            document.querySelectorAll('input[name="obKind"]').forEach((el) => {
-                el.addEventListener('change', syncObFormKind);
-            });
-            syncObFormKind();
-
             document.getElementById('obCount').addEventListener('input', (e) => {
                 const digits = onlyDigits(e.target.value).slice(0, 2);
                 e.target.value = digits ? toFaDigits(digits) : '';
@@ -4428,7 +4533,6 @@
             });
 
             document.getElementById('obFilterStatus').addEventListener('change', () => loadObligations());
-            document.getElementById('obFilterKind').addEventListener('change', () => loadObligations());
 
             function makeSeriesId() {
                 return `s_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
@@ -4532,9 +4636,10 @@
                 const fKind = document.getElementById('obFilterKind').value;
                 const todayStr = formatDate(getToday().year, getToday().month, getToday().day);
 
+                const scoped = fKind === 'all' ? items : items.filter((o) => o.kind === fKind);
                 let openPayable = 0;
                 let openReceivable = 0;
-                items.forEach((o) => {
+                scoped.forEach((o) => {
                     if (o.status !== 'open') return;
                     if (o.direction === 'payable') openPayable += o.amount;
                     else openReceivable += o.amount;
@@ -4542,7 +4647,7 @@
                 document.getElementById('obSumPayable').textContent = openPayable.toLocaleString('fa-IR');
                 document.getElementById('obSumReceivable').textContent = openReceivable.toLocaleString('fa-IR');
 
-                if (fKind !== 'all') items = items.filter((o) => o.kind === fKind);
+                items = scoped;
                 if (fStatus === 'open') items = items.filter((o) => o.status === 'open');
                 else if (fStatus === 'paid') items = items.filter((o) => o.status === 'paid');
                 else if (fStatus === 'overdue') {
@@ -4556,7 +4661,8 @@
 
                 const list = document.getElementById('obligationsList');
                 if (!items.length) {
-                    list.innerHTML = `<div class="empty-state"><strong>موردی نیست</strong><p>با فیلتر فعلی چیزی پیدا نشد یا هنوز ثبت نکرده‌اید.</p></div>`;
+                    const emptyLabel = fKind === 'check' ? 'چکی نیست' : fKind === 'installment' ? 'قسطی نیست' : 'موردی نیست';
+                    list.innerHTML = `<div class="empty-state"><strong>${emptyLabel}</strong><p>با فیلتر فعلی چیزی پیدا نشد یا هنوز ثبت نکرده‌اید.</p></div>`;
                     return;
                 }
 
