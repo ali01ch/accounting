@@ -2676,14 +2676,14 @@
                     </div>
 
                     <div class="field" id="obCountField" hidden>
-                        <label for="obCount">تعداد اقساط</label>
+                        <label for="obCount" id="obCountLabel">تعداد اقساط</label>
                         <input type="text" id="obCount" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۱۲" value="۱۲">
                     </div>
 
                     <div class="field" id="obIntervalField" hidden>
                         <label for="obInterval">بازه پرداخت (روز)</label>
                         <input type="text" id="obInterval" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۳۰" value="۳۰">
-                        <span class="field-hint">فاصلهٔ هر قسط از قسط قبلی بر حسب روز — پیش‌فرض ۳۰ روز</span>
+                        <span class="field-hint" id="obIntervalHint">فاصلهٔ هر قسط از قسط قبلی بر حسب روز — پیش‌فرض ۳۰ روز</span>
                     </div>
 
                     <div class="field">
@@ -2695,8 +2695,9 @@
                     </div>
 
                     <div class="field" id="obCheckNoField">
-                        <label for="obCheckNumber">شماره چک</label>
+                        <label for="obCheckNumber" id="obCheckNoLabel">شماره چک</label>
                         <input type="text" id="obCheckNumber" inputmode="numeric" autocomplete="off" lang="fa" placeholder="اختیاری">
+                        <span class="field-hint" id="obCheckNoHint" hidden>اگر شماره اولین چک را بدهید، بقیه به‌ترتیب یکی‌یکی اضافه می‌شوند.</span>
                     </div>
 
                     <div class="field">
@@ -4067,6 +4068,7 @@
                 return checked ? checked.value : 'transactions';
             }
 
+            let lastRegisterMode = null;
             function syncRegisterMode() {
                 const mode = getRegisterMode();
                 const isTx = mode === 'transaction';
@@ -4075,17 +4077,27 @@
 
                 const titles = {
                     transaction: ['ثبت تراکنش', 'نوع، مبلغ و جزئیات را وارد کنید تا در دفتر ذخیره شود.'],
-                    installment: ['ثبت قسط', 'سری اقساط ماهانه را با مبلغ و تعداد تعریف کنید.'],
-                    check: ['ثبت چک', 'چک پرداختنی یا دریافتنی را با سررسید ثبت کنید.']
+                    installment: ['ثبت قسط', 'سری اقساط را با مبلغ، تعداد و بازه تعریف کنید.'],
+                    check: ['ثبت چک', 'یک چک یا دسته چک را با سررسید ثبت کنید.']
                 };
                 const [title, desc] = titles[mode] || titles.transaction;
                 document.getElementById('registerHeadTitle').textContent = title;
                 document.getElementById('registerHeadDesc').textContent = desc;
 
                 if (!isTx) {
+                    if (lastRegisterMode !== mode) {
+                        if (mode === 'check') {
+                            document.getElementById('obCount').value = toFaDigits('1');
+                            document.getElementById('obInterval').value = toFaDigits('30');
+                        } else if (mode === 'installment') {
+                            document.getElementById('obCount').value = toFaDigits('12');
+                            document.getElementById('obInterval').value = toFaDigits('30');
+                        }
+                    }
                     document.getElementById('obKindValue').value = mode;
                     syncObFormKind();
                 }
+                lastRegisterMode = mode;
             }
 
             function syncReportsMode() {
@@ -4570,21 +4582,51 @@
                 return document.getElementById('obKindValue').value === 'installment' ? 'installment' : 'check';
             }
 
+            function getObCountValue() {
+                return Number(onlyDigits(document.getElementById('obCount').value)) || 0;
+            }
+
+            function bumpCheckNumber(base, offset) {
+                if (!base) return '';
+                try {
+                    const next = (BigInt(base) + BigInt(offset)).toString();
+                    return base.length > next.length ? base.slice(0, base.length - next.length) + next : next;
+                } catch {
+                    return '';
+                }
+            }
+
             function syncObFormKind() {
                 const kind = getObKind();
                 const isInst = kind === 'installment';
+                const count = Math.max(1, getObCountValue() || 1);
+                const isBatchCheck = !isInst && count > 1;
+
                 document.getElementById('obTitleField').hidden = !isInst;
-                document.getElementById('obCountField').hidden = !isInst;
-                document.getElementById('obIntervalField').hidden = !isInst;
+                document.getElementById('obCountField').hidden = false;
+                document.getElementById('obIntervalField').hidden = isInst ? false : !isBatchCheck;
                 document.getElementById('obCheckNoField').hidden = isInst;
-                document.getElementById('obAmountLabel').textContent = isInst ? 'مبلغ هر قسط (تومان)' : 'مبلغ چک (تومان)';
-                document.getElementById('obDateLabel').textContent = isInst ? 'اولین سررسید' : 'تاریخ سررسید';
-                document.getElementById('addObBtn').textContent = isInst ? 'ثبت سری اقساط' : 'ثبت چک';
+                document.getElementById('obCheckNoHint').hidden = !isBatchCheck;
+
+                document.getElementById('obCountLabel').textContent = isInst ? 'تعداد اقساط' : 'تعداد چک‌ها';
+                document.getElementById('obIntervalHint').textContent = isInst
+                    ? 'فاصلهٔ هر قسط از قسط قبلی بر حسب روز — پیش‌فرض ۳۰ روز'
+                    : 'فاصلهٔ سررسید هر چک از چک قبلی — پیش‌فرض ۳۰ روز';
+                document.getElementById('obCheckNoLabel').textContent = isBatchCheck ? 'شماره اولین چک' : 'شماره چک';
+                document.getElementById('obCheckNumber').placeholder = isBatchCheck
+                    ? 'اختیاری — بقیه به‌ترتیب'
+                    : 'اختیاری';
+                document.getElementById('obAmountLabel').textContent = isInst ? 'مبلغ هر قسط (تومان)' : 'مبلغ هر چک (تومان)';
+                document.getElementById('obDateLabel').textContent = (isInst || isBatchCheck) ? 'اولین سررسید' : 'تاریخ سررسید';
+                document.getElementById('addObBtn').textContent = isInst
+                    ? 'ثبت سری اقساط'
+                    : (isBatchCheck ? 'ثبت گروهی چک‌ها' : 'ثبت چک');
             }
 
             document.getElementById('obCount').addEventListener('input', (e) => {
                 const digits = onlyDigits(e.target.value).slice(0, 2);
                 e.target.value = digits ? toFaDigits(digits) : '';
+                if (getObKind() === 'check') syncObFormKind();
             });
             document.getElementById('obInterval').addEventListener('input', (e) => {
                 const digits = onlyDigits(e.target.value).slice(0, 3);
@@ -4621,8 +4663,13 @@
                     }
                     return base;
                 }
-                const no = item.checkNumber ? ` چک ${toFaDigits(item.checkNumber)}` : '';
-                return (item.title || item.note || `چک${no}`).trim() || 'چک';
+                const no = item.checkNumber ? toFaDigits(item.checkNumber) : '';
+                if (item.installmentCount > 1) {
+                    const label = no ? `چک ${no}` : (item.note || item.title || 'چک');
+                    return `${label} (${toFaDigits(item.installmentIndex)}/${toFaDigits(item.installmentCount)})`;
+                }
+                if (no) return item.note ? `${item.note} — چک ${no}` : `چک ${no}`;
+                return (item.title || item.note || 'چک').trim() || 'چک';
             }
 
             document.getElementById('addObBtn').onclick = async () => {
@@ -4642,36 +4689,66 @@
                 if (!amount) return notify('مبلغ را وارد کنید', 'warn');
                 if (!dueStr) return notify('تاریخ سررسید را انتخاب کنید', 'warn');
                 if (kind === 'installment' && !title) return notify('عنوان سری اقساط را وارد کنید', 'warn');
-                if (kind === 'installment' && (count < 1 || count > 60)) {
-                    return notify('تعداد اقساط باید بین ۱ تا ۶۰ باشد', 'warn');
+                if (count < 1 || count > 60) {
+                    return notify(kind === 'check' ? 'تعداد چک‌ها باید بین ۱ تا ۶۰ باشد' : 'تعداد اقساط باید بین ۱ تا ۶۰ باشد', 'warn');
                 }
-                if (kind === 'installment' && (intervalDays < 1 || intervalDays > 365)) {
+                if ((kind === 'installment' || count > 1) && (intervalDays < 1 || intervalDays > 365)) {
                     return notify('بازه پرداخت باید بین ۱ تا ۳۶۵ روز باشد', 'warn');
                 }
 
                 const firstDue = getDateField('ob');
 
                 if (kind === 'check') {
-                    await db.obligations.add({
-                        kind: 'check',
-                        direction,
-                        title: note || (checkNumber ? `چک ${checkNumber}` : 'چک'),
-                        amount,
-                        dueDate: dueStr,
-                        personId,
-                        bank,
-                        checkNumber: checkNumber || '',
-                        note,
-                        seriesId: null,
-                        installmentIndex: null,
-                        installmentCount: null,
-                        intervalDays: null,
-                        status: 'open',
-                        paidAt: null,
-                        linkedTxId: null,
-                        createdAt: new Date().toISOString()
-                    });
-                    notify('چک ثبت شد', 'success');
+                    if (count === 1) {
+                        await db.obligations.add({
+                            kind: 'check',
+                            direction,
+                            title: note || (checkNumber ? `چک ${checkNumber}` : 'چک'),
+                            amount,
+                            dueDate: dueStr,
+                            personId,
+                            bank,
+                            checkNumber: checkNumber || '',
+                            note,
+                            seriesId: null,
+                            installmentIndex: null,
+                            installmentCount: null,
+                            intervalDays: null,
+                            status: 'open',
+                            paidAt: null,
+                            linkedTxId: null,
+                            createdAt: new Date().toISOString()
+                        });
+                        notify('چک ثبت شد', 'success');
+                    } else {
+                        const seriesId = makeSeriesId();
+                        const rows = [];
+                        for (let i = 0; i < count; i++) {
+                            const due = addJalaliDays(firstDue, i * intervalDays);
+                            const num = bumpCheckNumber(checkNumber, i);
+                            rows.push({
+                                kind: 'check',
+                                direction,
+                                title: note || (num ? `چک ${num}` : 'چک'),
+                                amount,
+                                dueDate: formatDate(due.year, due.month, due.day),
+                                personId,
+                                bank,
+                                checkNumber: num,
+                                note,
+                                seriesId,
+                                installmentIndex: i + 1,
+                                installmentCount: count,
+                                intervalDays,
+                                status: 'open',
+                                paidAt: null,
+                                linkedTxId: null,
+                                createdAt: new Date().toISOString()
+                            });
+                        }
+                        await db.obligations.bulkAdd(rows);
+                        notify(`${count.toLocaleString('fa-IR')} چک با بازه ${intervalDays.toLocaleString('fa-IR')} روزه ثبت شد`, 'success');
+                    }
                 } else {
                     const seriesId = makeSeriesId();
                     const rows = [];
@@ -4708,6 +4785,10 @@
                 if (kind === 'installment') {
                     document.getElementById('obCount').value = toFaDigits('12');
                     document.getElementById('obInterval').value = toFaDigits('30');
+                } else {
+                    document.getElementById('obCount').value = toFaDigits('1');
+                    document.getElementById('obInterval').value = toFaDigits('30');
+                    syncObFormKind();
                 }
                 await loadObligations();
             };
