@@ -1977,6 +1977,10 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .mode-switch.cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .mode-switch.cols-4 {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -2681,9 +2685,19 @@
                     </div>
 
                     <div class="field" id="obIntervalField" hidden>
-                        <label for="obInterval">بازه پرداخت (روز)</label>
-                        <input type="text" id="obInterval" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۳۰" value="۳۰">
-                        <span class="field-hint" id="obIntervalHint">فاصلهٔ هر قسط از قسط قبلی بر حسب روز — پیش‌فرض ۳۰ روز</span>
+                        <label for="obInterval" id="obIntervalLabel">بازه پرداخت</label>
+                        <div class="mode-switch cols-2" id="obIntervalUnitSwitch" role="radiogroup" aria-label="واحد بازه" hidden>
+                            <label>
+                                <input type="radio" name="obIntervalUnit" value="month" checked>
+                                ماه
+                            </label>
+                            <label>
+                                <input type="radio" name="obIntervalUnit" value="day">
+                                روز
+                            </label>
+                        </div>
+                        <input type="text" id="obInterval" inputmode="numeric" autocomplete="off" lang="fa" placeholder="مثلاً ۱" value="۱">
+                        <span class="field-hint" id="obIntervalHint">فاصلهٔ هر قسط از قسط قبلی — پیش‌فرض ۱ ماه</span>
                     </div>
 
                     <div class="field">
@@ -3386,21 +3400,52 @@
             function formatDate(y, m, d) { return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`; }
             function parseDate(str) { const p = String(str || '').split('/'); return { year: +p[0], month: +p[1], day: +p[2] }; }
             function addJalaliMonths(dateObj, months) {
+                const srcMax = getMonthDays(dateObj.year, dateObj.month);
                 let y = dateObj.year;
-                let m = dateObj.month + months;
+                let m = dateObj.month + Number(months || 0);
                 let d = dateObj.day;
                 while (m > 12) { m -= 12; y++; }
                 while (m < 1) { m += 12; y--; }
                 const maxD = getMonthDays(y, m);
-                if (d > maxD) d = maxD;
+                // اگر روز اول، آخرین روز ماه بود (۲۹/۳۰/۳۱)، در ماه مقصد هم آخر ماه بمان
+                if (d >= srcMax) d = maxD;
+                else if (d > maxD) d = maxD;
                 return { year: y, month: m, day: d };
             }
             function addJalaliDays(dateObj, days) {
-                const g = toGregorian(dateObj.year, dateObj.month, dateObj.day);
-                const dt = new Date(g.gy, g.gm - 1, g.gd);
-                dt.setDate(dt.getDate() + Number(days || 0));
-                const j = toJalali(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
-                return { year: j.jy, month: j.jm, day: j.jd };
+                // شمارش بومی شمسی — طول ماه‌های ۲۹/۳۰/۳۱ درست رعایت می‌شود
+                let y = dateObj.year;
+                let m = dateObj.month;
+                let d = dateObj.day;
+                let left = Number(days) || 0;
+
+                while (left > 0) {
+                    const dim = getMonthDays(y, m);
+                    const room = dim - d;
+                    if (left <= room) {
+                        d += left;
+                        left = 0;
+                    } else {
+                        left -= room + 1;
+                        d = 1;
+                        m += 1;
+                        if (m > 12) { m = 1; y += 1; }
+                    }
+                }
+
+                while (left < 0) {
+                    if (d + left >= 1) {
+                        d += left;
+                        left = 0;
+                    } else {
+                        left += d;
+                        m -= 1;
+                        if (m < 1) { m = 12; y -= 1; }
+                        d = getMonthDays(y, m);
+                    }
+                }
+
+                return { year: y, month: m, day: d };
             }
             function escapeHtml(str) {
                 return String(str ?? '')
@@ -4089,9 +4134,13 @@
                         if (mode === 'check') {
                             document.getElementById('obCount').value = toFaDigits('1');
                             document.getElementById('obInterval').value = toFaDigits('30');
+                            const dayUnit = document.querySelector('input[name="obIntervalUnit"][value="day"]');
+                            if (dayUnit) dayUnit.checked = true;
                         } else if (mode === 'installment') {
                             document.getElementById('obCount').value = toFaDigits('12');
-                            document.getElementById('obInterval').value = toFaDigits('30');
+                            document.getElementById('obInterval').value = toFaDigits('1');
+                            const monthUnit = document.querySelector('input[name="obIntervalUnit"][value="month"]');
+                            if (monthUnit) monthUnit.checked = true;
                         }
                     }
                     document.getElementById('obKindValue').value = mode;
@@ -4596,6 +4645,38 @@
                 }
             }
 
+            function getObIntervalUnit() {
+                const checked = document.querySelector('input[name="obIntervalUnit"]:checked');
+                return checked ? checked.value : 'month';
+            }
+
+            function syncObIntervalUi() {
+                const kind = getObKind();
+                const isInst = kind === 'installment';
+                const unit = getObIntervalUnit();
+                const unitSwitch = document.getElementById('obIntervalUnitSwitch');
+                unitSwitch.hidden = !isInst;
+
+                if (isInst) {
+                    if (unit === 'month') {
+                        document.getElementById('obIntervalLabel').textContent = 'بازه پرداخت (ماه)';
+                        document.getElementById('obInterval').placeholder = 'مثلاً ۱';
+                        document.getElementById('obIntervalHint').textContent =
+                            'فاصلهٔ هر قسط به ماه شمسی — برای ماه‌های ۲۹/۳۰/۳۱ روزه، روز سررسید حفظ یا به آخر ماه تنظیم می‌شود';
+                    } else {
+                        document.getElementById('obIntervalLabel').textContent = 'بازه پرداخت (روز)';
+                        document.getElementById('obInterval').placeholder = 'مثلاً ۳۰';
+                        document.getElementById('obIntervalHint').textContent =
+                            'فاصلهٔ دقیق به روز شمسی — طول ماه‌های ۲۹/۳۰/۳۱ در محاسبه رعایت می‌شود';
+                    }
+                } else {
+                    document.getElementById('obIntervalLabel').textContent = 'بازه پرداخت (روز)';
+                    document.getElementById('obInterval').placeholder = 'مثلاً ۳۰';
+                    document.getElementById('obIntervalHint').textContent =
+                        'فاصلهٔ سررسید هر چک از چک قبلی — پیش‌فرض ۳۰ روز';
+                }
+            }
+
             function syncObFormKind() {
                 const kind = getObKind();
                 const isInst = kind === 'installment';
@@ -4609,9 +4690,6 @@
                 document.getElementById('obCheckNoHint').hidden = !isBatchCheck;
 
                 document.getElementById('obCountLabel').textContent = isInst ? 'تعداد اقساط' : 'تعداد چک‌ها';
-                document.getElementById('obIntervalHint').textContent = isInst
-                    ? 'فاصلهٔ هر قسط از قسط قبلی بر حسب روز — پیش‌فرض ۳۰ روز'
-                    : 'فاصلهٔ سررسید هر چک از چک قبلی — پیش‌فرض ۳۰ روز';
                 document.getElementById('obCheckNoLabel').textContent = isBatchCheck ? 'شماره اولین چک' : 'شماره چک';
                 document.getElementById('obCheckNumber').placeholder = isBatchCheck
                     ? 'اختیاری — بقیه به‌ترتیب'
@@ -4621,7 +4699,23 @@
                 document.getElementById('addObBtn').textContent = isInst
                     ? 'ثبت سری اقساط'
                     : (isBatchCheck ? 'ثبت گروهی چک‌ها' : 'ثبت چک');
+
+                syncObIntervalUi();
             }
+
+            document.querySelectorAll('input[name="obIntervalUnit"]').forEach((el) => {
+                el.addEventListener('change', () => {
+                    if (getObKind() !== 'installment') return;
+                    const unit = getObIntervalUnit();
+                    const cur = Number(onlyDigits(document.getElementById('obInterval').value)) || 0;
+                    if (unit === 'month' && (cur === 0 || cur === 30)) {
+                        document.getElementById('obInterval').value = toFaDigits('1');
+                    } else if (unit === 'day' && (cur === 0 || cur === 1)) {
+                        document.getElementById('obInterval').value = toFaDigits('30');
+                    }
+                    syncObIntervalUi();
+                });
+            });
 
             document.getElementById('obCount').addEventListener('input', (e) => {
                 const digits = onlyDigits(e.target.value).slice(0, 2);
@@ -4629,7 +4723,8 @@
                 if (getObKind() === 'check') syncObFormKind();
             });
             document.getElementById('obInterval').addEventListener('input', (e) => {
-                const digits = onlyDigits(e.target.value).slice(0, 3);
+                const maxLen = (getObKind() === 'installment' && getObIntervalUnit() === 'month') ? 2 : 3;
+                const digits = onlyDigits(e.target.value).slice(0, maxLen);
                 e.target.value = digits ? toFaDigits(digits) : '';
             });
             document.getElementById('obCheckNumber').addEventListener('input', (e) => {
@@ -4684,7 +4779,8 @@
                 const title = document.getElementById('obTitle').value.trim();
                 const checkNumber = onlyDigits(document.getElementById('obCheckNumber').value);
                 const count = Number(onlyDigits(document.getElementById('obCount').value)) || 0;
-                const intervalDays = Number(onlyDigits(document.getElementById('obInterval').value)) || 0;
+                const intervalValue = Number(onlyDigits(document.getElementById('obInterval').value)) || 0;
+                const intervalUnit = kind === 'installment' ? getObIntervalUnit() : 'day';
 
                 if (!amount) return notify('مبلغ را وارد کنید', 'warn');
                 if (!dueStr) return notify('تاریخ سررسید را انتخاب کنید', 'warn');
@@ -4692,11 +4788,22 @@
                 if (count < 1 || count > 60) {
                     return notify(kind === 'check' ? 'تعداد چک‌ها باید بین ۱ تا ۶۰ باشد' : 'تعداد اقساط باید بین ۱ تا ۶۰ باشد', 'warn');
                 }
-                if ((kind === 'installment' || count > 1) && (intervalDays < 1 || intervalDays > 365)) {
-                    return notify('بازه پرداخت باید بین ۱ تا ۳۶۵ روز باشد', 'warn');
+                if (kind === 'installment' || count > 1) {
+                    if (intervalUnit === 'month') {
+                        if (intervalValue < 1 || intervalValue > 24) {
+                            return notify('بازه پرداخت باید بین ۱ تا ۲۴ ماه باشد', 'warn');
+                        }
+                    } else if (intervalValue < 1 || intervalValue > 365) {
+                        return notify('بازه پرداخت باید بین ۱ تا ۳۶۵ روز باشد', 'warn');
+                    }
                 }
 
                 const firstDue = getDateField('ob');
+
+                function dueAfterSteps(steps) {
+                    if (intervalUnit === 'month') return addJalaliMonths(firstDue, steps * intervalValue);
+                    return addJalaliDays(firstDue, steps * intervalValue);
+                }
 
                 if (kind === 'check') {
                     if (count === 1) {
@@ -4714,6 +4821,8 @@
                             installmentIndex: null,
                             installmentCount: null,
                             intervalDays: null,
+                            intervalMonths: null,
+                            intervalUnit: null,
                             status: 'open',
                             paidAt: null,
                             linkedTxId: null,
@@ -4724,7 +4833,7 @@
                         const seriesId = makeSeriesId();
                         const rows = [];
                         for (let i = 0; i < count; i++) {
-                            const due = addJalaliDays(firstDue, i * intervalDays);
+                            const due = dueAfterSteps(i);
                             const num = bumpCheckNumber(checkNumber, i);
                             rows.push({
                                 kind: 'check',
@@ -4739,7 +4848,9 @@
                                 seriesId,
                                 installmentIndex: i + 1,
                                 installmentCount: count,
-                                intervalDays,
+                                intervalDays: intervalValue,
+                                intervalMonths: null,
+                                intervalUnit: 'day',
                                 status: 'open',
                                 paidAt: null,
                                 linkedTxId: null,
@@ -4747,13 +4858,13 @@
                             });
                         }
                         await db.obligations.bulkAdd(rows);
-                        notify(`${count.toLocaleString('fa-IR')} چک با بازه ${intervalDays.toLocaleString('fa-IR')} روزه ثبت شد`, 'success');
+                        notify(`${count.toLocaleString('fa-IR')} چک با بازه ${intervalValue.toLocaleString('fa-IR')} روزه ثبت شد`, 'success');
                     }
                 } else {
                     const seriesId = makeSeriesId();
                     const rows = [];
                     for (let i = 0; i < count; i++) {
-                        const due = addJalaliDays(firstDue, i * intervalDays);
+                        const due = dueAfterSteps(i);
                         rows.push({
                             kind: 'installment',
                             direction,
@@ -4767,7 +4878,9 @@
                             seriesId,
                             installmentIndex: i + 1,
                             installmentCount: count,
-                            intervalDays,
+                            intervalDays: intervalUnit === 'day' ? intervalValue : null,
+                            intervalMonths: intervalUnit === 'month' ? intervalValue : null,
+                            intervalUnit,
                             status: 'open',
                             paidAt: null,
                             linkedTxId: null,
@@ -4775,7 +4888,8 @@
                         });
                     }
                     await db.obligations.bulkAdd(rows);
-                    notify(`${count.toLocaleString('fa-IR')} قسط با بازه ${intervalDays.toLocaleString('fa-IR')} روزه ثبت شد`, 'success');
+                    const unitLabel = intervalUnit === 'month' ? 'ماهه' : 'روزه';
+                    notify(`${count.toLocaleString('fa-IR')} قسط با بازه ${intervalValue.toLocaleString('fa-IR')} ${unitLabel} ثبت شد`, 'success');
                 }
 
                 document.getElementById('obAmount').value = '';
@@ -4784,7 +4898,10 @@
                 document.getElementById('obTitle').value = '';
                 if (kind === 'installment') {
                     document.getElementById('obCount').value = toFaDigits('12');
-                    document.getElementById('obInterval').value = toFaDigits('30');
+                    const monthUnit = document.querySelector('input[name="obIntervalUnit"][value="month"]');
+                    if (monthUnit) monthUnit.checked = true;
+                    document.getElementById('obInterval').value = toFaDigits('1');
+                    syncObFormKind();
                 } else {
                     document.getElementById('obCount').value = toFaDigits('1');
                     document.getElementById('obInterval').value = toFaDigits('30');
